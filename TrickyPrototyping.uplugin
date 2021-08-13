@@ -1,0 +1,29 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "TrickyPrototyping",
+	"Description": "This plugin is made for rapid prototyping. It contains some simple game mechanics and content which you can find in majority of games.",
+	"Category": "Other",
+	"CreatedBy": "Artyom \"Tricky Fat Cat\" Volkov",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "TrickyPrototyping",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [],
+			"WhitelistPlatforms": [
+				"Win64",
+				"Linux"
+				]
+		}
+	]
+}
