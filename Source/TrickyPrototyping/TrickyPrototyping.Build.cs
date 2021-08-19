@@ -38,6 +38,7 @@ public class TrickyPrototyping : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"PhysicsCore"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
