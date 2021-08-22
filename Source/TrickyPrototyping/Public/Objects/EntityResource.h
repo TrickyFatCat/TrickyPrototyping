@@ -27,7 +27,7 @@ struct FResourceAutoChangeData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bIsEnabled", ClampMin="0.0"))
 	float StartDelay = 1.f; // In seconds
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bIsEnabled", ClampMin="0.0"))
-	float Frequency = 1.f;
+	float Frequency = 1.f; // Ticks in second
 	UPROPERTY()
 	float Time = 1.f; // Time between ticks in seconds.
 };
