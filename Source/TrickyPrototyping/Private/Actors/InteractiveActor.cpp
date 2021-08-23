@@ -33,13 +33,25 @@ void AInteractiveActor::BeginPlay()
 	{
 		for (const auto Component : AnimatedComponents)
 		{
+			if (!Component) continue;
+
 			InitialTransforms.Add(Component->GetRelativeTransform());
 		}
 	}
 
-	checkf(TargetTransforms.Num() != InitialTransforms.Num(),
-	       TEXT("Check number of items in TargetTransforms in %s"),
-	       *GetName());
+	if (TargetTransforms.Num() > 0)
+	{
+		for (int32 i = 0; i < TargetTransforms.Num(); ++i)
+		{
+			FVector DeltaScale = InitialTransforms[i].GetScale3D() - TargetTransforms[i].GetScale3D();
+			DeltaScale.X = FMath::Abs(DeltaScale.X);
+			DeltaScale.Y = FMath::Abs(DeltaScale.Y);
+			DeltaScale.Z = FMath::Abs(DeltaScale.Z);
+			TargetTransforms[i].SetScale3D(DeltaScale);
+		}
+	}
+
+	checkf(TargetTransforms.Num() == InitialTransforms.Num(), TEXT("Target transforms length %i | Initial transforms length %i"), TargetTransforms.Num(), InitialTransforms.Num());
 }
 
 void AInteractiveActor::Tick(float DeltaTime)
@@ -62,6 +74,13 @@ void AInteractiveActor::SetAnimationProgress(const float Progress)
 	AnimateTransform(Progress);
 }
 
+void AInteractiveActor::AddAnimatedComponent(USceneComponent* NewComponent)
+{
+	if (AnimatedComponents.Contains(NewComponent)) return;
+
+	AnimatedComponents.AddUnique(NewComponent);
+}
+
 void AInteractiveActor::StartAnimation()
 {
 	if (!AnimationCurve || GetAnimationDuration() <= 0.f) return;
@@ -77,6 +96,8 @@ void AInteractiveActor::StartAnimation()
 		AnimationTimeline->ReverseFromEnd();
 		break;
 	}
+
+	SetState(EInteractiveActorState::Transition);
 }
 
 void AInteractiveActor::ReverseAnimation()
@@ -120,9 +141,10 @@ void AInteractiveActor::AnimateTransform(const float AnimationProgress)
 			Quaternion();
 		NewTransform.SetRotation(NewRotation);
 
+
 		NewTransform.SetScale3D(NewTransform.GetScale3D() + TargetTransform.GetScale3D() * AnimationProgress);
 
-		AnimatedComponents.Array()[i]->SetRelativeTransform(NewTransform);
+		AnimatedComponents[i]->SetRelativeTransform(NewTransform);
 	}
 }
 
@@ -133,7 +155,7 @@ bool AInteractiveActor::CanBeReversed() const
 
 void AInteractiveActor::SetState(const EInteractiveActorState NewState)
 {
-	if (!IsStateCurrent(NewState)) return;
+	if (IsStateCurrent(NewState)) return;
 
 	StatePrevious = StateCurrent;
 	StateCurrent = NewState;
@@ -153,7 +175,7 @@ bool AInteractiveActor::CanStartAnimation() const
 	return !IsStateCurrent(EInteractiveActorState::Locked) || !IsStateCurrent(EInteractiveActorState::Disabled);
 }
 
-void AInteractiveActor::Open() 
+void AInteractiveActor::Open()
 {
 	if (IsStateCurrent(EInteractiveActorState::Opened) || !CanStartAnimation()) return;
 

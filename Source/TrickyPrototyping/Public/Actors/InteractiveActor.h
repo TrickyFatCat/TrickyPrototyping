@@ -14,7 +14,7 @@ class UTimelineComponent;
  * It contains the basic logic for controlling animation for this objects.
  */
 
-UENUM()
+UENUM(BlueprintType)
 enum class EInteractiveActorState : uint8
 {
 	Opened,
@@ -61,24 +61,29 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category="Components")
 	UTimelineComponent* AnimationTimeline = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation")
-	UCurveFloat* AnimationCurve = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation")
-	TSet<USceneComponent*> AnimatedComponents;
-
-	UPROPERTY()
-	TArray<FTransform> InitialTransforms;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation")
-	TArray<FTransform> TargetTransforms;
+	UFUNCTION(BlueprintCallable, Category="Animation")
+	void AddAnimatedComponent(USceneComponent* NewComponent);
 
 	virtual void StartAnimation();
 	virtual void ReverseAnimation();
 	virtual void StopAnimation();
+	
+	UFUNCTION()
 	virtual void FinishAnimation();
 
 private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
+	UCurveFloat* AnimationCurve = nullptr;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess="true"))
+	TArray<USceneComponent*> AnimatedComponents;
+
+	UPROPERTY()
+	TArray<FTransform> InitialTransforms;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
+	TArray<FTransform> TargetTransforms;
+	
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationDuration,
 		BlueprintSetter=SetAnimationDuration,
@@ -103,9 +108,6 @@ private:
 
 	// States
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="States")
-	EInteractiveActorState StateInitial = EInteractiveActorState::Closed;
-
 	UFUNCTION(BlueprintCallable, Category="States")
 	EInteractiveActorState GetStateCurrent() const { return StateCurrent; }
 
@@ -122,11 +124,14 @@ protected:
 	UFUNCTION(BlueprintCallable, Category="States")
 	void SetState(const EInteractiveActorState NewState);
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="States", meta=(AllowPrivateAccess="true"))
+	EInteractiveActorState StateInitial = EInteractiveActorState::Closed;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StateCurrent = EInteractiveActorState::Closed;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="States", meta=(AllowPrivateAccess="true"))
-	EInteractiveActorState StatePrevious = EInteractiveActorState::Transition;
+	EInteractiveActorState StatePrevious = EInteractiveActorState::Closed;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StateTarget = EInteractiveActorState::Opened;
