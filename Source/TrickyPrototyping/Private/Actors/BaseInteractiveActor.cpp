@@ -44,7 +44,7 @@ void ABaseInteractiveActor::BeginPlay()
 		for (int32 i = 0; i < TargetTransforms.Num(); ++i)
 		{
 			if (InitialTransforms[i].GetScale3D() == TargetTransforms[i].GetScale3D()) continue;
-			
+
 			FVector DeltaScale = InitialTransforms[i].GetScale3D() - TargetTransforms[i].GetScale3D();
 			DeltaScale.X = FMath::Abs(DeltaScale.X);
 			DeltaScale.Y = FMath::Abs(DeltaScale.Y);
@@ -58,6 +58,31 @@ void ABaseInteractiveActor::BeginPlay()
 	       *GetName(),
 	       TargetTransforms.Num(),
 	       InitialTransforms.Num());
+
+	switch (StateInitial)
+	{
+	case EInteractiveActorState::Opened:
+		SetState(EInteractiveActorState::Opened);
+		AnimateTransform(1.f);
+		break;
+
+	case EInteractiveActorState::Closed:
+		SetState(EInteractiveActorState::Closed);
+		AnimateTransform(0.f);
+		break;
+
+	case EInteractiveActorState::Locked:
+		SetState(EInteractiveActorState::Locked);
+		AnimateTransform(0.f);
+		break;
+
+	case EInteractiveActorState::Disabled:
+		Disable();
+		break;
+		
+	default:
+		break;
+	}
 }
 
 void ABaseInteractiveActor::Tick(float DeltaTime)
