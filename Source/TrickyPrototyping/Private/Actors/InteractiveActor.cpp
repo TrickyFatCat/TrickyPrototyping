@@ -43,6 +43,8 @@ void AInteractiveActor::BeginPlay()
 	{
 		for (int32 i = 0; i < TargetTransforms.Num(); ++i)
 		{
+			if (InitialTransforms[i].GetScale3D() == TargetTransforms[i].GetScale3D()) continue;
+			
 			FVector DeltaScale = InitialTransforms[i].GetScale3D() - TargetTransforms[i].GetScale3D();
 			DeltaScale.X = FMath::Abs(DeltaScale.X);
 			DeltaScale.Y = FMath::Abs(DeltaScale.Y);
@@ -51,7 +53,11 @@ void AInteractiveActor::BeginPlay()
 		}
 	}
 
-	checkf(TargetTransforms.Num() == InitialTransforms.Num(), TEXT("Target transforms length %i | Initial transforms length %i"), TargetTransforms.Num(), InitialTransforms.Num());
+	checkf(TargetTransforms.Num() == InitialTransforms.Num(),
+	       TEXT("Check Target Transforms in %s. Target transforms length %i | Initial transforms length %i"),
+	       *GetName(),
+	       TargetTransforms.Num(),
+	       InitialTransforms.Num());
 }
 
 void AInteractiveActor::Tick(float DeltaTime)
@@ -67,18 +73,25 @@ void AInteractiveActor::SetAnimationDuration(const float Value)
 	CalculatePlayRate();
 }
 
-void AInteractiveActor::SetAnimationProgress(const float Progress)
-{
-	if (Progress < 0.f || Progress > 1.f) return;
-
-	AnimateTransform(Progress);
-}
-
 void AInteractiveActor::AddAnimatedComponent(USceneComponent* NewComponent)
 {
 	if (AnimatedComponents.Contains(NewComponent)) return;
 
 	AnimatedComponents.AddUnique(NewComponent);
+}
+
+void AInteractiveActor::FillAnimatedComponents(TArray<USceneComponent*> Components)
+{
+	if (Components.Num() == 0) return;
+
+	AnimatedComponents.Empty();
+
+	for (const auto Component : Components)
+	{
+		if (!Component || AnimatedComponents.Contains(Component)) continue;
+
+		AnimatedComponents.AddUnique(Component);
+	}
 }
 
 void AInteractiveActor::StartAnimation()
@@ -102,12 +115,21 @@ void AInteractiveActor::StartAnimation()
 
 void AInteractiveActor::ReverseAnimation()
 {
-	if (!AnimationCurve || !GetIsRevertible() || GetAnimationDuration() <= 0.f) return;
+	if (!AnimationCurve || !bIsReversible || GetAnimationDuration() <= 0.f) return;
 
 	StateTarget = StateTarget == EInteractiveActorState::Closed
 		              ? EInteractiveActorState::Opened
 		              : EInteractiveActorState::Closed;
-	AnimationTimeline->Reverse();
+
+	switch (StateTarget)
+	{
+	case EInteractiveActorState::Opened:
+		AnimationTimeline->Play();
+		break;
+	case EInteractiveActorState::Closed:
+		AnimationTimeline->Reverse();
+		break;
+	}
 }
 
 void AInteractiveActor::StopAnimation()
@@ -150,7 +172,7 @@ void AInteractiveActor::AnimateTransform(const float AnimationProgress)
 
 bool AInteractiveActor::CanBeReversed() const
 {
-	return IsStateCurrent(EInteractiveActorState::Transition) && bIsRevertible;
+	return IsStateCurrent(EInteractiveActorState::Transition) && bIsReversible;
 }
 
 void AInteractiveActor::SetState(const EInteractiveActorState NewState)

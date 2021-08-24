@@ -49,13 +49,10 @@ public:
 	void SetAnimationDuration(const float Value);
 
 	UFUNCTION(BlueprintGetter, Category="Animation")
-	bool GetIsRevertible() const { return bIsRevertible; }
+	bool GetIsReversible() const { return bIsReversible; }
 
 	UFUNCTION(BlueprintSetter, Category="Animation")
-	void SetIsRevertible(const bool Value) { bIsRevertible = Value; }
-
-	UFUNCTION(BlueprintCallable, Category="Animation")
-	void SetAnimationProgress(const float Progress);
+	void SetIsReversible(const bool Value) { bIsReversible = Value; }
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category="Components")
@@ -63,6 +60,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category="Animation")
 	void AddAnimatedComponent(USceneComponent* NewComponent);
+
+	UFUNCTION(BlueprintCallable, Category="Animation")
+	void FillAnimatedComponents(TArray<USceneComponent*> Components);
 
 	virtual void StartAnimation();
 	virtual void ReverseAnimation();
@@ -91,12 +91,12 @@ private:
 		meta=(AllowPrivateAccess="true"))
 	float AnimationDuration = 1.f;
 
-	UPROPERTY(EditDefaultsOnly,
-		BlueprintGetter=GetIsRevertible,
-		BlueprintSetter=SetIsRevertible,
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetIsReversible,
+		BlueprintSetter=SetIsReversible,
 		Category="Animation",
 		meta=(AllowPrivateAccess="true"))
-	bool bIsRevertible = false;
+	bool bIsReversible = false;
 
 	UFUNCTION(BlueprintCallable, Category="Animation")
 	void CalculatePlayRate();
