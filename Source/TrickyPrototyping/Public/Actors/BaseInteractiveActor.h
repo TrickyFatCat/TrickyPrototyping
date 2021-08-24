@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractiveActor.generated.h"
+#include "BaseInteractiveActor.generated.h"
 
 class UCurveFloat;
 class UTimelineComponent;
@@ -27,12 +27,12 @@ enum class EInteractiveActorState : uint8
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractiveActorChangedStateSignature, EInteractiveActorState, NewState);
 
 UCLASS()
-class TRICKYPROTOTYPING_API AInteractiveActor : public AActor
+class TRICKYPROTOTYPING_API ABaseInteractiveActor : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	AInteractiveActor();
+	ABaseInteractiveActor();
 
 protected:
 	virtual void BeginPlay() override;

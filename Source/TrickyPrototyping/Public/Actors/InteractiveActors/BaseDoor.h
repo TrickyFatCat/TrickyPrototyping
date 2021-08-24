@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/InteractiveActor.h"
+#include "Actors/BaseInteractiveActor.h"
 #include "BaseDoor.generated.h"
 
 /**
@@ -11,7 +11,7 @@
  */
 
 UCLASS()
-class TRICKYPROTOTYPING_API ABaseDoor : public AInteractiveActor
+class TRICKYPROTOTYPING_API ABaseDoor : public ABaseInteractiveActor
 {
 	GENERATED_BODY()
 
