@@ -80,7 +80,7 @@ void ABaseInteractiveActor::AddAnimatedComponent(USceneComponent* NewComponent)
 	AnimatedComponents.AddUnique(NewComponent);
 }
 
-void ABaseInteractiveActor::FillAnimatedComponents(TArray<USceneComponent*> Components)
+void ABaseInteractiveActor::FillAnimatedComponents(TArray<USceneComponent*>& Components)
 {
 	if (Components.Num() == 0) return;
 

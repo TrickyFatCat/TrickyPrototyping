@@ -62,7 +62,7 @@ protected:
 	void AddAnimatedComponent(USceneComponent* NewComponent);
 
 	UFUNCTION(BlueprintCallable, Category="Animation")
-	void FillAnimatedComponents(TArray<USceneComponent*> Components);
+	void FillAnimatedComponents(TArray<USceneComponent*>& Components);
 
 	virtual void StartAnimation();
 	virtual void ReverseAnimation();
