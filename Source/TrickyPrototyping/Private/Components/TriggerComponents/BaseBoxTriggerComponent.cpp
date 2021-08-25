@@ -15,6 +15,9 @@ void UBaseBoxTriggerComponent::BeginPlay()
 	SetGenerateOverlapEvents(true);
 	SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	SetIsEnabled(bIsEnabled);
+
+	OnComponentBeginOverlap.AddDynamic(this, &UBaseBoxTriggerComponent::OnBeginOverlap);
+	OnComponentEndOverlap.AddDynamic(this, &UBaseBoxTriggerComponent::OnEndOverlap);
 }
 
 void UBaseBoxTriggerComponent::TickComponent(float DeltaTime,
@@ -40,4 +43,20 @@ void UBaseBoxTriggerComponent::EnableTrigger()
 void UBaseBoxTriggerComponent::DisableTrigger()
 {
 	SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void UBaseBoxTriggerComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
+{
+}
+
+void UBaseBoxTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex)
+{
 }
