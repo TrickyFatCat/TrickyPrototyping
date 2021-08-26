@@ -43,13 +43,13 @@ void ABaseInteractiveActor::BeginPlay()
 	{
 		for (int32 i = 0; i < TargetTransforms.Num(); ++i)
 		{
-			if (InitialTransforms[i].GetScale3D() == TargetTransforms[i].GetScale3D()) continue;
+			if (!TargetTransforms[i].bAnimateScale) continue;
 
-			FVector DeltaScale = InitialTransforms[i].GetScale3D() - TargetTransforms[i].GetScale3D();
+			FVector DeltaScale = InitialTransforms[i].GetScale3D() - TargetTransforms[i].TargetScale;
 			DeltaScale.X = FMath::Abs(DeltaScale.X);
 			DeltaScale.Y = FMath::Abs(DeltaScale.Y);
 			DeltaScale.Z = FMath::Abs(DeltaScale.Z);
-			TargetTransforms[i].SetScale3D(DeltaScale);
+			TargetTransforms[i].TargetScale = DeltaScale;
 		}
 	}
 
@@ -79,7 +79,7 @@ void ABaseInteractiveActor::BeginPlay()
 	case EInteractiveActorState::Disabled:
 		Disable();
 		break;
-		
+
 	default:
 		break;
 	}
@@ -105,7 +105,7 @@ void ABaseInteractiveActor::AddAnimatedComponent(USceneComponent* NewComponent)
 	AnimatedComponents.AddUnique(NewComponent);
 }
 
-void ABaseInteractiveActor::FillAnimatedComponents(TArray<USceneComponent*>& Components)
+void ABaseInteractiveActor::FillAnimatedComponents(TArray<USceneComponent*> Components)
 {
 	if (Components.Num() == 0) return;
 
@@ -179,17 +179,28 @@ void ABaseInteractiveActor::AnimateTransform(const float AnimationProgress)
 	for (int32 i = 0; i < AnimatedComponents.Num(); ++i)
 	{
 		FTransform NewTransform = InitialTransforms[i];
-		FTransform TargetTransform = TargetTransforms[i];
+		FTransform TargetTransform;
+		TargetTransform.SetLocation(TargetTransforms[i].TargetLocation);
+		TargetTransform.SetRotation(TargetTransforms[i].TargetRotation.Quaternion());
+		TargetTransform.SetScale3D(TargetTransforms[i].TargetScale);
 
-		NewTransform.SetLocation(NewTransform.GetLocation() + TargetTransform.GetLocation() * AnimationProgress);
+		if (TargetTransforms[i].bAnimateLocation)
+		{
+			NewTransform.SetLocation(NewTransform.GetLocation() + TargetTransform.GetLocation() * AnimationProgress);
+		}
 
-		FQuat NewRotation = FRotator(
+		if (TargetTransforms[i].bAnimateRotation)
+		{
+			FQuat NewRotation = FRotator(
 				NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() * AnimationProgress).
 			Quaternion();
-		NewTransform.SetRotation(NewRotation);
+			NewTransform.SetRotation(NewRotation);
+		}
 
-
-		NewTransform.SetScale3D(NewTransform.GetScale3D() + TargetTransform.GetScale3D() * AnimationProgress);
+		if (TargetTransforms[i].bAnimateScale)
+		{
+			NewTransform.SetScale3D(NewTransform.GetScale3D() + TargetTransform.GetScale3D() * AnimationProgress);
+		}
 
 		AnimatedComponents[i]->SetRelativeTransform(NewTransform);
 	}

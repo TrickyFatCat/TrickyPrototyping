@@ -24,6 +24,30 @@ enum class EInteractiveActorState : uint8
 	Transition UMETA(Hidden)
 };
 
+USTRUCT(BlueprintType)
+struct FInteractiveActorData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere)
+	bool bAnimateLocation = true;
+
+	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateLocation"))
+	FVector TargetLocation = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere)
+	bool bAnimateRotation = true;
+	
+	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateRotation"))
+	FRotator TargetRotation = FRotator::ZeroRotator;
+
+	UPROPERTY(EditAnywhere)
+	bool bAnimateScale = false;
+	
+	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateScale"))
+	FVector TargetScale = FVector(1.f, 1.f, 1.f);
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractiveActorChangedStateSignature, EInteractiveActorState, NewState);
 
 UCLASS()
@@ -62,7 +86,7 @@ protected:
 	void AddAnimatedComponent(USceneComponent* NewComponent);
 
 	UFUNCTION(BlueprintCallable, Category="Animation")
-	void FillAnimatedComponents(TArray<USceneComponent*>& Components);
+	void FillAnimatedComponents(TArray<USceneComponent*> Components);
 
 	virtual void StartAnimation();
 	virtual void ReverseAnimation();
@@ -82,7 +106,7 @@ private:
 	TArray<FTransform> InitialTransforms;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
-	TArray<FTransform> TargetTransforms;
+	TArray<FInteractiveActorData> TargetTransforms;
 	
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationDuration,
