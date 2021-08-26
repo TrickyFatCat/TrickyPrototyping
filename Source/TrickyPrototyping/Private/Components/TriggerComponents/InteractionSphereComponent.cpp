@@ -2,7 +2,7 @@
 
 
 #include "Components/TriggerComponents/InteractionSphereComponent.h"
-#include "Components/InteractionQueManagerComponent.h"
+#include "Components/InteractionQueueComponent.h"
 
 void UInteractionSphereComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                                 AActor* OtherActor,
@@ -13,7 +13,7 @@ void UInteractionSphereComponent::OnBeginOverlap(UPrimitiveComponent* Overlapped
 {
 	if (!IsValid(OtherActor) || !IsValid(GetOwner()) || bUseAsNormalTrigger) return;
 
-	UInteractionQueManagerComponent* InteractionQue = OtherActor->FindComponentByClass<UInteractionQueManagerComponent>();
+	UInteractionQueueComponent* InteractionQue = OtherActor->FindComponentByClass<UInteractionQueueComponent>();
 
 	if (!InteractionQue) return;
 
@@ -27,7 +27,7 @@ void UInteractionSphereComponent::OnEndOverlap(UPrimitiveComponent* OverlappedCo
 {
 	if (!IsValid(OtherActor) || !IsValid(GetOwner()) || bUseAsNormalTrigger) return;
 
-	UInteractionQueManagerComponent* InteractionQue = OtherActor->FindComponentByClass<UInteractionQueManagerComponent>();
+	UInteractionQueueComponent* InteractionQue = OtherActor->FindComponentByClass<UInteractionQueueComponent>();
 
 	if (!InteractionQue) return;
 

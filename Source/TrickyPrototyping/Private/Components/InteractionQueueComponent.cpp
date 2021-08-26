@@ -1,35 +1,34 @@
 // Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Components/InteractionQueManagerComponent.h"
-
+#include "Components/InteractionQueueComponent.h"
 #include "Interfaces/InteractionInterface.h"
 
-UInteractionQueManagerComponent::UInteractionQueManagerComponent()
+UInteractionQueueComponent::UInteractionQueueComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UInteractionQueManagerComponent::BeginPlay()
+void UInteractionQueueComponent::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void UInteractionQueManagerComponent::AddToQue(AActor* Actor)
+void UInteractionQueueComponent::AddToQue(AActor* Actor)
 {
 	if (!IsValid(Actor) || InteractionQueue.Contains(Actor)) return;
 
 	InteractionQueue.AddUnique(Actor);
 }
 
-void UInteractionQueManagerComponent::RemoveFromQueue(AActor* Actor)
+void UInteractionQueueComponent::RemoveFromQueue(AActor* Actor)
 {
 	if (!IsValid(Actor) || InteractionQueue.Contains(Actor)) return;
 
 	InteractionQueue.Remove(Actor);
 }
 
-bool UInteractionQueManagerComponent::Interact() const
+bool UInteractionQueueComponent::Interact() const
 {
 	if (IsQueueEmpty()) return false;
 
@@ -44,7 +43,7 @@ bool UInteractionQueManagerComponent::Interact() const
 	return IInteractionInterface::Execute_ProcessInteraction(TargetActor, PlayerController);
 }
 
-AActor* UInteractionQueManagerComponent::GetTargetActor() const
+AActor* UInteractionQueueComponent::GetTargetActor() const
 {
 	if (IsQueueEmpty()) return nullptr;
 

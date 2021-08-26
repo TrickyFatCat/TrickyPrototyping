@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "InteractionQueManagerComponent.generated.h"
+#include "InteractionQueueComponent.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class TRICKYPROTOTYPING_API UInteractionQueManagerComponent : public UActorComponent
+class TRICKYPROTOTYPING_API UInteractionQueueComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	UInteractionQueManagerComponent();
+	UInteractionQueueComponent();
 
 protected:
 	virtual void BeginPlay() override;
