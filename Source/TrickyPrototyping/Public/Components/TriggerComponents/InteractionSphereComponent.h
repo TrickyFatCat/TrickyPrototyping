@@ -7,7 +7,7 @@
 #include "InteractionSphereComponent.generated.h"
 
 /**
- * 
+ * A sphere trigger which adds actor to an interaction queue
  */
 UCLASS()
 class TRICKYPROTOTYPING_API UInteractionSphereComponent : public UBaseSphereTriggerComponent

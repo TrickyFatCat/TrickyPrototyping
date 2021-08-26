@@ -7,7 +7,7 @@
 #include "BaseDoor.generated.h"
 
 /**
- * 
+ * A base door class
  */
 
 UCLASS()

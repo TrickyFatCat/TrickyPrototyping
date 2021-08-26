@@ -7,7 +7,7 @@
 #include "BaseSphereTriggerComponent.generated.h"
 
 /**
- * 
+ * A base sphere trigger component for creating different trigger components
  */
 UCLASS()
 class TRICKYPROTOTYPING_API UBaseSphereTriggerComponent : public USphereComponent

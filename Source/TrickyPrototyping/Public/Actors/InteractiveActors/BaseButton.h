@@ -7,7 +7,7 @@
 #include "BaseButton.generated.h"
 
 /**
- * 
+ * A base button class. Use it for creating different buttons and levers
  */
 UCLASS()
 class TRICKYPROTOTYPING_API ABaseButton : public ABaseInteractiveActor

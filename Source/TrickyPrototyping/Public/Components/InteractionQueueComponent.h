@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "InteractionQueueComponent.generated.h"
 
+/**
+ * A component which manages interaction queue
+ */
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UInteractionQueueComponent : public UActorComponent

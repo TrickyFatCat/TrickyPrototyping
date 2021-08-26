@@ -9,6 +9,10 @@
 
 class UInteractionSphereComponent;
 
+/**
+ * Base pickup class. Use for creating various pickups
+ */
+
 UCLASS()
 class TRICKYPROTOTYPING_API ABasePickup : public AActor, public IInteractionInterface
 {

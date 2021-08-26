@@ -7,7 +7,7 @@
 #include "BaseBoxTriggerComponent.generated.h"
 
 /**
- * 
+ * A base box trigger component for creating different trigger components
  */
 UCLASS()
 class TRICKYPROTOTYPING_API UBaseBoxTriggerComponent : public UBoxComponent

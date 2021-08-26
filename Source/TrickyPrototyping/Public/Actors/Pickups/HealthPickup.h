@@ -7,7 +7,7 @@
 #include "HealthPickup.generated.h"
 
 /**
- * 
+ * Simple health pickup
  */
 UCLASS()
 class TRICKYPROTOTYPING_API AHealthPickup : public ABasePickup

@@ -7,7 +7,7 @@
 #include "InteractionBoxComponent.generated.h"
 
 /**
- * 
+ * A box trigger which adds actor to an interaction queue
  */
 UCLASS()
 class TRICKYPROTOTYPING_API UInteractionBoxComponent : public UBaseBoxTriggerComponent
