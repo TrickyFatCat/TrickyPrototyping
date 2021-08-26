@@ -10,15 +10,18 @@
  * 
  */
 UCLASS()
-class TRICKYPROTOTYPING_API UInteractionBoxComponent: public UBaseBoxTriggerComponent
+class TRICKYPROTOTYPING_API UInteractionBoxComponent : public UBaseBoxTriggerComponent
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category="Trigger")
-	bool bUseAsNormalTrigger = false;
+	UFUNCTION(BlueprintCallable, Category="Trigger")
+	bool IsNormalTrigger() const { return bUseAsNormalTrigger; }
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category="Trigger", meta=(AllowPrivateAccess="true"))
+	bool bUseAsNormalTrigger = false;
+
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	                            AActor* OtherActor,
 	                            UPrimitiveComponent* OtherComp,

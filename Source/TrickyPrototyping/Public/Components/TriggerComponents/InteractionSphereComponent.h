@@ -14,6 +14,10 @@ class TRICKYPROTOTYPING_API UInteractionSphereComponent: public UBaseSphereTrigg
 {
 	GENERATED_BODY()
 
+public:
+	UFUNCTION(BlueprintCallable, Category="Trigger")
+	bool IsNormalTrigger() const { return bUseAsNormalTrigger; }
+	
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Trigger", meta=(AllowPrivateAccess="true"))
 	bool bUseAsNormalTrigger = false;
