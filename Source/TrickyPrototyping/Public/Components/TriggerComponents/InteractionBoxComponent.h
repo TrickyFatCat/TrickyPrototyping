@@ -4,15 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "Components/TriggerComponents/BaseBoxTriggerComponent.h"
-#include "BoxIntTriggerComponent.generated.h"
+#include "InteractionBoxComponent.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TRICKYPROTOTYPING_API UBoxIntTriggerComponent : public UBaseBoxTriggerComponent
+class TRICKYPROTOTYPING_API UInteractionBoxComponent: public UBaseBoxTriggerComponent
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category="Trigger")
+	bool bUseAsNormalTrigger = false;
 
 private:
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,

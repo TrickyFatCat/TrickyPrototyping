@@ -1,17 +1,17 @@
 // Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Components/TriggerComponents/SphereIntTriggerComponent.h"
+#include "Components/TriggerComponents/InteractionSphereComponent.h"
 #include "Components/InteractionQueManagerComponent.h"
 
-void USphereIntTriggerComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+void UInteractionSphereComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                                 AActor* OtherActor,
                                                 UPrimitiveComponent* OtherComp,
                                                 int32 OtherBodyIndex,
                                                 bool bFromSweep,
                                                 const FHitResult& SweepResult)
 {
-	if (!IsValid(OtherActor) || !IsValid(GetOwner())) return;
+	if (!IsValid(OtherActor) || !IsValid(GetOwner()) || bUseAsNormalTrigger) return;
 
 	UInteractionQueManagerComponent* InteractionQue = OtherActor->FindComponentByClass<UInteractionQueManagerComponent>();
 
@@ -20,12 +20,12 @@ void USphereIntTriggerComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedC
 	InteractionQue->AddToQue(GetOwner());
 }
 
-void USphereIntTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
+void UInteractionSphereComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
                                               AActor* OtherActor,
                                               UPrimitiveComponent* OtherComp,
                                               int32 OtherBodyIndex)
 {
-	if (!IsValid(OtherActor) || !IsValid(GetOwner())) return;
+	if (!IsValid(OtherActor) || !IsValid(GetOwner()) || bUseAsNormalTrigger) return;
 
 	UInteractionQueManagerComponent* InteractionQue = OtherActor->FindComponentByClass<UInteractionQueManagerComponent>();
 

@@ -1,17 +1,17 @@
 // Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Components/TriggerComponents/BoxIntTriggerComponent.h"
+#include "Components/TriggerComponents/InteractionBoxComponent.h"
 #include "Components/InteractionQueManagerComponent.h"
 
-void UBoxIntTriggerComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+void UInteractionBoxComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                              AActor* OtherActor,
                                              UPrimitiveComponent* OtherComp,
                                              int32 OtherBodyIndex,
                                              bool bFromSweep,
                                              const FHitResult& SweepResult)
 {
-	if (!IsValid(OtherActor) || !IsValid(GetOwner())) return;
+	if (!IsValid(OtherActor) || !IsValid(GetOwner()) || bUseAsNormalTrigger) return;
 
 	UInteractionQueManagerComponent* InteractionQue = OtherActor->FindComponentByClass<UInteractionQueManagerComponent>();
 
@@ -20,12 +20,12 @@ void UBoxIntTriggerComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComp
 	InteractionQue->AddToQue(GetOwner());
 }
 
-void UBoxIntTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
+void UInteractionBoxComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
                                            AActor* OtherActor,
                                            UPrimitiveComponent* OtherComp,
                                            int32 OtherBodyIndex)
 {
-	if (!IsValid(OtherActor) || !IsValid(GetOwner())) return;
+	if (!IsValid(OtherActor) || !IsValid(GetOwner()) || bUseAsNormalTrigger) return;
 
 	UInteractionQueManagerComponent* InteractionQue = OtherActor->FindComponentByClass<UInteractionQueManagerComponent>();
 

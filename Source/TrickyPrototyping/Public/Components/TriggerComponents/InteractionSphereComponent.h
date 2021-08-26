@@ -4,17 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Components/TriggerComponents/BaseSphereTriggerComponent.h"
-#include "SphereIntTriggerComponent.generated.h"
+#include "InteractionSphereComponent.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TRICKYPROTOTYPING_API USphereIntTriggerComponent : public UBaseSphereTriggerComponent
+class TRICKYPROTOTYPING_API UInteractionSphereComponent: public UBaseSphereTriggerComponent
 {
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category="Trigger", meta=(AllowPrivateAccess="true"))
+	bool bUseAsNormalTrigger = false;
+	
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	                            AActor* OtherActor,
 	                            UPrimitiveComponent* OtherComp,
