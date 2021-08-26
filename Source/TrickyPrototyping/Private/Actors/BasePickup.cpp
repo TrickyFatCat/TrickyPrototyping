@@ -20,8 +20,9 @@ void ABasePickup::BeginPlay()
 	Super::BeginPlay();
 
 	InitialLocation = MeshScene->GetRelativeLocation();
-
-	if (InteractionTrigger->IsNormalTrigger())
+	InteractionTrigger->SetIsNormalTrigger(bRequireInteraction);
+	
+	if (bRequireInteraction)
 	{
 		InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &ABasePickup::OnTriggerBeginOverlap);
 	}
@@ -37,7 +38,7 @@ void ABasePickup::Tick(float DeltaTime)
 
 bool ABasePickup::ProcessInteraction_Implementation(APlayerController* PlayerController)
 {
-	if (!PlayerController || !PlayerController->GetPawn() || InteractionTrigger->IsNormalTrigger()) return false;
+	if (!PlayerController || !PlayerController->GetPawn() || !bRequireInteraction) return false;
 	
 	return ActivatePickup(PlayerController->GetPawn());
 }
@@ -49,7 +50,7 @@ void ABasePickup::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	if (!InteractionTrigger->IsNormalTrigger() || !IsValid(OtherActor)) return;
+	if (!bRequireInteraction || !IsValid(OtherActor)) return;
 
 	APawn* TargetPawn = Cast<APawn>(OtherActor);
 

@@ -30,16 +30,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
 	USceneComponent* MeshScene = nullptr;
 
+private:
 	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
 
 	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-	                            AActor* OtherActor,
-	                            UPrimitiveComponent* OtherComp,
-	                            int32 OtherBodyIndex,
-	                            bool bFromSweep,
-	                            const FHitResult& SweepResult);
+	                           AActor* OtherActor,
+	                           UPrimitiveComponent* OtherComp,
+	                           int32 OtherBodyIndex,
+	                           bool bFromSweep,
+	                           const FHitResult& SweepResult);
 
 	virtual bool ActivatePickup(APawn* TargetPawn);
+
+	UPROPERTY(EditDefaultsOnly, Category="Trigger")
+	bool bRequireInteraction = false;
 
 	// Animation
 private:

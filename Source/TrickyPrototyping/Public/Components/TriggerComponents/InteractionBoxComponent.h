@@ -15,12 +15,19 @@ class TRICKYPROTOTYPING_API UInteractionBoxComponent : public UBaseBoxTriggerCom
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category="Trigger")
-	bool IsNormalTrigger() const { return bUseAsNormalTrigger; }
+	UFUNCTION(BlueprintGetter, Category="Trigger")
+	bool GetIsNormalTrigger() const { return bIsNormalTrigger; }
+
+	UFUNCTION(BlueprintSetter, Category="Trigger")
+	void SetIsNormalTrigger(const bool Value) { bIsNormalTrigger = Value; }
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category="Trigger", meta=(AllowPrivateAccess="true"))
-	bool bUseAsNormalTrigger = false;
+	UPROPERTY(EditDefaultsOnly,
+		BlueprintGetter=GetIsNormalTrigger,
+		BlueprintSetter=SetIsNormalTrigger,
+		Category="Trigger",
+		meta=(AllowPrivateAccess="true"))
+	bool bIsNormalTrigger = false;
 
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	                            AActor* OtherActor,
