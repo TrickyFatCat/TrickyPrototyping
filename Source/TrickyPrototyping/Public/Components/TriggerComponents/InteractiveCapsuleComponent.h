@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/TriggerComponents/BaseBoxTriggerComponent.h"
-#include "InteractionBoxComponent.generated.h"
+#include "Components/TriggerComponents/BaseCapsuleTriggerComponent.h"
+#include "InteractiveCapsuleComponent.generated.h"
 
 /**
- * A box trigger which adds an actor to an interaction queue
+ * A capsule component which adds an actor to an interaction queeu
  */
 UCLASS()
-class TRICKYPROTOTYPING_API UInteractionBoxComponent : public UBaseBoxTriggerComponent
+class TRICKYPROTOTYPING_API UInteractiveCapsuleComponent : public UBaseCapsuleTriggerComponent
 {
 	GENERATED_BODY()
-
+	
 public:
 	UFUNCTION(BlueprintGetter, Category="Trigger")
 	bool GetIsNormalTrigger() const { return bIsNormalTrigger; }
