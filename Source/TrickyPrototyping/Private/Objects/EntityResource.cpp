@@ -245,3 +245,10 @@ void UEntityResource::SetAutoDecreaseThreshold(const float NewThreshold)
 	ResourceData.AutoDecreaseData.Threshold = NewThreshold;
 	StartAutoDecrease();
 }
+
+void UEntityResource::SetAutoDecreaseStartDelay(const float NewDelay)
+{
+	if (NewDelay < 0.f) return;
+
+	ResourceData.AutoDecreaseData.StartDelay = NewDelay;
+}
