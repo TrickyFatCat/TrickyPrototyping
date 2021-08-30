@@ -11,7 +11,9 @@ enum class ESessionState : uint8
 	Preparation,
 	Progress,
 	Pause,
-	GameOver
+	GameOver,
+	GameOverWin,
+	GameOverLose
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSessionStateChangedSignature, ESessionState);
