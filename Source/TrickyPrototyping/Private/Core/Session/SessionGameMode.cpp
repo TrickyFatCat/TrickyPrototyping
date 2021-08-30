@@ -46,9 +46,14 @@ float ASessionGameMode::GetPreparationTimerRemainingTime()
 
 float ASessionGameMode::GetSessionRemainingTime() const
 {
-	if (GetWorld() || SessionData.bIsSessionTimeLimited) return -1.f;
+	if (GetWorld()) return -1.f;
 
-	return GetWorld()->GetTimerManager().GetTimerRemaining(SessionTimerHandle);
+	if (SessionData.bIsSessionTimeLimited)
+	{
+		return GetWorld()->GetTimerManager().GetTimerRemaining(SessionTimerHandle);
+	}
+
+	return GetSessionElapsedTime();
 }
 
 float ASessionGameMode::GetSessionElapsedTime() const
