@@ -19,6 +19,8 @@ class TRICKYPROTOTYPING_API UBaseUserWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	virtual void NativeOnInitialized() override;
+	
 	void Show();
 	void Hide();
 
@@ -34,5 +36,8 @@ protected:
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* HideAnimation = nullptr;
 
+	ESlateVisibility DefaultVisibility;
+
+	virtual void OnAnimationStarted_Implementation(const UWidgetAnimation* Animation) override;
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
 };
