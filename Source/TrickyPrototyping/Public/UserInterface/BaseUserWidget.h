@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "BaseUserWidget.generated.h"
 
+class ASessionGameMode;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShowedSignature);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHiddenSignature);
@@ -22,10 +24,12 @@ public:
 	virtual void NativeOnInitialized() override;
 	
 	void Show();
+	
 	void Hide();
 
 	UPROPERTY(BlueprintAssignable, Category="Animation")
 	FOnShowedSignature OnShowed;
+	
 	UPROPERTY(BlueprintAssignable, Category="Animation")
 	FOnHiddenSignature OnHidden;
 
@@ -36,8 +40,9 @@ protected:
 	UPROPERTY(Transient, meta=(BindWidgetAnim))
 	UWidgetAnimation* HideAnimation = nullptr;
 
-	ESlateVisibility DefaultVisibility;
-
 	virtual void OnAnimationStarted_Implementation(const UWidgetAnimation* Animation) override;
+	
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
+	
+	ASessionGameMode* GetSessionGameMode() const;
 };

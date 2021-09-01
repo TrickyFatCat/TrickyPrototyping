@@ -2,16 +2,16 @@
 
 
 #include "UserInterface/BaseUserWidget.h"
+#include "Core/Session/SessionGameMode.h"
 
 void UBaseUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	DefaultVisibility = GetVisibility();
 }
 
 void UBaseUserWidget::Show()
 {
+	SetVisibility(ESlateVisibility::Visible);
 	PlayAnimation(ShowAnimation);
 }
 
@@ -22,11 +22,24 @@ void UBaseUserWidget::Hide()
 
 void UBaseUserWidget::OnAnimationStarted_Implementation(const UWidgetAnimation* Animation)
 {
-	SetVisibility(DefaultVisibility);
 }
 
 void UBaseUserWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
 {
-	SetVisibility(ESlateVisibility::Hidden);
-	Animation == ShowAnimation ? OnShowed.Broadcast() : OnHidden.Broadcast();
+	if (Animation == ShowAnimation)
+	{
+		OnShowed.Broadcast();
+	}
+	else
+	{
+		SetVisibility(ESlateVisibility::Hidden);
+		OnHidden.Broadcast();
+	}
+}
+
+ASessionGameMode* UBaseUserWidget::GetSessionGameMode() const
+{
+	if (!GetWorld()) return nullptr;
+
+	return Cast<ASessionGameMode>(GetWorld()->GetAuthGameMode());
 }
