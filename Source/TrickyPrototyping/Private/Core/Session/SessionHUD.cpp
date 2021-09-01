@@ -10,6 +10,7 @@ void ASessionHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CreateSessionWidget(ESessionState::Preparation, PreparationWidgetClass);
 	CreateSessionWidget(ESessionState::Progress, ProgressWidgetClass);
 	CreateSessionWidget(ESessionState::Pause, PauseWidgetClass);
 	CreateSessionWidget(ESessionState::GameOver, GameOverScreenWidgetClass);
@@ -39,9 +40,13 @@ void ASessionHUD::BeginPlay()
 
 void ASessionHUD::OnSessionStateChanged(const ESessionState NewState)
 {
-	if (!SessionWidgets.Contains(NewState) || !CurrentWidget) return;
+	if (CurrentWidget)
+	{
+		CurrentWidget->Hide();
+	}
 
-	CurrentWidget->Hide();
+	if (!SessionWidgets.Contains(NewState)) return;
+
 	CurrentWidget = SessionWidgets[NewState];
 	CurrentWidget->Show();
 }

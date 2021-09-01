@@ -16,10 +16,13 @@ UCLASS()
 class TRICKYPROTOTYPING_API ASessionHUD : public AHUD
 {
 	GENERATED_BODY()
-
+	
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UBaseUserWidget> PreparationWidgetClass = nullptr;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
 	TSubclassOf<UBaseUserWidget> ProgressWidgetClass = nullptr;
 
@@ -42,6 +45,7 @@ private:
 	UPROPERTY()
 	UBaseUserWidget* CurrentWidget = nullptr;
 
+	UFUNCTION()
 	void OnSessionStateChanged(ESessionState NewState);
 
 	void CreateSessionWidget(const ESessionState State, TSubclassOf<UBaseUserWidget> WidgetClass);
