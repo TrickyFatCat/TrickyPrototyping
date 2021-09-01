@@ -13,20 +13,27 @@ ASessionGameMode::ASessionGameMode()
 void ASessionGameMode::StartPlay()
 {
 	Super::StartPlay();
-	SetSessionState(ESessionState::Inactive);
+
+	if (SessionData.PreparationTimerDuration <= 0.f)
+	{
+		StartSession();
+		return;
+	}
+
+	StartPreparationTimer();
 }
 
 bool ASessionGameMode::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate)
 {
 	SetSessionState(ESessionState::Pause);
-	
+
 	return Super::SetPause(PC, CanUnpauseDelegate);
 }
 
 bool ASessionGameMode::ClearPause()
 {
 	SetSessionState(ESessionState::Progress);
-	
+
 	return Super::ClearPause();
 }
 
@@ -46,7 +53,7 @@ float ASessionGameMode::GetPreparationTimerRemainingTime()
 
 float ASessionGameMode::GetSessionRemainingTime() const
 {
-	if (GetWorld()) return -1.f;
+	if (!GetWorld()) return -1.f;
 
 	if (SessionData.bIsSessionTimeLimited)
 	{
@@ -59,7 +66,7 @@ float ASessionGameMode::GetSessionRemainingTime() const
 float ASessionGameMode::GetSessionElapsedTime() const
 {
 	if (!GetWorld()) return -1.f;
-	
+
 	if (SessionData.bIsSessionTimeLimited)
 	{
 		return GetWorld()->GetTimerManager().GetTimerElapsed(SessionTimerHandle);
@@ -72,17 +79,14 @@ void ASessionGameMode::SetSessionState(const ESessionState NewState)
 {
 	if (CurrentState == NewState) return;
 
+	PreviousState = CurrentState;
 	CurrentState = NewState;
+	OnSessionStateChanged.Broadcast(NewState);
 }
 
 void ASessionGameMode::StartPreparationTimer()
 {
 	if (!GetWorld()) return;
-
-	if (SessionData.PreparationTimerDuration <= 0.f)
-	{
-		StartSession();
-	}
 
 	SetSessionState(ESessionState::Preparation);
 	GetWorld()->GetTimerManager().SetTimer(StartTimerHandle,

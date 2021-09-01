@@ -10,6 +10,7 @@
 /**
  * 
  */
+
 UCLASS()
 class TRICKYPROTOTYPING_API ASessionGameMode : public AGameModeBase
 {
@@ -43,8 +44,10 @@ public:
 
 protected:
 private:
-	ESessionState CurrentState = ESessionState::Preparation;
-	ESessionState PreviousState = ESessionState::Inactive;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Session", meta=(AllowPrivateAccess="true"))
+	ESessionState CurrentState = ESessionState::Inactive;
+	
+	ESessionState PreviousState;
 	
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintReadOnly,
