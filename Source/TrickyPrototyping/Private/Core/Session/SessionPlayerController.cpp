@@ -34,4 +34,9 @@ void ASessionPlayerController::Tick(float DeltaSeconds)
 void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewState)
 {
 	NewState == ESessionState::Progress ? SetInputMode(FInputModeGameOnly()) : SetInputMode(FInputModeUIOnly());
+
+	if (NewState != ESessionState::Progress)
+	{
+		bShowMouseCursor = true;
+	}
 }
