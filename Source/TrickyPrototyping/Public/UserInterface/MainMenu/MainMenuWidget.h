@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Core/TrickyCoreTypes.h"
 #include "MainMenuWidget.generated.h"
 
 class UButton;
@@ -15,12 +16,7 @@ class UTransitionScreenWidget;
  * 
  */
 
-UENUM()
-enum class EMenuCommand : uint8
-{
-	Start,
-	Quit
-};
+
 
 UCLASS()
 class TRICKYPROTOTYPING_API UMainMenuWidget : public UUserWidget
@@ -44,7 +40,7 @@ protected:
 	UButton* Button_QuitGame = nullptr;
 
 private:
-	EMenuCommand Command;
+	ETransitionCommand Command;
 
 	UFUNCTION()
 	void OnSplashFinished();
