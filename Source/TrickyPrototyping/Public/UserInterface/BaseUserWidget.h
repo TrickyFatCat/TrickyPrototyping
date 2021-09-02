@@ -7,6 +7,7 @@
 #include "BaseUserWidget.generated.h"
 
 class ASessionGameMode;
+class UTrickyPrototypingGameInstance;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShowedSignature);
 
@@ -45,4 +46,10 @@ protected:
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
 	
 	ASessionGameMode* GetSessionGameMode() const;
+	
+	UFUNCTION()
+	void ExitToMenu();
+
+	UFUNCTION()
+	void RestartGame();
 };
