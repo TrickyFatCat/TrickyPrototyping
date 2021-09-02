@@ -35,3 +35,12 @@ struct FSessionGameModeData
 		meta=(ClampMin="1", EditCondition="bIsSessionTimeLimited"))
 	float SessionDuration = 240.f; // In seconds
 };
+
+UENUM()
+enum class ETransitionCommand : uint8
+{
+	Start,
+	Restart,
+	Exit,
+	Quit
+};

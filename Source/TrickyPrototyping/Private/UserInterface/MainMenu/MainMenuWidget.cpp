@@ -61,11 +61,11 @@ void UMainMenuWidget::ProcessTransition()
 
 	switch (Command)
 	{
-	case EMenuCommand::Start:
+	case ETransitionCommand::Start:
 		UGameplayStatics::OpenLevel(this, GameInstance->GetStartLevelName());
 		break;
 
-	case EMenuCommand::Quit:
+	case ETransitionCommand::Quit:
 		UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, true);
 		break;
 	}
@@ -73,13 +73,13 @@ void UMainMenuWidget::ProcessTransition()
 
 void UMainMenuWidget::OnStartGame()
 {
-	Command = EMenuCommand::Start;
+	Command = ETransitionCommand::Start;
 	StartTransition();
 }
 
 void UMainMenuWidget::OnQuitGame()
 {
-	Command = EMenuCommand::Quit;
+	Command = ETransitionCommand::Quit;
 	StartTransition();
 }
 
