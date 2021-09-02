@@ -46,10 +46,4 @@ protected:
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
 	
 	ASessionGameMode* GetSessionGameMode() const;
-	
-	UFUNCTION()
-	void ExitToMenu();
-
-	UFUNCTION()
-	void RestartGame();
 };

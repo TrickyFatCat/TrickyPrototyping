@@ -46,24 +46,3 @@ ASessionGameMode* UBaseUserWidget::GetSessionGameMode() const
 
 	return Cast<ASessionGameMode>(GetWorld()->GetAuthGameMode());
 }
-
-void UBaseUserWidget::ExitToMenu()
-{
-	if (!GetWorld()) return;
-
-	UTrickyPrototypingGameInstance* GameInstance = GetWorld()->GetGameInstance<UTrickyPrototypingGameInstance>();
-
-	if (!GameInstance) return;
-
-	const FName MenuLevelName = GameInstance->GetMainMenuLevelName();
-
-	if (MenuLevelName.IsNone()) return;
-
-	UGameplayStatics::OpenLevel(this, MenuLevelName);
-}
-
-void UBaseUserWidget::RestartGame()
-{
-	const FName CurrentLevelName = FName(UGameplayStatics::GetCurrentLevelName(this));
-	UGameplayStatics::OpenLevel(this, CurrentLevelName);
-}

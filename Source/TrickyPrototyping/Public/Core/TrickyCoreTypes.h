@@ -40,7 +40,5 @@ UENUM()
 enum class ETransitionCommand : uint8
 {
 	Start,
-	Restart,
-	Exit,
 	Quit
 };
