@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/BaseInteractiveActor.h"
+#include "Actors/InteractiveActorBase.h"
 #include "ButtonBase.generated.h"
 
 /**
  * A base button class. Use it for creating different buttons and levers
  */
 UCLASS()
-class TRICKYPROTOTYPING_API AButtonBase : public ABaseInteractiveActor
+class TRICKYPROTOTYPING_API AButtonBase : public AInteractiveActorBase
 {
 	GENERATED_BODY()
 
