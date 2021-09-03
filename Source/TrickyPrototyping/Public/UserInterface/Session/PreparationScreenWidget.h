@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "UserInterface/BaseUserWidget.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "PreparationScreenWidget.generated.h"
 
 class UTextBlock;
@@ -29,5 +28,5 @@ protected:
 	UTextBlock* Text_PreparationTimer = nullptr;
 	
 	UFUNCTION(BlueprintPure, Category="UI")
-	FTimespan GetPreparationRemainingTime() const;
+	int32 GetPreparationRemainingTime() const;
 };

@@ -16,11 +16,11 @@ void UPreparationScreenWidget::NativeOnInitialized()
 	}
 }
 
-FTimespan UPreparationScreenWidget::GetPreparationRemainingTime() const
+int32 UPreparationScreenWidget::GetPreparationRemainingTime() const
 {
 	ASessionGameMode* GameMode = GetSessionGameMode();
 
 	if (!GameMode) return -1.f;
 
-	return UKismetMathLibrary::FromSeconds(FMath::CeilToFloat(GameMode->GetPreparationTimerRemainingTime()));
+	return FMath::CeilToInt(GameMode->GetPreparationTimerRemainingTime());
 }
