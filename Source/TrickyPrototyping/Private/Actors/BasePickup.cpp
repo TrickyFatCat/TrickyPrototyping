@@ -59,7 +59,7 @@ void ABasePickup::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent
 	ActivatePickup(TargetPawn);
 }
 
-bool ABasePickup::ActivatePickup(APawn* TargetPawn)
+bool ABasePickup::ActivatePickup_Implementation(APawn* TargetPawn)
 {
 	return false;
 }

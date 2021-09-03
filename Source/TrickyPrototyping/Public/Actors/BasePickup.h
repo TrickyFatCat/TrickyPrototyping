@@ -44,7 +44,10 @@ private:
 	                           bool bFromSweep,
 	                           const FHitResult& SweepResult);
 
-	virtual bool ActivatePickup(APawn* TargetPawn);
+	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
+	bool ActivatePickup(APawn* TargetPawn);
+
+	virtual bool ActivatePickup_Implementation(APawn* TargetPawn);
 
 	UPROPERTY(EditDefaultsOnly, Category="Trigger")
 	bool bRequireInteraction = false;

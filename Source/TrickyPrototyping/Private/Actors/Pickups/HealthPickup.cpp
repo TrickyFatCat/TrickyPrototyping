@@ -5,7 +5,7 @@
 
 #include "Components/DamageControllerComponent.h"
 
-bool AHealthPickup::ActivatePickup(APawn* TargetPawn)
+bool AHealthPickup::ActivatePickup_Implementation(APawn* TargetPawn)
 {
 	if (!IsValid(TargetPawn)) return false;
 

@@ -21,6 +21,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Pickup", meta=(AllowPrivateAccess="true"))
 	bool bClampHealToMaxHealth = true;
 
-	virtual bool ActivatePickup(APawn* TargetPawn) override;
+	virtual bool ActivatePickup_Implementation(APawn* TargetPawn) override;
 	
 };
