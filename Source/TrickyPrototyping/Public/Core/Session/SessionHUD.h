@@ -31,12 +31,6 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
 	TSubclassOf<UBaseUserWidget> GameOverScreenWidgetClass = nullptr;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
-	TSubclassOf<UBaseUserWidget> WinScreenWidgetClass = nullptr;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
-	TSubclassOf<UBaseUserWidget> LoseScreenWidgetClass = nullptr;
 
 private:
 	UPROPERTY()

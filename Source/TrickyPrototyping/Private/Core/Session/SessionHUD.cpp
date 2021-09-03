@@ -14,8 +14,6 @@ void ASessionHUD::BeginPlay()
 	CreateSessionWidget(ESessionState::Progress, ProgressWidgetClass);
 	CreateSessionWidget(ESessionState::Pause, PauseWidgetClass);
 	CreateSessionWidget(ESessionState::GameOver, GameOverScreenWidgetClass);
-	CreateSessionWidget(ESessionState::GameOverWin, WinScreenWidgetClass);
-	CreateSessionWidget(ESessionState::GameOverLose, LoseScreenWidgetClass);
 
 	for (const auto SessionWidgetPair : SessionWidgets)
 	{
