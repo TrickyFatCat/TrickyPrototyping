@@ -25,14 +25,21 @@ void ASessionGameMode::StartPlay()
 
 bool ASessionGameMode::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate)
 {
-	SetSessionState(ESessionState::Pause);
-
+	if (CurrentState != ESessionState::GameOver)
+	{
+		SetSessionState(ESessionState::Pause);
+	}
+	else
+	{
+		return false;
+	}
+	
 	return Super::SetPause(PC, CanUnpauseDelegate);
 }
 
 bool ASessionGameMode::ClearPause()
 {
-	SetSessionState(ESessionState::Progress);
+	SetSessionState(PreviousState);
 
 	return Super::ClearPause();
 }
