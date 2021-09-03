@@ -1,11 +1,11 @@
 // Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Actors/Pickups/HealthPickup.h"
+#include "Actors/Pickups/PickupHealth.h"
 
 #include "Components/DamageControllerComponent.h"
 
-bool AHealthPickup::ActivatePickup_Implementation(APawn* TargetPawn)
+bool APickupHealth::ActivatePickup_Implementation(APawn* TargetPawn)
 {
 	if (!IsValid(TargetPawn)) return false;
 

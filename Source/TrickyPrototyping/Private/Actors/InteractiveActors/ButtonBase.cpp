@@ -1,14 +1,14 @@
 // Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Actors/InteractiveActors/BaseDoor.h"
+#include "Actors/InteractiveActors/ButtonBase.h"
 
-void ABaseDoor::BeginPlay()
+void AButtonBase::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void ABaseDoor::Tick(float DeltaSeconds)
+void AButtonBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 }

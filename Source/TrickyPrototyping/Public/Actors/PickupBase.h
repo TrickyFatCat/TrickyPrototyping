@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/InteractionInterface.h"
-#include "BasePickup.generated.h"
+#include "PickupBase.generated.h"
 
 class UInteractionSphereComponent;
 
@@ -14,12 +14,12 @@ class UInteractionSphereComponent;
  */
 
 UCLASS()
-class TRICKYPROTOTYPING_API ABasePickup : public AActor, public IInteractionInterface
+class TRICKYPROTOTYPING_API APickupBase : public AActor, public IInteractionInterface
 {
 	GENERATED_BODY()
 
 public:
-	ABasePickup();
+	APickupBase();
 
 protected:
 	virtual void BeginPlay() override;
@@ -34,6 +34,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
 	USceneComponent* MeshScene = nullptr;
 
+	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
+	bool ActivatePickup(APawn* TargetPawn);
+
+	virtual bool ActivatePickup_Implementation(APawn* TargetPawn);
+
 private:
 	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
 
@@ -43,11 +48,6 @@ private:
 	                           int32 OtherBodyIndex,
 	                           bool bFromSweep,
 	                           const FHitResult& SweepResult);
-
-	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
-	bool ActivatePickup(APawn* TargetPawn);
-
-	virtual bool ActivatePickup_Implementation(APawn* TargetPawn);
 
 	UPROPERTY(EditDefaultsOnly, Category="Trigger")
 	bool bRequireInteraction = false;

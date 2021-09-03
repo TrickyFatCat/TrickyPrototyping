@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Actors/BaseInteractiveActor.h"
-#include "BaseDoor.generated.h"
+#include "ButtonBase.generated.h"
 
 /**
- * A base door class
+ * A base button class. Use it for creating different buttons and levers
  */
-
 UCLASS()
-class TRICKYPROTOTYPING_API ABaseDoor : public ABaseInteractiveActor
+class TRICKYPROTOTYPING_API AButtonBase : public ABaseInteractiveActor
 {
 	GENERATED_BODY()
 
@@ -20,5 +19,4 @@ protected:
 
 public:
 	virtual void Tick(float DeltaSeconds) override;
-
 };
