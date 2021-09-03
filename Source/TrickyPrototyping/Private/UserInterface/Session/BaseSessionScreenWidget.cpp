@@ -16,7 +16,7 @@ void UBaseSessionScreenWidget::NativeOnInitialized()
 		TransitionScreen->OnShowed.AddDynamic(this, &UBaseSessionScreenWidget::OnTransitionScreenShowed);
 		TransitionScreen->SetVisibility(ESlateVisibility::Hidden);
 	}
-	
+
 	if (Button_RestartLevel)
 	{
 		Button_RestartLevel->OnClicked.AddDynamic(this, &UBaseSessionScreenWidget::OnRestartPressed);
@@ -25,6 +25,16 @@ void UBaseSessionScreenWidget::NativeOnInitialized()
 	if (Button_ExitToMenu)
 	{
 		Button_ExitToMenu->OnClicked.AddDynamic(this, &UBaseSessionScreenWidget::OnExitPressed);
+	}
+}
+
+void UBaseSessionScreenWidget::StartTransition() const
+{
+	TransitionScreen->Show();
+
+	if (GetOwningPlayer())
+	{
+		GetOwningPlayer()->bShowMouseCursor = false;
 	}
 }
 
@@ -73,14 +83,4 @@ void UBaseSessionScreenWidget::RestartGame() const
 {
 	const FName CurrentLevelName = FName(UGameplayStatics::GetCurrentLevelName(this));
 	UGameplayStatics::OpenLevel(this, CurrentLevelName);
-}
-
-void UBaseSessionScreenWidget::StartTransition() const
-{
-	TransitionScreen->Show();
-	
-	if (GetOwningPlayer())
-	{
-		GetOwningPlayer()->bShowMouseCursor = false;
-	}
 }

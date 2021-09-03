@@ -20,6 +20,16 @@ class TRICKYPROTOTYPING_API UGameOverScreenWidget : public UBaseSessionScreenWid
 
 protected:
 	virtual void NativeOnInitialized() override;
+
+	UPROPERTY(meta=(BindWidget))
+	UButton* Button_NextLevel = nullptr;
+	
 private:
+	virtual void OnTransitionScreenShowed() override;
+	
+	UFUNCTION()
+	void OnNextLevelPressed();
+
+	void OpenNextLevel() const;
 
 };

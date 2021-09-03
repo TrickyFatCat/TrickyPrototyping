@@ -16,15 +16,18 @@ class TRICKYPROTOTYPING_API UTrickyPrototypingGameInstance : public UGameInstanc
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Levels")
-	FName GetStartLevelName() const { return StartLevelName; }
+	FName GetStartLevelName() const;
 
 	UFUNCTION(BlueprintCallable, Category="Levels")
 	FName GetMainMenuLevelName() const { return MainMenuLevelName; }
+
+	UFUNCTION(BlueprintCallable, Category="Levels")
+	FName GetNextLevelName() const;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Levels")
-	FName StartLevelName = NAME_None;
+	FName MainMenuLevelName = NAME_None;
 
 	UPROPERTY(EditDefaultsOnly, Category="Levels")
-	FName MainMenuLevelName = NAME_None;
+	TArray<FName> LevelNames;
 };

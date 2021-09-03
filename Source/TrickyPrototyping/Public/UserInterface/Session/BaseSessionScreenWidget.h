@@ -20,20 +20,23 @@ class TRICKYPROTOTYPING_API UBaseSessionScreenWidget : public UBaseUserWidget
 protected:
 	virtual void NativeOnInitialized() override;
 
-	UPROPERTY(Transient, meta=(BindWidget))
+	UPROPERTY(meta=(BindWidget))
 	UTransitionScreenWidget* TransitionScreen = nullptr;
 
-	UPROPERTY(Transient, meta=(BindWidget))
+	UPROPERTY(meta=(BindWidget))
 	UButton* Button_ExitToMenu = nullptr;
 
-	UPROPERTY(Transient, meta=(BindWidget))
+	UPROPERTY(meta=(BindWidget))
 	UButton* Button_RestartLevel = nullptr;
-private:
+	
 	ETransitionCommand TransitionCommand;
-
+	
+	void StartTransition() const;
+	
 	UFUNCTION()
-	void OnTransitionScreenShowed();
-
+	virtual void OnTransitionScreenShowed();
+	
+private:
 	UFUNCTION()
 	void OnRestartPressed();
 
@@ -42,5 +45,4 @@ private:
 	
 	void ExitToMenu() const;
 	void RestartGame() const;
-	void StartTransition() const;
 };

@@ -38,5 +38,6 @@ UENUM()
 enum class ETransitionCommand : uint8
 {
 	Start,
+	NextLevel,
 	Quit
 };
