@@ -3,9 +3,7 @@
 
 #include "UserInterface/BaseUserWidget.h"
 
-#include "Core/TrickyPrototypingGameInstance.h"
 #include "Core/Session/SessionGameMode.h"
-#include "Kismet/GameplayStatics.h"
 
 void UBaseUserWidget::NativeOnInitialized()
 {

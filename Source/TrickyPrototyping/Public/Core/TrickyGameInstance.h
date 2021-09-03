@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "TrickyPrototypingGameInstance.generated.h"
+#include "TrickyGameInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TRICKYPROTOTYPING_API UTrickyPrototypingGameInstance : public UGameInstance
+class TRICKYPROTOTYPING_API UTrickyGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 

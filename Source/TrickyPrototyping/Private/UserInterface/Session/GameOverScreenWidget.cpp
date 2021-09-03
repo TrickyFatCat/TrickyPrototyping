@@ -4,7 +4,7 @@
 #include "UserInterface/Session/GameOverScreenWidget.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
-#include "Core/TrickyPrototypingGameInstance.h"
+#include "Core/TrickyGameInstance.h"
 
 
 void UGameOverScreenWidget::NativeOnInitialized()
@@ -37,7 +37,7 @@ void UGameOverScreenWidget::OpenNextLevel() const
 {
 	if (!GetWorld()) return;
 
-	UTrickyPrototypingGameInstance* GameInstance = GetWorld()->GetGameInstance<UTrickyPrototypingGameInstance>();
+	UTrickyGameInstance* GameInstance = GetWorld()->GetGameInstance<UTrickyGameInstance>();
 
 	if (!GameInstance) return;
 

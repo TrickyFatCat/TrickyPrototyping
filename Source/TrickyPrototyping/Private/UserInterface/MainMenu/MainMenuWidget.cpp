@@ -8,7 +8,7 @@
 #include "UserInterface/TransitionScreenWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UserInterface/MainMenu/SplashScreenWidget.h"
-#include "Core/TrickyPrototypingGameInstance.h"
+#include "Core/TrickyGameInstance.h"
 
 void UMainMenuWidget::NativeOnInitialized()
 {
@@ -55,7 +55,7 @@ void UMainMenuWidget::ProcessTransition()
 {
 	if (!GetWorld()) return;
 
-	UTrickyPrototypingGameInstance* GameInstance = GetWorld()->GetGameInstance<UTrickyPrototypingGameInstance>();
+	UTrickyGameInstance* GameInstance = GetWorld()->GetGameInstance<UTrickyGameInstance>();
 
 	if (!GameInstance) return;
 

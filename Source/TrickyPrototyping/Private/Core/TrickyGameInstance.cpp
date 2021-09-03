@@ -1,17 +1,17 @@
 // Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Core/TrickyPrototypingGameInstance.h"
+#include "Core/TrickyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
-FName UTrickyPrototypingGameInstance::GetStartLevelName() const
+FName UTrickyGameInstance::GetStartLevelName() const
 {
 	if (LevelNames.Num() == 0) return NAME_None;
 
 	return LevelNames[0];
 }
 
-FName UTrickyPrototypingGameInstance::GetNextLevelName() const
+FName UTrickyGameInstance::GetNextLevelName() const
 {
 	FName NextLevelName = NAME_None;
 	const FName CurrentLevelName = FName(UGameplayStatics::GetCurrentLevelName(this));

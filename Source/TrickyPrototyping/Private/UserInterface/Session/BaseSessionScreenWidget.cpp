@@ -3,7 +3,7 @@
 
 #include "UserInterface/Session/BaseSessionScreenWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include "Core/TrickyPrototypingGameInstance.h"
+#include "Core/TrickyGameInstance.h"
 #include "UserInterface/TransitionScreenWidget.h"
 #include "Components/Button.h"
 
@@ -68,7 +68,7 @@ void UBaseSessionScreenWidget::ExitToMenu() const
 {
 	if (!GetWorld()) return;
 
-	UTrickyPrototypingGameInstance* GameInstance = GetWorld()->GetGameInstance<UTrickyPrototypingGameInstance>();
+	UTrickyGameInstance* GameInstance = GetWorld()->GetGameInstance<UTrickyGameInstance>();
 
 	if (!GameInstance) return;
 

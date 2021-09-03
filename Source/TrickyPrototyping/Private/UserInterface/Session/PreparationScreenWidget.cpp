@@ -3,7 +3,6 @@
 
 #include "UserInterface/Session/PreparationScreenWidget.h"
 #include "Core/Session/SessionGameMode.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "UserInterface/TransitionScreenWidget.h"
 
 void UPreparationScreenWidget::NativeOnInitialized()
