@@ -8,7 +8,7 @@
 #include "UserInterface/TransitionScreenWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "UserInterface/MainMenu/SplashScreenWidget.h"
-#include "Core/TrickyPrototypingGameInstance.h"
+#include "Core/TrickyGameInstance.h"
 
 void UMainMenuWidget::NativeOnInitialized()
 {
@@ -55,17 +55,17 @@ void UMainMenuWidget::ProcessTransition()
 {
 	if (!GetWorld()) return;
 
-	UTrickyPrototypingGameInstance* GameInstance = GetWorld()->GetGameInstance<UTrickyPrototypingGameInstance>();
+	UTrickyGameInstance* GameInstance = GetWorld()->GetGameInstance<UTrickyGameInstance>();
 
 	if (!GameInstance) return;
 
 	switch (Command)
 	{
-	case EMenuCommand::Start:
+	case ETransitionCommand::Start:
 		UGameplayStatics::OpenLevel(this, GameInstance->GetStartLevelName());
 		break;
 
-	case EMenuCommand::Quit:
+	case ETransitionCommand::Quit:
 		UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, true);
 		break;
 	}
@@ -73,13 +73,13 @@ void UMainMenuWidget::ProcessTransition()
 
 void UMainMenuWidget::OnStartGame()
 {
-	Command = EMenuCommand::Start;
+	Command = ETransitionCommand::Start;
 	StartTransition();
 }
 
 void UMainMenuWidget::OnQuitGame()
 {
-	Command = EMenuCommand::Quit;
+	Command = ETransitionCommand::Quit;
 	StartTransition();
 }
 
