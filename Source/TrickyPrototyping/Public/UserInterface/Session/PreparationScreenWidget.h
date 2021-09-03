@@ -27,6 +27,6 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* Text_PreparationTimer = nullptr;
 	
-	UFUNCTION(BlueprintCallable, Category="UI")
+	UFUNCTION(BlueprintPure, Category="UI")
 	float GetPreparationRemainingTime() const;
 };
