@@ -102,8 +102,8 @@ void AInteractiveActorBase::AddAnimatedComponent(USceneComponent* NewComponent)
 {
 	AnimatedComponents.Empty();
 	
-	if (AnimatedComponents.Contains(NewComponent)) return;
-
+	if (AnimatedComponents.Contains(NewComponent) || !NewComponent) return;
+	
 	AnimatedComponents.AddUnique(NewComponent);
 }
 
