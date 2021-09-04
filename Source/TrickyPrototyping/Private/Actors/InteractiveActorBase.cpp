@@ -100,6 +100,8 @@ void AInteractiveActorBase::SetAnimationDuration(const float Value)
 
 void AInteractiveActorBase::AddAnimatedComponent(USceneComponent* NewComponent)
 {
+	AnimatedComponents.Empty();
+	
 	if (AnimatedComponents.Contains(NewComponent)) return;
 
 	AnimatedComponents.AddUnique(NewComponent);
