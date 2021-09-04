@@ -9,7 +9,7 @@
 /**
  * A base box trigger component for creating different trigger components
  */
-UCLASS()
+UCLASS(Blueprintable)
 class TRICKYPROTOTYPING_API UBaseBoxTriggerComponent : public UBoxComponent
 {
 	GENERATED_BODY()
