@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/TriggerComponents/BaseCapsuleTriggerComponent.h"
-#include "InteractiveCapsuleComponent.generated.h"
+#include "InteractionCapsuleComponent.generated.h"
 
 /**
  * A capsule component which adds an actor to an interaction queeu
  */
 UCLASS()
-class TRICKYPROTOTYPING_API UInteractiveCapsuleComponent : public UBaseCapsuleTriggerComponent
+class TRICKYPROTOTYPING_API UInteractionCapsuleComponent : public UBaseCapsuleTriggerComponent
 {
 	GENERATED_BODY()
 	
