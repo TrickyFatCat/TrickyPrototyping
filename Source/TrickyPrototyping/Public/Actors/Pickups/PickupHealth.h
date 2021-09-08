@@ -15,7 +15,7 @@ class TRICKYPROTOTYPING_API APickupHealth : public APickupBase
 	GENERATED_BODY()
 
 protected:
-	virtual bool ActivatePickup_Implementation(APawn* TargetPawn) override;
+	virtual void ActivatePickup_Implementation(AActor* TargetActor) override;
 	
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Pickup", meta=(AllowPrivateAccess="true", ClampMin="0.0"))

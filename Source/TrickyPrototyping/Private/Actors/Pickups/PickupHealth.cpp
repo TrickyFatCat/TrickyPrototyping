@@ -5,15 +5,13 @@
 
 #include "Components/DamageControllerComponent.h"
 
-bool APickupHealth::ActivatePickup_Implementation(APawn* TargetPawn)
+void APickupHealth::ActivatePickup_Implementation(AActor* TargetActor)
 {
-	if (!IsValid(TargetPawn)) return false;
+	if (!TargetActor) return;
 
-	UDamageControllerComponent* DamageController = TargetPawn->FindComponentByClass<UDamageControllerComponent>();
+	UDamageControllerComponent* DamageController = TargetActor->FindComponentByClass<UDamageControllerComponent>();
 
-	if (!DamageController) return false;
+	if (!DamageController) return;
 
 	DamageController->IncreaseHealth(HealPower, bClampHealToMaxHealth);
-	
-	return true;
 }
