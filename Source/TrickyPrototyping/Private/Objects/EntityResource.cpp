@@ -53,7 +53,7 @@ void UEntityResource::IncreaseValue(const float DeltaValue, const bool bClampToM
 
 	if (bClampToMax)
 	{
-		ResourceData.Value = FMath::Min(ResourceData.Value, 0.f);
+		ResourceData.Value = FMath::Min(ResourceData.Value, ResourceData.ValueMax);
 	}
 
 	StartAutoDecrease();
