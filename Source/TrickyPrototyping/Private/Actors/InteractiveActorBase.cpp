@@ -28,7 +28,11 @@ void AInteractiveActorBase::BeginPlay()
 		AnimationFinished.BindUFunction(this, FName("FinishAnimation"));
 		AnimationTimeline->SetTimelineFinishedFunc(AnimationFinished);
 	}
-
+	else
+	{
+		AnimationDuration = 0.f;
+	}
+	
 	if (AnimatedComponents.Num() > 0)
 	{
 		for (const auto Component : AnimatedComponents)
@@ -92,7 +96,7 @@ void AInteractiveActorBase::Tick(float DeltaTime)
 
 void AInteractiveActorBase::SetAnimationDuration(const float Value)
 {
-	if (Value < 0.f) return;
+	if (Value <= 0.f) return;
 
 	AnimationDuration = Value;
 	CalculatePlayRate();
@@ -101,9 +105,9 @@ void AInteractiveActorBase::SetAnimationDuration(const float Value)
 void AInteractiveActorBase::AddAnimatedComponent(USceneComponent* NewComponent)
 {
 	AnimatedComponents.Empty();
-	
+
 	if (AnimatedComponents.Contains(NewComponent) || !NewComponent) return;
-	
+
 	AnimatedComponents.AddUnique(NewComponent);
 }
 
@@ -123,21 +127,34 @@ void AInteractiveActorBase::FillAnimatedComponents(TArray<USceneComponent*> Comp
 
 void AInteractiveActorBase::StartAnimation()
 {
-	if (!AnimationCurve || GetAnimationDuration() <= 0.f) return;
-
 	SetTargetState();
+	SetState(EInteractiveActorState::Transition);
 
 	switch (StateTarget)
 	{
 	case EInteractiveActorState::Opened:
-		AnimationTimeline->PlayFromStart();
+		if (GetAnimationDuration() > 0.f)
+		{
+			AnimationTimeline->PlayFromStart();
+		}
+		else
+		{
+			AnimateTransform(1.0);
+			FinishAnimation();
+		}
 		break;
 	case EInteractiveActorState::Closed:
-		AnimationTimeline->ReverseFromEnd();
+		if (GetAnimationDuration() > 0.f)
+		{
+			AnimationTimeline->ReverseFromEnd();
+		}
+		else
+		{
+			AnimateTransform(0.f);
+			FinishAnimation();
+		}
 		break;
 	}
-
-	SetState(EInteractiveActorState::Transition);
 }
 
 void AInteractiveActorBase::ReverseAnimation()
@@ -194,8 +211,8 @@ void AInteractiveActorBase::AnimateTransform(const float AnimationProgress)
 		if (TargetTransforms[i].bAnimateRotation)
 		{
 			FQuat NewRotation = FRotator(
-				NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() * AnimationProgress).
-			Quaternion();
+					NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() * AnimationProgress).
+				Quaternion();
 			NewTransform.SetRotation(NewRotation);
 		}
 
