@@ -3,14 +3,19 @@
 
 #include "Actors/PickupBase.h"
 #include "Components/TriggerComponents/InteractionSphereComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 APickupBase::APickupBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	PickupRoot = CreateDefaultSubobject<USceneComponent>("PickupRoot");
+	SetRootComponent(PickupRoot);
+	
 	InteractionTrigger = CreateDefaultSubobject<UInteractionSphereComponent>("InteractionTrigger");
-	SetRootComponent(InteractionTrigger);
-
+	InteractionTrigger->SetupAttachment(GetRootComponent());
+	
 	MeshScene = CreateDefaultSubobject<USceneComponent>("MeshScene");
 	MeshScene->SetupAttachment(GetRootComponent());
 }
@@ -21,11 +26,7 @@ void APickupBase::BeginPlay()
 
 	InitialLocation = MeshScene->GetRelativeLocation();
 	InteractionTrigger->SetIsNormalTrigger(bRequireInteraction);
-
-	if (bRequireInteraction)
-	{
-		InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APickupBase::OnTriggerBeginOverlap);
-	}
+	InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APickupBase::OnTriggerBeginOverlap);
 }
 
 void APickupBase::Tick(float DeltaTime)
@@ -36,16 +37,26 @@ void APickupBase::Tick(float DeltaTime)
 	AnimateRotation();
 }
 
-bool APickupBase::ActivatePickup_Implementation(APawn* TargetPawn)
+void APickupBase::ActivatePickup_Implementation(AActor* TargetActor)
 {
-	return false;
+
+}
+
+void APickupBase::DestroyPickup()
+{
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), PickupSound, GetActorLocation());
+	InteractionTrigger->SetIsEnabled(false);
+	Destroy();
 }
 
 bool APickupBase::ProcessInteraction_Implementation(APlayerController* PlayerController)
 {
 	if (!PlayerController || !PlayerController->GetPawn() || !bRequireInteraction) return false;
 
-	return ActivatePickup(PlayerController->GetPawn());
+	ActivatePickup(Cast<AActor>(PlayerController->GetPawn()));
+	DestroyPickup();
+	
+	return true;
 }
 
 void APickupBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -55,13 +66,10 @@ void APickupBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent
                                         bool bFromSweep,
                                         const FHitResult& SweepResult)
 {
-	if (!bRequireInteraction || !IsValid(OtherActor)) return;
+	if (bRequireInteraction || !IsValid(OtherActor)) return;
 
-	APawn* TargetPawn = Cast<APawn>(OtherActor);
-
-	if (!TargetPawn) return;
-
-	ActivatePickup(TargetPawn);
+	ActivatePickup(OtherActor);
+	DestroyPickup();
 }
 
 void APickupBase::AnimateRotation() const

@@ -8,6 +8,7 @@
 #include "PickupBase.generated.h"
 
 class UInteractionSphereComponent;
+class USoundCue;
 
 /**
  * Base pickup class. Use for creating various pickups
@@ -29,19 +30,28 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
+	USceneComponent* PickupRoot = nullptr;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
 	UInteractionSphereComponent* InteractionTrigger = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
 	USceneComponent* MeshScene = nullptr;
 
 	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
-	bool ActivatePickup(APawn* TargetPawn);
+	void ActivatePickup(AActor* TargetActor);
 
-	virtual bool ActivatePickup_Implementation(APawn* TargetPawn);
+	virtual void ActivatePickup_Implementation(AActor* TargetActor);
+
+	virtual void DestroyPickup();
 
 private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Pickup", meta=(AllowPrivateAccess="true"))
+	USoundCue* PickupSound = nullptr;
+	
 	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
 
+	UFUNCTION()
 	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	                           AActor* OtherActor,
 	                           UPrimitiveComponent* OtherComp,
