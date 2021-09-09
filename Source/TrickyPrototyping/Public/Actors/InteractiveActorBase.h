@@ -135,6 +135,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="States")
 	EInteractiveActorState GetStateCurrent() const { return StateCurrent; }
 
+	UFUNCTION(BlueprintCallable, Category="States")
+	EInteractiveActorState GetStateTarget() const { return StateTarget; }
+
 	UPROPERTY(BlueprintAssignable, Category="States")
 	FOnInteractiveActorChangedStateSignature OnActorChangedState;
 
