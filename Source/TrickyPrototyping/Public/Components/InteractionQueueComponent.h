@@ -23,8 +23,12 @@ protected:
 
 public:
 	void AddToQue(AActor* Actor);
+	
 	void RemoveFromQueue(AActor* Actor);
-	bool Interact() const;
+
+	UFUNCTION(BlueprintCallable, Category="Interaction")
+	bool Interact();
+	
 	bool IsQueueEmpty() const { return InteractionQueue.Num() == 0; };
 
 	UFUNCTION(BlueprintCallable, Category="Interaction")

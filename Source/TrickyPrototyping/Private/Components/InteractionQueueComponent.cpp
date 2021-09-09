@@ -28,7 +28,7 @@ void UInteractionQueueComponent::RemoveFromQueue(AActor* Actor)
 	InteractionQueue.Remove(Actor);
 }
 
-bool UInteractionQueueComponent::Interact() const
+bool UInteractionQueueComponent::Interact()
 {
 	if (IsQueueEmpty()) return false;
 
