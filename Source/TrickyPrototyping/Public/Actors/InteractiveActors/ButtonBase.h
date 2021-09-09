@@ -57,6 +57,9 @@ private:
 		meta=(AllowPrivateAccess="true", EditCondition="ButtonBehaviour == EButtonBehaviour::Key", ClampMin="0"))
 	float KeyAutoCloseDelayDuration = 1.f;
 
+	UPROPERTY(EditDefaultsOnly, Category="Button")
+	bool bRequireInteraction = true;
+
 	FTimerHandle AutoCloseDelayHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Button", meta=(AllowPrivateAccess="true"))

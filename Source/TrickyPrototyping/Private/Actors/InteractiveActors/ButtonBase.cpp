@@ -17,6 +17,8 @@ AButtonBase::AButtonBase()
 void AButtonBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ButtonTrigger->SetIsNormalTrigger(!bRequireInteraction);
 }
 
 void AButtonBase::Tick(float DeltaSeconds)
