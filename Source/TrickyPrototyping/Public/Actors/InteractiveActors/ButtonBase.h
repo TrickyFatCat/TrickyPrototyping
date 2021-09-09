@@ -61,6 +61,20 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Button")
 	bool bRequireInteraction = true;
 
+	UPROPERTY(EditDefaultsOnly,
+		Category="Button",
+		meta=(AllowPrivateAccess="true", EditCondition="!bRequireInteraction", ClampMin="0"))
+	float BeginOverlapDelay = 1.f;
+
+	UPROPERTY(EditDefaultsOnly,
+		Category="Button",
+		meta=(AllowPrivateAccess="true", EditCondition="!bRequireInteraction", ClampMin="0"))
+	float EndOverlapDelay = 1.f;
+
+	FTimerHandle BeginOverlapDelayHandle;
+
+	FTimerHandle EndOverlapDelayHandle;
+
 	FTimerHandle AutoCloseDelayHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Button", meta=(AllowPrivateAccess="true"))
@@ -78,7 +92,9 @@ private:
 
 	UFUNCTION()
 	void OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
-	                                 AActor* OtherActor,
-	                                 UPrimitiveComponent* OtherComp,
-	                                 int32 OtherBodyIndex);
+	                         AActor* OtherActor,
+	                         UPrimitiveComponent* OtherComp,
+	                         int32 OtherBodyIndex);
+
+	void ProcessTriggerOverlap();
 };

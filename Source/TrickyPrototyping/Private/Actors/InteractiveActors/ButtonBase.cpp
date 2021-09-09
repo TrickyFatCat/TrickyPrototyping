@@ -53,7 +53,7 @@ void AButtonBase::StartAnimation()
 	Super::StartAnimation();
 
 	if (!bRequireInteraction) return;
-	
+
 	ButtonTrigger->SetIsEnabled(false);
 }
 
@@ -110,22 +110,25 @@ void AButtonBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	if (bRequireInteraction) return;
 
-	const EInteractiveActorState State = AnimationTimeline->IsPlaying() && GetIsReversible()
-		                                     ? GetStateTarget()
-		                                     : GetStateCurrent();
-
-	
-	switch (State)
+	if (BeginOverlapDelay > 0.f)
 	{
-	case EInteractiveActorState::Closed:
-		Open();
-		break;
+		FTimerManager& TimerManager = GetWorldTimerManager();
 
-	case EInteractiveActorState::Opened:
-		if (ButtonBehaviour == EButtonBehaviour::Key) return;
-		Close();
-		break;
+		if (TimerManager.IsTimerActive(EndOverlapDelayHandle))
+		{
+			TimerManager.ClearTimer(EndOverlapDelayHandle);
+		}
+
+		TimerManager.SetTimer(BeginOverlapDelayHandle,
+		                      this,
+		                      &AButtonBase::ProcessTriggerOverlap,
+		                      BeginOverlapDelay,
+		                      false);
+
+		return;
 	}
+
+	ProcessTriggerOverlap();
 }
 
 void AButtonBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -135,6 +138,27 @@ void AButtonBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if (bRequireInteraction) return;
 
+	if (EndOverlapDelay > 0.f)
+	{
+		FTimerManager& TimerManager = GetWorldTimerManager();
+
+		if (TimerManager.IsTimerActive(BeginOverlapDelayHandle))
+		{
+			TimerManager.ClearTimer(BeginOverlapDelayHandle);
+		}
+
+		if (!GetIsReversible()) return;
+
+		TimerManager.SetTimer(EndOverlapDelayHandle, this, &AButtonBase::ProcessTriggerOverlap, EndOverlapDelay, false);
+		
+		return;
+	}
+
+	ProcessTriggerOverlap();
+}
+
+void AButtonBase::ProcessTriggerOverlap()
+{
 	const EInteractiveActorState State = AnimationTimeline->IsPlaying() && GetIsReversible()
 		                                     ? GetStateTarget()
 		                                     : GetStateCurrent();
@@ -147,7 +171,7 @@ void AButtonBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	case EInteractiveActorState::Opened:
 		if (ButtonBehaviour == EButtonBehaviour::Key) return;
-		
+
 		Close();
 		break;
 	}
