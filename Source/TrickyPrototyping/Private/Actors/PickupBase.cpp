@@ -25,7 +25,7 @@ void APickupBase::BeginPlay()
 	Super::BeginPlay();
 
 	InitialLocation = MeshScene->GetRelativeLocation();
-	InteractionTrigger->SetIsNormalTrigger(bRequireInteraction);
+	InteractionTrigger->SetIsNormalTrigger(!bRequireInteraction);
 	InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APickupBase::OnTriggerBeginOverlap);
 }
 
