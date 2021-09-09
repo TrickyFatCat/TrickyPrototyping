@@ -1,10 +1,10 @@
 // Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Components/TriggerComponents/InteractiveCapsuleComponent.h"
+#include "Components/TriggerComponents/InteractionCapsuleComponent.h"
 #include "Components/InteractionQueueComponent.h"
 
-void UInteractiveCapsuleComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+void UInteractionCapsuleComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                                   AActor* OtherActor,
                                                   UPrimitiveComponent* OtherComp,
                                                   int32 OtherBodyIndex,
@@ -20,7 +20,7 @@ void UInteractiveCapsuleComponent::OnBeginOverlap(UPrimitiveComponent* Overlappe
 	InteractionQue->AddToQue(GetOwner());
 }
 
-void UInteractiveCapsuleComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
+void UInteractionCapsuleComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
                                                 AActor* OtherActor,
                                                 UPrimitiveComponent* OtherComp,
                                                 int32 OtherBodyIndex)

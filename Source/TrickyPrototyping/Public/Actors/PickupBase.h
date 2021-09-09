@@ -5,21 +5,22 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/InteractionInterface.h"
-#include "BasePickup.generated.h"
+#include "PickupBase.generated.h"
 
 class UInteractionSphereComponent;
+class USoundCue;
 
 /**
  * Base pickup class. Use for creating various pickups
  */
 
 UCLASS()
-class TRICKYPROTOTYPING_API ABasePickup : public AActor, public IInteractionInterface
+class TRICKYPROTOTYPING_API APickupBase : public AActor, public IInteractionInterface
 {
 	GENERATED_BODY()
 
 public:
-	ABasePickup();
+	APickupBase();
 
 protected:
 	virtual void BeginPlay() override;
@@ -29,14 +30,28 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
+	USceneComponent* PickupRoot = nullptr;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
 	UInteractionSphereComponent* InteractionTrigger = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
 	USceneComponent* MeshScene = nullptr;
 
+	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
+	void ActivatePickup(AActor* TargetActor);
+
+	virtual void ActivatePickup_Implementation(AActor* TargetActor);
+
+	virtual void DestroyPickup();
+
 private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Pickup", meta=(AllowPrivateAccess="true"))
+	USoundCue* PickupSound = nullptr;
+	
 	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
 
+	UFUNCTION()
 	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	                           AActor* OtherActor,
 	                           UPrimitiveComponent* OtherComp,
@@ -44,9 +59,7 @@ private:
 	                           bool bFromSweep,
 	                           const FHitResult& SweepResult);
 
-	virtual bool ActivatePickup(APawn* TargetPawn);
-
-	UPROPERTY(EditDefaultsOnly, Category="Trigger")
+	UPROPERTY(EditDefaultsOnly, Category="Pickup")
 	bool bRequireInteraction = false;
 
 	// Animation

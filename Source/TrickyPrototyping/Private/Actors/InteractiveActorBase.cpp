@@ -1,18 +1,18 @@
 // Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
-#include "Actors/BaseInteractiveActor.h"
+#include "Actors/InteractiveActorBase.h"
 #include "Components/TimelineComponent.h"
 
 DECLARE_LOG_CATEGORY_CLASS(LogInteractiveObject, All, All);
 
-ABaseInteractiveActor::ABaseInteractiveActor()
+AInteractiveActorBase::AInteractiveActorBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	AnimationTimeline = CreateDefaultSubobject<UTimelineComponent>("AnimationTimeline");
 }
 
-void ABaseInteractiveActor::BeginPlay()
+void AInteractiveActorBase::BeginPlay()
 {
 	Super::BeginPlay();
 	check(AnimationTimeline);
@@ -28,7 +28,11 @@ void ABaseInteractiveActor::BeginPlay()
 		AnimationFinished.BindUFunction(this, FName("FinishAnimation"));
 		AnimationTimeline->SetTimelineFinishedFunc(AnimationFinished);
 	}
-
+	else
+	{
+		AnimationDuration = 0.f;
+	}
+	
 	if (AnimatedComponents.Num() > 0)
 	{
 		for (const auto Component : AnimatedComponents)
@@ -85,27 +89,29 @@ void ABaseInteractiveActor::BeginPlay()
 	}
 }
 
-void ABaseInteractiveActor::Tick(float DeltaTime)
+void AInteractiveActorBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void ABaseInteractiveActor::SetAnimationDuration(const float Value)
+void AInteractiveActorBase::SetAnimationDuration(const float Value)
 {
-	if (Value < 0.f) return;
+	if (Value <= 0.f) return;
 
 	AnimationDuration = Value;
 	CalculatePlayRate();
 }
 
-void ABaseInteractiveActor::AddAnimatedComponent(USceneComponent* NewComponent)
+void AInteractiveActorBase::AddAnimatedComponent(USceneComponent* NewComponent)
 {
-	if (AnimatedComponents.Contains(NewComponent)) return;
+	AnimatedComponents.Empty();
+
+	if (AnimatedComponents.Contains(NewComponent) || !NewComponent) return;
 
 	AnimatedComponents.AddUnique(NewComponent);
 }
 
-void ABaseInteractiveActor::FillAnimatedComponents(TArray<USceneComponent*> Components)
+void AInteractiveActorBase::FillAnimatedComponents(TArray<USceneComponent*> Components)
 {
 	if (Components.Num() == 0) return;
 
@@ -119,26 +125,39 @@ void ABaseInteractiveActor::FillAnimatedComponents(TArray<USceneComponent*> Comp
 	}
 }
 
-void ABaseInteractiveActor::StartAnimation()
+void AInteractiveActorBase::StartAnimation()
 {
-	if (!AnimationCurve || GetAnimationDuration() <= 0.f) return;
-
 	SetTargetState();
+	SetState(EInteractiveActorState::Transition);
 
 	switch (StateTarget)
 	{
 	case EInteractiveActorState::Opened:
-		AnimationTimeline->PlayFromStart();
+		if (GetAnimationDuration() > 0.f)
+		{
+			AnimationTimeline->PlayFromStart();
+		}
+		else
+		{
+			AnimateTransform(1.0);
+			FinishAnimation();
+		}
 		break;
 	case EInteractiveActorState::Closed:
-		AnimationTimeline->ReverseFromEnd();
+		if (GetAnimationDuration() > 0.f)
+		{
+			AnimationTimeline->ReverseFromEnd();
+		}
+		else
+		{
+			AnimateTransform(0.f);
+			FinishAnimation();
+		}
 		break;
 	}
-
-	SetState(EInteractiveActorState::Transition);
 }
 
-void ABaseInteractiveActor::ReverseAnimation()
+void AInteractiveActorBase::ReverseAnimation()
 {
 	if (!AnimationCurve || !bIsReversible || GetAnimationDuration() <= 0.f) return;
 
@@ -157,24 +176,24 @@ void ABaseInteractiveActor::ReverseAnimation()
 	}
 }
 
-void ABaseInteractiveActor::StopAnimation()
+void AInteractiveActorBase::StopAnimation()
 {
 	AnimationTimeline->Stop();
 }
 
-void ABaseInteractiveActor::FinishAnimation()
+void AInteractiveActorBase::FinishAnimation()
 {
 	SetState(StateTarget);
 }
 
-void ABaseInteractiveActor::CalculatePlayRate()
+void AInteractiveActorBase::CalculatePlayRate()
 {
 	if (!AnimationTimeline) return;
 
 	AnimationTimeline->SetPlayRate(1.f / AnimationDuration);
 }
 
-void ABaseInteractiveActor::AnimateTransform(const float AnimationProgress)
+void AInteractiveActorBase::AnimateTransform(const float AnimationProgress)
 {
 	for (int32 i = 0; i < AnimatedComponents.Num(); ++i)
 	{
@@ -192,8 +211,8 @@ void ABaseInteractiveActor::AnimateTransform(const float AnimationProgress)
 		if (TargetTransforms[i].bAnimateRotation)
 		{
 			FQuat NewRotation = FRotator(
-				NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() * AnimationProgress).
-			Quaternion();
+					NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() * AnimationProgress).
+				Quaternion();
 			NewTransform.SetRotation(NewRotation);
 		}
 
@@ -206,12 +225,12 @@ void ABaseInteractiveActor::AnimateTransform(const float AnimationProgress)
 	}
 }
 
-bool ABaseInteractiveActor::CanBeReversed() const
+bool AInteractiveActorBase::CanBeReversed() const
 {
 	return IsStateCurrent(EInteractiveActorState::Transition) && bIsReversible;
 }
 
-void ABaseInteractiveActor::SetState(const EInteractiveActorState NewState)
+void AInteractiveActorBase::SetState(const EInteractiveActorState NewState)
 {
 	if (IsStateCurrent(NewState)) return;
 
@@ -221,19 +240,19 @@ void ABaseInteractiveActor::SetState(const EInteractiveActorState NewState)
 	OnStateChanged(NewState);
 }
 
-void ABaseInteractiveActor::SetTargetState()
+void AInteractiveActorBase::SetTargetState()
 {
 	StateTarget = StateCurrent == EInteractiveActorState::Closed
 		              ? EInteractiveActorState::Opened
 		              : EInteractiveActorState::Closed;
 }
 
-bool ABaseInteractiveActor::CanStartAnimation() const
+bool AInteractiveActorBase::CanStartAnimation() const
 {
 	return !IsStateCurrent(EInteractiveActorState::Locked) || !IsStateCurrent(EInteractiveActorState::Disabled);
 }
 
-void ABaseInteractiveActor::Open()
+void AInteractiveActorBase::Open()
 {
 	if (IsStateCurrent(EInteractiveActorState::Opened) || !CanStartAnimation()) return;
 
@@ -254,7 +273,7 @@ void ABaseInteractiveActor::Open()
 	StartAnimation();
 }
 
-void ABaseInteractiveActor::Close()
+void AInteractiveActorBase::Close()
 {
 	if (IsStateCurrent(EInteractiveActorState::Closed) || !CanStartAnimation()) return;
 
@@ -275,28 +294,28 @@ void ABaseInteractiveActor::Close()
 	StartAnimation();
 }
 
-void ABaseInteractiveActor::Lock()
+void AInteractiveActorBase::Lock()
 {
 	if (!IsStateCurrent(EInteractiveActorState::Closed)) return;
 
 	SetState(EInteractiveActorState::Locked);
 }
 
-void ABaseInteractiveActor::Unlock()
+void AInteractiveActorBase::Unlock()
 {
 	if (!IsStateCurrent(EInteractiveActorState::Locked)) return;
 
 	SetState(EInteractiveActorState::Closed);
 }
 
-void ABaseInteractiveActor::Enable()
+void AInteractiveActorBase::Enable()
 {
 	if (IsStateCurrent(EInteractiveActorState::Disabled)) return;
 
 	SetState(StatePrevious);
 }
 
-void ABaseInteractiveActor::Disable()
+void AInteractiveActorBase::Disable()
 {
 	if (!IsStateCurrent(EInteractiveActorState::Transition)) return;
 

@@ -52,7 +52,7 @@ struct FResourceData
 	FResourceAutoChangeData AutoDecreaseData;
 };
 
-UCLASS(Abstract)
+UCLASS()
 class TRICKYPROTOTYPING_API UEntityResource : public UBaseObject
 {
 	GENERATED_BODY()

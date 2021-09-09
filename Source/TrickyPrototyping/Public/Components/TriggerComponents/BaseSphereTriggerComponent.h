@@ -9,7 +9,7 @@
 /**
  * A base sphere trigger component for creating different trigger components
  */
-UCLASS()
+UCLASS(Blueprintable)
 class TRICKYPROTOTYPING_API UBaseSphereTriggerComponent : public USphereComponent
 {
 	GENERATED_BODY()

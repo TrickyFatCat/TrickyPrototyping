@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "BaseInteractiveActor.generated.h"
+#include "InteractiveActorBase.generated.h"
 
 class UCurveFloat;
 class UTimelineComponent;
@@ -51,12 +51,12 @@ struct FInteractiveActorData
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractiveActorChangedStateSignature, EInteractiveActorState, NewState);
 
 UCLASS()
-class TRICKYPROTOTYPING_API ABaseInteractiveActor : public AActor
+class TRICKYPROTOTYPING_API AInteractiveActorBase : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	ABaseInteractiveActor();
+	AInteractiveActorBase();
 
 protected:
 	virtual void BeginPlay() override;
@@ -134,6 +134,9 @@ private:
 public:
 	UFUNCTION(BlueprintCallable, Category="States")
 	EInteractiveActorState GetStateCurrent() const { return StateCurrent; }
+
+	UFUNCTION(BlueprintCallable, Category="States")
+	EInteractiveActorState GetStateTarget() const { return StateTarget; }
 
 	UPROPERTY(BlueprintAssignable, Category="States")
 	FOnInteractiveActorChangedStateSignature OnActorChangedState;

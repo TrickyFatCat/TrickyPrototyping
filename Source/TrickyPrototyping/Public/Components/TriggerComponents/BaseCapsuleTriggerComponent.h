@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class TRICKYPROTOTYPING_API UBaseCapsuleTriggerComponent : public UCapsuleComponent
 {
 	GENERATED_BODY()
