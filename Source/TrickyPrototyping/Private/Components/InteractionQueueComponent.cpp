@@ -23,7 +23,7 @@ void UInteractionQueueComponent::AddToQue(AActor* Actor)
 
 void UInteractionQueueComponent::RemoveFromQueue(AActor* Actor)
 {
-	if (!IsValid(Actor) || InteractionQueue.Contains(Actor)) return;
+	if (!IsValid(Actor) || !InteractionQueue.Contains(Actor)) return;
 
 	InteractionQueue.Remove(Actor);
 }
