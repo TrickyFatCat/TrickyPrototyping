@@ -59,7 +59,7 @@ private:
 	                           bool bFromSweep,
 	                           const FHitResult& SweepResult);
 
-	UPROPERTY(EditDefaultsOnly, Category="Trigger")
+	UPROPERTY(EditDefaultsOnly, Category="Pickup")
 	bool bRequireInteraction = false;
 
 	// Animation
