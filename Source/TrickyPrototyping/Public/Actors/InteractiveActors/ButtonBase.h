@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Actors/InteractiveActorBase.h"
+#include "Interfaces/InteractionInterface.h"
 #include "ButtonBase.generated.h"
 
-class UInteractionCapsuleComponent;
+class UInteractionSphereComponent;
 class USceneComponent;
 
 /**
@@ -21,13 +22,13 @@ enum class EButtonBehaviour : uint8
 };
 
 UCLASS()
-class TRICKYPROTOTYPING_API AButtonBase : public AInteractiveActorBase
+class TRICKYPROTOTYPING_API AButtonBase : public AInteractiveActorBase, public IInteractionInterface
 {
 	GENERATED_BODY()
 
 public:
 	AButtonBase();
-	
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -45,11 +46,11 @@ protected:
 	USceneComponent* ButtonRoot = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
-	UInteractionCapsuleComponent* ButtonTrigger = nullptr;
+	UInteractionSphereComponent* ButtonTrigger = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Button")
 	EButtonBehaviour ButtonBehaviour = EButtonBehaviour::Switch;
-	
+
 private:
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
@@ -64,4 +65,20 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Button", meta=(AllowPrivateAccess="true"))
 	bool bPressOnce = false;
+
+	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
+
+	UFUNCTION()
+	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+	                           AActor* OtherActor,
+	                           UPrimitiveComponent* OtherComp,
+	                           int32 OtherBodyIndex,
+	                           bool bFromSweep,
+	                           const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
+	                                 AActor* OtherActor,
+	                                 UPrimitiveComponent* OtherComp,
+	                                 int32 OtherBodyIndex);
 };

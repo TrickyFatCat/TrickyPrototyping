@@ -2,15 +2,16 @@
 
 
 #include "Actors/InteractiveActors/ButtonBase.h"
-#include "Components/TriggerComponents/InteractionCapsuleComponent.h"
+#include "Components/TriggerComponents/InteractionSphereComponent.h"
 #include "Components/SceneComponent.h"
+#include "Components/TimelineComponent.h"
 
 AButtonBase::AButtonBase()
 {
 	ButtonRoot = CreateDefaultSubobject<USceneComponent>("ButtonRoot");
 	SetRootComponent(ButtonRoot);
 
-	ButtonTrigger = CreateDefaultSubobject<UInteractionCapsuleComponent>("ButtonTrigger");
+	ButtonTrigger = CreateDefaultSubobject<UInteractionSphereComponent>("ButtonTrigger");
 	ButtonTrigger->SetupAttachment(ButtonRoot);
 }
 
@@ -19,6 +20,12 @@ void AButtonBase::BeginPlay()
 	Super::BeginPlay();
 
 	ButtonTrigger->SetIsNormalTrigger(!bRequireInteraction);
+
+	if (!bRequireInteraction)
+	{
+		ButtonTrigger->OnComponentBeginOverlap.AddDynamic(this, &AButtonBase::OnTriggerBeginOverlap);
+		ButtonTrigger->OnComponentEndOverlap.AddDynamic(this, &AButtonBase::OnTriggerEndOverlap);
+	}
 }
 
 void AButtonBase::Tick(float DeltaSeconds)
@@ -36,7 +43,7 @@ void AButtonBase::Disable()
 void AButtonBase::Enable()
 {
 	if (bPressOnce) return;
-	
+
 	Super::Enable();
 	ButtonTrigger->SetIsEnabled(true);
 }
@@ -45,6 +52,8 @@ void AButtonBase::StartAnimation()
 {
 	Super::StartAnimation();
 
+	if (!bRequireInteraction) return;
+	
 	ButtonTrigger->SetIsEnabled(false);
 }
 
@@ -61,7 +70,7 @@ void AButtonBase::FinishAnimation()
 	switch (ButtonBehaviour)
 	{
 	case EButtonBehaviour::Key:
-		if (IsStateCurrent(EInteractiveActorState::Closed))
+		if (IsStateCurrent(EInteractiveActorState::Opened))
 		{
 			if (!GetWorld()) return;
 
@@ -71,7 +80,7 @@ void AButtonBase::FinishAnimation()
 			                                       KeyAutoCloseDelayDuration,
 			                                       false);
 		}
-		else
+		else if (IsStateCurrent(EInteractiveActorState::Closed))
 		{
 			ButtonTrigger->SetIsEnabled(true);
 		}
@@ -79,6 +88,67 @@ void AButtonBase::FinishAnimation()
 
 	case EButtonBehaviour::Switch:
 		ButtonTrigger->SetIsEnabled(true);
+		break;
+	}
+}
+
+bool AButtonBase::ProcessInteraction_Implementation(APlayerController* PlayerController)
+{
+	if (!PlayerController || !bRequireInteraction) return false;
+
+	StartAnimation();
+
+	return true;
+}
+
+void AButtonBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+                                        AActor* OtherActor,
+                                        UPrimitiveComponent* OtherComp,
+                                        int32 OtherBodyIndex,
+                                        bool bFromSweep,
+                                        const FHitResult& SweepResult)
+{
+	if (bRequireInteraction) return;
+
+	const EInteractiveActorState State = AnimationTimeline->IsPlaying() && GetIsReversible()
+		                                     ? GetStateTarget()
+		                                     : GetStateCurrent();
+
+	
+	switch (State)
+	{
+	case EInteractiveActorState::Closed:
+		Open();
+		break;
+
+	case EInteractiveActorState::Opened:
+		if (ButtonBehaviour == EButtonBehaviour::Key) return;
+		Close();
+		break;
+	}
+}
+
+void AButtonBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
+                                      AActor* OtherActor,
+                                      UPrimitiveComponent* OtherComp,
+                                      int32 OtherBodyIndex)
+{
+	if (bRequireInteraction) return;
+
+	const EInteractiveActorState State = AnimationTimeline->IsPlaying() && GetIsReversible()
+		                                     ? GetStateTarget()
+		                                     : GetStateCurrent();
+
+	switch (State)
+	{
+	case EInteractiveActorState::Closed:
+		Open();
+		break;
+
+	case EInteractiveActorState::Opened:
+		if (ButtonBehaviour == EButtonBehaviour::Key) return;
+		
+		Close();
 		break;
 	}
 }
