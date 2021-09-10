@@ -26,5 +26,8 @@ class TRICKYPROTOTYPING_API UTrickyFunctionLibrary : public UBlueprintFunctionLi
 
 public:
 	UFUNCTION(BlueprintPure)
-	static FString ConvertTimeSeconds(const ETimeFormat ConvertMethod, const float TimeSeconds);
+	static FString ConvertTimeSeconds(const float TimeSeconds, const ETimeFormat ConvertMethod);
+
+private:
+	static int32 ConvertMilliseconds(const int32 InitialValue, const float Fraction);
 };

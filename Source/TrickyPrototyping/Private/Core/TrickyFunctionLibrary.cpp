@@ -2,43 +2,56 @@
 
 
 #include "Core/TrickyFunctionLibrary.h"
-#include "Kismet/KismetStringLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
-FString UTrickyFunctionLibrary::ConvertTimeSeconds(const ETimeFormat ConvertMethod, const float TimeSeconds)
+FString UTrickyFunctionLibrary::ConvertTimeSeconds(const float TimeSeconds, const ETimeFormat ConvertMethod)
 {
-	const FString Result = UKismetStringLibrary::TimeSecondsToString(TimeSeconds);
-	int32 Start = 0;
-	int32 Count = 0;
+	const FTimespan Timespan = UKismetMathLibrary::FromSeconds(TimeSeconds);
+
+	FString Result = "";
+
+	const int32 TotalMinutes = static_cast<int32>(Timespan.GetTotalMinutes());
+	const int32 Seconds = Timespan.GetSeconds();
+	const int32 TotalSeconds = static_cast<int32>(Timespan.GetTotalSeconds());
+	const int32 Milliseconds = Timespan.GetFractionMilli();
 
 	switch (ConvertMethod)
 	{
 	case ETimeFormat::MM_SS_MsMs:
-		Count = 8;
+		Result = FString::Printf(TEXT("%02d:%02d.%02d"),
+		                             TotalMinutes,
+		                             Seconds,
+		                             ConvertMilliseconds(Milliseconds, 0.1f));
 		break;
 
 	case ETimeFormat::MM_SS_Ms:
-		Count = 7;
+		Result = FString::Printf(TEXT("%02d:%02d.%d"),
+		                             TotalMinutes,
+		                             Seconds,
+		                             ConvertMilliseconds(Milliseconds, 0.01));
 		break;
 
 	case ETimeFormat::MM_SS:
-		Count = 5;
+		Result = FString::Printf(TEXT("%02d:%02d"), TotalMinutes, Seconds);
 		break;
 
 	case ETimeFormat::SS_MsMs:
-		Start = 3;
-		Count = 5;
+		Result = FString::Printf(TEXT("%02d.%02d"), TotalSeconds, ConvertMilliseconds(Milliseconds, 0.1f));
 		break;
 
 	case ETimeFormat::SS_Ms:
-		Start = 3;
-		Count = 4;
+		Result = FString::Printf(TEXT("%02d.%d"), TotalSeconds, ConvertMilliseconds(Milliseconds, 0.01f));
 		break;
 
 	case ETimeFormat::SS:
-		Start = 3;
-		Count = 2;
+		Result = FString::Printf(TEXT("%02d"), TotalSeconds);
 		break;
 	}
 
-	return UKismetStringLibrary::Mid(Result, Start, Count);
+	return Result;
+}
+
+int32 UTrickyFunctionLibrary::ConvertMilliseconds(const int32 InitialValue, const float Fraction)
+{
+	return static_cast<int32>(InitialValue * Fraction);
 }

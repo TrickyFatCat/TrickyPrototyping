@@ -25,6 +25,8 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controller")
+	bool bShowCursorOnStart = false;
 	UFUNCTION()
 	void OnSessionStateChanged(const ESessionState NewState);
 };

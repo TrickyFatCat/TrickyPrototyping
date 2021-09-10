@@ -24,6 +24,8 @@ void ASessionPlayerController::BeginPlay()
 			GameMode->OnSessionStateChanged.AddUObject(this, &ASessionPlayerController::OnSessionStateChanged);
 		}
 	}
+	
+	bShowMouseCursor = false;
 }
 
 void ASessionPlayerController::Tick(float DeltaSeconds)
@@ -37,8 +39,8 @@ void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewStat
 		? SetInputMode(FInputModeGameOnly())
 		: SetInputMode(FInputModeUIOnly());
 
-	if (NewState != ESessionState::Progress)
+	if (NewState == ESessionState::Progress)
 	{
-		bShowMouseCursor = true;
+		bShowMouseCursor = bShowCursorOnStart;
 	}
 }
