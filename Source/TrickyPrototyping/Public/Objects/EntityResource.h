@@ -37,7 +37,7 @@ struct FResourceData
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float Value = 100.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0.0"))
 	float ValueMax = 100.f;
