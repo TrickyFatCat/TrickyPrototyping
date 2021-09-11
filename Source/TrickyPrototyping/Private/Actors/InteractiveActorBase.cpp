@@ -129,6 +129,7 @@ void AInteractiveActorBase::StartAnimation()
 {
 	SetTargetState();
 	SetState(EInteractiveActorState::Transition);
+	OnTransitionStarted.Broadcast(StateTarget);
 
 	switch (StateTarget)
 	{
@@ -174,6 +175,8 @@ void AInteractiveActorBase::ReverseAnimation()
 		AnimationTimeline->Reverse();
 		break;
 	}
+
+	OnTransitionReversed.Broadcast(StateTarget);
 }
 
 void AInteractiveActorBase::StopAnimation()
