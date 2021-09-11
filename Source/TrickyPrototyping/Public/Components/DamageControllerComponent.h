@@ -54,7 +54,7 @@ public:
 	void BroadcastOnHealthChanged(const float NewHealth, const float DeltaHealth);
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="DamageController", meta=(AllowPrivateAccess="true"))
 	FResourceData HealthData;
 	UPROPERTY()
 	UEntityResource* HealthObject = nullptr;
