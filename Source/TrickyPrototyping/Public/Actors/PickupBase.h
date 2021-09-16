@@ -39,9 +39,9 @@ protected:
 	USceneComponent* MeshScene = nullptr;
 
 	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
-	void ActivatePickup(AActor* TargetActor);
+	bool ActivatePickup(AActor* TargetActor);
 
-	virtual void ActivatePickup_Implementation(AActor* TargetActor);
+	virtual bool ActivatePickup_Implementation(AActor* TargetActor);
 
 	virtual void DestroyPickup();
 

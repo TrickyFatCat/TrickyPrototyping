@@ -12,10 +12,10 @@ APickupBase::APickupBase()
 
 	PickupRoot = CreateDefaultSubobject<USceneComponent>("PickupRoot");
 	SetRootComponent(PickupRoot);
-	
+
 	InteractionTrigger = CreateDefaultSubobject<UInteractionSphereComponent>("InteractionTrigger");
 	InteractionTrigger->SetupAttachment(GetRootComponent());
-	
+
 	MeshScene = CreateDefaultSubobject<USceneComponent>("MeshScene");
 	MeshScene->SetupAttachment(GetRootComponent());
 }
@@ -37,9 +37,9 @@ void APickupBase::Tick(float DeltaTime)
 	AnimateRotation();
 }
 
-void APickupBase::ActivatePickup_Implementation(AActor* TargetActor)
+bool APickupBase::ActivatePickup_Implementation(AActor* TargetActor)
 {
-
+	return true;
 }
 
 void APickupBase::DestroyPickup()
@@ -53,10 +53,13 @@ bool APickupBase::ProcessInteraction_Implementation(APlayerController* PlayerCon
 {
 	if (!PlayerController || !PlayerController->GetPawn() || !bRequireInteraction) return false;
 
-	ActivatePickup(Cast<AActor>(PlayerController->GetPawn()));
-	DestroyPickup();
-	
-	return true;
+	if (ActivatePickup(Cast<AActor>(PlayerController->GetPawn())))
+	{
+		DestroyPickup();
+		return true;
+	}
+
+	return false;
 }
 
 void APickupBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -68,8 +71,10 @@ void APickupBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	if (bRequireInteraction || !IsValid(OtherActor)) return;
 
-	ActivatePickup(OtherActor);
-	DestroyPickup();
+	if (ActivatePickup(OtherActor))
+	{
+		DestroyPickup();
+	}
 }
 
 void APickupBase::AnimateRotation() const
