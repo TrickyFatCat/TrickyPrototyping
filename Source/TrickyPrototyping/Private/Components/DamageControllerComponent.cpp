@@ -18,6 +18,15 @@ void UDamageControllerComponent::BeginPlay()
 	HealthObject = NewObject<UEntityResource>(this, TEXT("HealthObject"));
 	HealthObject->SetResourceData(HealthData);
 	HealthObject->OnValueChanged.AddUObject(this, &UDamageControllerComponent::BroadcastOnHealthChanged);
+
+	AActor* ComponentOwner = GetOwner();
+
+	if (ComponentOwner)
+	{
+		ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &UDamageControllerComponent::OnTakeAnyDamage);
+		ComponentOwner->OnTakePointDamage.AddDynamic(this, &UDamageControllerComponent::OnTakePointDamage);
+		ComponentOwner->OnTakeRadialDamage.AddDynamic(this, &UDamageControllerComponent::OnTakeRadialDamage);
+	}
 }
 
 void UDamageControllerComponent::DecreaseHealth(const float Amount, AController* Instigator)
