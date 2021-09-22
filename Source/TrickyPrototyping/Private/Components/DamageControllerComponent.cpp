@@ -29,17 +29,11 @@ void UDamageControllerComponent::BeginPlay()
 	}
 }
 
-void UDamageControllerComponent::DecreaseHealth(const float Amount, AController* Instigator)
+void UDamageControllerComponent::DecreaseHealth(const float Amount)
 {
 	if (Amount <= 0.f || GetIsDead()) return;
 
 	HealthObject->DecreaseValue(Amount);
-
-	if (GetIsDead())
-	{
-		HealthObject->SetAutoIncreaseEnabled(false);
-		OnDeath.Broadcast();
-	}
 }
 
 void UDamageControllerComponent::IncreaseHealth(const float Amount, const bool bClampToMax)
@@ -90,11 +84,17 @@ float UDamageControllerComponent::GetPointDamageModifier(AActor* Actor, const FN
 	return PointDamageModifiers[PhysMat];
 }
 
-void UDamageControllerComponent::CalculateDamage(const float Damage, AController* Instigator)
+void UDamageControllerComponent::CalculateDamage(const float Damage, AActor* DamagedActor, AController* Instigator, AActor* Causer,const UDamageType* DamageType)
 {
 	if (Damage <= 0.f) return;
 
-	DecreaseHealth(Damage * GeneralDamageModifier, Instigator);
+	DecreaseHealth(Damage * GeneralDamageModifier);
+	
+	if (GetIsDead())
+	{
+		HealthObject->SetAutoIncreaseEnabled(false);
+		OnDeath.Broadcast(Instigator, Causer, DamageType);
+	}
 }
 
 void UDamageControllerComponent::OnTakeAnyDamage(AActor* DamageActor,
@@ -122,7 +122,7 @@ void UDamageControllerComponent::OnTakePointDamage(AActor* DamagedActor,
 		FinalDamage *= GetPointDamageModifier(DamagedActor, BoneName);
 	}
 
-	CalculateDamage(FinalDamage, InstigatedBy);
+	CalculateDamage(FinalDamage, DamagedActor, InstigatedBy, DamageCauser, DamageType);
 }
 
 void UDamageControllerComponent::OnTakeRadialDamage(AActor* DamagedActor,
@@ -133,5 +133,5 @@ void UDamageControllerComponent::OnTakeRadialDamage(AActor* DamagedActor,
                                                     AController* InstigatedBy,
                                                     AActor* DamageCauser)
 {
-	CalculateDamage(Damage, InstigatedBy);
+	CalculateDamage(Damage, DamagedActor, InstigatedBy, DamageCauser, DamageType);
 }
