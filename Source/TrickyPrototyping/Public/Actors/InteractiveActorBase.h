@@ -50,6 +50,10 @@ struct FInteractiveActorData
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractiveActorChangedStateSignature, EInteractiveActorState, NewState);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTransitionStartedSignature, EInteractiveActorState, TargetState);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTransitionReversedSignature, EInteractiveActorState, TargetState);
+
 UCLASS()
 class TRICKYPROTOTYPING_API AInteractiveActorBase : public AActor
 {
@@ -140,6 +144,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="States")
 	FOnInteractiveActorChangedStateSignature OnActorChangedState;
+
+	UPROPERTY(BlueprintAssignable, Category="States")
+	FOnTransitionStartedSignature OnTransitionStarted;
+
+	UPROPERTY(BlueprintAssignable, Category="States")
+	FOnTransitionReversedSignature OnTransitionReversed;
 
 	UFUNCTION(BlueprintCallable, Category="States")
 	bool IsStateCurrent(const EInteractiveActorState DoorState) const { return StateCurrent == DoorState; }

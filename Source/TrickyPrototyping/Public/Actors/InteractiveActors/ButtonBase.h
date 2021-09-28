@@ -39,7 +39,6 @@ public:
 	virtual void Enable() override;
 
 protected:
-	virtual void StartAnimation() override;
 	virtual void FinishAnimation() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
@@ -60,6 +59,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Button")
 	bool bRequireInteraction = true;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Button", meta=(AllowPrivateAccess="true", EditCondition="bRequireInteraction"))
+	bool bRequireLineOfSight = false;
 
 	UPROPERTY(EditDefaultsOnly,
 		Category="Button",

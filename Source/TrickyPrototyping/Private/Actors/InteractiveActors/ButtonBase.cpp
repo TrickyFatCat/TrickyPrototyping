@@ -20,6 +20,7 @@ void AButtonBase::BeginPlay()
 	Super::BeginPlay();
 
 	ButtonTrigger->SetIsNormalTrigger(!bRequireInteraction);
+	ButtonTrigger->bRequireLineOfSight = bRequireLineOfSight;
 
 	if (!bRequireInteraction)
 	{
@@ -46,15 +47,6 @@ void AButtonBase::Enable()
 
 	Super::Enable();
 	ButtonTrigger->SetIsEnabled(true);
-}
-
-void AButtonBase::StartAnimation()
-{
-	Super::StartAnimation();
-
-	if (!bRequireInteraction) return;
-
-	ButtonTrigger->SetIsEnabled(false);
 }
 
 void AButtonBase::FinishAnimation()
@@ -96,6 +88,8 @@ bool AButtonBase::ProcessInteraction_Implementation(APlayerController* PlayerCon
 {
 	if (!PlayerController || !bRequireInteraction) return false;
 
+	if (!GetIsReversible() && GetStateCurrent() == EInteractiveActorState::Transition) return false;
+	
 	StartAnimation();
 
 	return true;

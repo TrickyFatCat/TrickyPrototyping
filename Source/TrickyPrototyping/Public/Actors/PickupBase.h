@@ -39,9 +39,9 @@ protected:
 	USceneComponent* MeshScene = nullptr;
 
 	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
-	void ActivatePickup(AActor* TargetActor);
+	bool ActivatePickup(AActor* TargetActor);
 
-	virtual void ActivatePickup_Implementation(AActor* TargetActor);
+	virtual bool ActivatePickup_Implementation(AActor* TargetActor);
 
 	virtual void DestroyPickup();
 
@@ -61,6 +61,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Pickup")
 	bool bRequireInteraction = false;
+
+	UPROPERTY(EditDefaultsOnly, Category="Pickup", meta=(EditCondition="bRequireInteraction"))
+	bool bRequireLineOfSight = false;
 
 	// Animation
 private:

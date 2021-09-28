@@ -5,13 +5,17 @@
 
 #include "Components/DamageControllerComponent.h"
 
-void APickupHealth::ActivatePickup_Implementation(AActor* TargetActor)
+bool APickupHealth::ActivatePickup_Implementation(AActor* TargetActor)
 {
-	if (!TargetActor) return;
+	if (!TargetActor) return false;
 
 	UDamageControllerComponent* DamageController = TargetActor->FindComponentByClass<UDamageControllerComponent>();
 
-	if (!DamageController) return;
+	if (!DamageController) return false;
+
+	if (DamageController->GetNormalizedHealth() >= 1.f || DamageController->GetIsDead()) return false;
 
 	DamageController->IncreaseHealth(HealPower, bClampHealToMaxHealth);
+	
+	return true;
 }
