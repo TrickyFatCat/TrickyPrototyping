@@ -22,6 +22,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
 	void AddToQue(AActor* Actor);
 	
 	void RemoveFromQueue(AActor* Actor);
@@ -35,6 +37,14 @@ public:
 	AActor* GetTargetActor() const;
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category="Interaction")
+	bool bSortByLineOfSight = false;
+
+	UPROPERTY(EditDefaultsOnly, Category="Interaction", meta=(EditCondition="bSortByLineOfSight", ClampMin="0"))
+	float SortDistance = 60.f;
+	
 	UPROPERTY(VisibleAnywhere, Category="Interaction")
 	TArray<AActor*> InteractionQueue;
+
+	void SortQueue();
 };

@@ -2,16 +2,27 @@
 
 
 #include "Components/InteractionQueueComponent.h"
+
+#include "Core/TrickyUtils.h"
 #include "Interfaces/InteractionInterface.h"
 
 UInteractionQueueComponent::UInteractionQueueComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UInteractionQueueComponent::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void UInteractionQueueComponent::TickComponent(float DeltaTime,
+                                               ELevelTick Tick,
+                                               FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
+
+	SortQueue();
 }
 
 void UInteractionQueueComponent::AddToQue(AActor* Actor)
@@ -57,3 +68,34 @@ AActor* UInteractionQueueComponent::GetTargetActor() const
 	return TargetActor;
 }
 
+void UInteractionQueueComponent::SortQueue()
+{
+	if (InteractionQueue.Num() <= 1 || !bSortByLineOfSight) return;
+
+	FVector ViewLocation = FVector::ZeroVector;
+	FRotator ViewRotation = FRotator::ZeroRotator;
+
+	if (!FTrickyUtils::GetPlayerViewPoint(GetOwner(), ViewLocation, ViewRotation)) return;
+
+	FVector TraceStart = ViewLocation;
+	FVector TraceDirection = ViewRotation.Vector();
+	FVector TraceEnd = TraceStart + TraceDirection * SortDistance;
+
+	if (!GetWorld()) return;
+
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionQueryParams;
+	CollisionQueryParams.AddIgnoredActor(GetOwner());
+	GetWorld()->LineTraceSingleByChannel(HitResult,
+	                                     TraceStart,
+	                                     TraceEnd,
+	                                     ECollisionChannel::ECC_Visibility,
+	                                     CollisionQueryParams);
+
+	if (InteractionQueue.Contains(HitResult.Actor))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Target Actor: %s"), *HitResult.Actor->GetName());
+		InteractionQueue.Remove(HitResult.GetActor());
+		InteractionQueue.Insert(HitResult.GetActor(), 0);
+	}
+}
