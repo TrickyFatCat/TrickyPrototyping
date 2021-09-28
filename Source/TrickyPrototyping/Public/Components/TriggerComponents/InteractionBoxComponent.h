@@ -21,6 +21,7 @@ public:
 	UFUNCTION(BlueprintSetter, Category="Trigger")
 	void SetIsNormalTrigger(const bool Value) { bIsNormalTrigger = Value; }
 
+	bool bRequireLineOfSight = false;
 private:
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintGetter=GetIsNormalTrigger,

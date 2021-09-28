@@ -62,6 +62,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Pickup")
 	bool bRequireInteraction = false;
 
+	UPROPERTY(EditDefaultsOnly, Category="Pickup", meta=(EditCondition="bRequireInteraction"))
+	bool bRequireLineOfSight = false;
+
 	// Animation
 private:
 	FVector InitialLocation = FVector::ZeroVector;

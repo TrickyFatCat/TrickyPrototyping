@@ -22,30 +22,35 @@ void UInteractionQueueComponent::TickComponent(float DeltaTime,
 {
 	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
 
-	SortQueue();
+	CheckLineOfSight();
 }
 
-void UInteractionQueueComponent::AddToQue(AActor* Actor)
+void UInteractionQueueComponent::AddToQue(AActor* Actor, bool bRequireLineOfSight)
 {
-	if (!IsValid(Actor) || InteractionQueue.Contains(Actor)) return;
+	if (!IsValid(Actor) || QueueContainsActor(Actor)) return;
 
-	InteractionQueue.AddUnique(Actor);
+	FInteractionData NewData;
+	NewData.Actor = Actor;
+	NewData.bRequireLineOfSight = bRequireLineOfSight;
+	InteractionQueue.Add(NewData);
 }
 
-void UInteractionQueueComponent::RemoveFromQueue(AActor* Actor)
+void UInteractionQueueComponent::RemoveFromQueue(const AActor* Actor)
 {
-	if (!IsValid(Actor) || !InteractionQueue.Contains(Actor)) return;
+	if (!IsValid(Actor) || !QueueContainsActor(Actor)) return;
 
-	InteractionQueue.Remove(Actor);
+	InteractionQueue.RemoveAt(GetInteractionDataIndex(Actor));
 }
 
 bool UInteractionQueueComponent::Interact()
 {
 	if (IsQueueEmpty()) return false;
 
-	AActor* TargetActor = GetTargetActor();
+	AActor* TargetActor = GetFirstActorInQueue();
 
 	if (!IsValid(TargetActor)) return false;
+
+	if (InteractionQueue[0].bRequireLineOfSight && TargetActor != ActorInSight) return false;
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetOwner()->GetInstigatorController());
 
@@ -54,23 +59,23 @@ bool UInteractionQueueComponent::Interact()
 	return IInteractionInterface::Execute_ProcessInteraction(TargetActor, PlayerController);
 }
 
-AActor* UInteractionQueueComponent::GetTargetActor() const
+AActor* UInteractionQueueComponent::GetFirstActorInQueue() const
 {
 	if (IsQueueEmpty()) return nullptr;
 
-	AActor* TargetActor = InteractionQueue[0];
+	AActor* TargetActor = InteractionQueue[0].Actor;
 
 	while (!IsValid(TargetActor))
 	{
-		TargetActor = InteractionQueue[0];
+		TargetActor = InteractionQueue[0].Actor;
 	}
 
 	return TargetActor;
 }
 
-void UInteractionQueueComponent::SortQueue()
+void UInteractionQueueComponent::CheckLineOfSight()
 {
-	if (InteractionQueue.Num() <= 1 || !bSortByLineOfSight) return;
+	if (IsQueueEmpty()) return;
 
 	FVector ViewLocation = FVector::ZeroVector;
 	FRotator ViewRotation = FRotator::ZeroRotator;
@@ -92,10 +97,40 @@ void UInteractionQueueComponent::SortQueue()
 	                                     ECollisionChannel::ECC_Visibility,
 	                                     CollisionQueryParams);
 
-	if (InteractionQueue.Contains(HitResult.Actor))
+	ActorInSight = HitResult.GetActor();
+
+	SortQueueByLineOfSight(HitResult);
+}
+
+void UInteractionQueueComponent::SortQueueByLineOfSight(FHitResult& HitResult)
+{
+	if (!bSortByLineOfSight || !HitResult.GetActor()) return;
+
+	if (QueueContainsActor(HitResult.GetActor()))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Target Actor: %s"), *HitResult.Actor->GetName());
-		InteractionQueue.Remove(HitResult.GetActor());
-		InteractionQueue.Insert(HitResult.GetActor(), 0);
+		InteractionQueue.RemoveAt(GetInteractionDataIndex(HitResult.GetActor()));
+		InteractionQueue.Insert(FInteractionData{HitResult.GetActor(), true}, 0);
 	}
+}
+
+bool UInteractionQueueComponent::QueueContainsActor(const AActor* Actor) const
+{
+	const auto bContains = InteractionQueue.FindByPredicate([&](const FInteractionData& Data)
+	{
+		return Data.Actor == Actor;
+	});
+	return bContains != nullptr;
+}
+
+AActor* UInteractionQueueComponent::GetQueuedActor(const AActor* Actor) const
+{
+	const FInteractionData FinalData = *InteractionQueue.FindByPredicate(
+		[&](const FInteractionData& Data) { return Data.Actor == Actor; });
+	return FinalData.Actor;
+}
+
+int32 UInteractionQueueComponent::GetInteractionDataIndex(const AActor* Actor) const
+{
+	return InteractionQueue.IndexOfByPredicate(
+		[&](const FInteractionData& Data) { return Data.Actor == Actor; });
 }

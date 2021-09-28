@@ -20,6 +20,7 @@ void AButtonBase::BeginPlay()
 	Super::BeginPlay();
 
 	ButtonTrigger->SetIsNormalTrigger(!bRequireInteraction);
+	ButtonTrigger->bRequireLineOfSight = bRequireLineOfSight;
 
 	if (!bRequireInteraction)
 	{

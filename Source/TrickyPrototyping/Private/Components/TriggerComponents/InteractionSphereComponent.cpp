@@ -17,7 +17,7 @@ void UInteractionSphereComponent::OnBeginOverlap(UPrimitiveComponent* Overlapped
 
 	if (!InteractionQue) return;
 
-	InteractionQue->AddToQue(GetOwner());
+	InteractionQue->AddToQue(GetOwner(), bRequireLineOfSight);
 }
 
 void UInteractionSphereComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,

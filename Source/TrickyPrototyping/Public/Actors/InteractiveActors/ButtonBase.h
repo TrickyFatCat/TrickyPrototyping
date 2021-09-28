@@ -50,6 +50,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Button")
 	EButtonBehaviour ButtonBehaviour = EButtonBehaviour::Switch;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Button")
+	bool bRequireLineOfSight = false;
+
 private:
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
