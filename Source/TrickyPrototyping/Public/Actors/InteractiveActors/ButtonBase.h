@@ -39,7 +39,6 @@ public:
 	virtual void Enable() override;
 
 protected:
-	virtual void StartAnimation() override;
 	virtual void FinishAnimation() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")

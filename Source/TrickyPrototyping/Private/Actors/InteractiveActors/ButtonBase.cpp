@@ -48,15 +48,6 @@ void AButtonBase::Enable()
 	ButtonTrigger->SetIsEnabled(true);
 }
 
-void AButtonBase::StartAnimation()
-{
-	Super::StartAnimation();
-
-	if (!bRequireInteraction) return;
-
-	ButtonTrigger->SetIsEnabled(false);
-}
-
 void AButtonBase::FinishAnimation()
 {
 	Super::FinishAnimation();
@@ -96,6 +87,8 @@ bool AButtonBase::ProcessInteraction_Implementation(APlayerController* PlayerCon
 {
 	if (!PlayerController || !bRequireInteraction) return false;
 
+	if (!GetIsReversible() && GetStateCurrent() == EInteractiveActorState::Transition) return false;
+	
 	StartAnimation();
 
 	return true;
