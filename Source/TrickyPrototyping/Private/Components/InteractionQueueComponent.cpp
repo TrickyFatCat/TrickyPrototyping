@@ -108,8 +108,10 @@ void UInteractionQueueComponent::SortQueueByLineOfSight(FHitResult& HitResult)
 
 	if (QueueContainsActor(HitResult.GetActor()))
 	{
-		InteractionQueue.RemoveAt(GetInteractionDataIndex(HitResult.GetActor()));
-		InteractionQueue.Insert(FInteractionData{HitResult.GetActor(), true}, 0);
+		const int32 Index = GetInteractionDataIndex(HitResult.GetActor());
+		const FInteractionData Data = InteractionQueue[Index];
+		InteractionQueue.RemoveAt(Index);
+		InteractionQueue.Insert(Data, 0);
 	}
 }
 
