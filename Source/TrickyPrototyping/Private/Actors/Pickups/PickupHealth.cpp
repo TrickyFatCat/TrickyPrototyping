@@ -13,6 +13,9 @@ bool APickupHealth::ActivatePickup_Implementation(AActor* TargetActor)
 
 	if (!DamageController) return false;
 
+	if (DamageController->GetNormalizedHealth() >= 1.f || DamageController->GetIsDead()) return false;
+
 	DamageController->IncreaseHealth(HealPower, bClampHealToMaxHealth);
+	
 	return true;
 }
