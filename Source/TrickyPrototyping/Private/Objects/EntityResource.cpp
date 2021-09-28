@@ -46,7 +46,7 @@ void UEntityResource::DecreaseValue(const float DeltaValue)
 
 void UEntityResource::IncreaseValue(const float DeltaValue, const bool bClampToMax)
 {
-	if (DeltaValue <= 0.f || GetValue() <= 0.f) return;
+	if (DeltaValue <= 0.f) return;
 
 	ResourceData.Value += DeltaValue;
 	OnValueChanged.Broadcast(ResourceData.Value, DeltaValue);
