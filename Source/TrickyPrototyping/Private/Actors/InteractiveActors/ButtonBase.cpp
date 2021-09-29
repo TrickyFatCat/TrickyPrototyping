@@ -86,9 +86,9 @@ void AButtonBase::FinishAnimation()
 
 bool AButtonBase::ProcessInteraction_Implementation(APlayerController* PlayerController)
 {
-	if (!PlayerController || !bRequireInteraction) return false;
+	if (!PlayerController || !bRequireInteraction || IsStateCurrent(EInteractiveActorState::Locked)) return false;
 
-	if (!GetIsReversible() && GetStateCurrent() == EInteractiveActorState::Transition) return false;
+	if (!GetIsReversible() && IsStateCurrent(EInteractiveActorState::Transition)) return false;
 	
 	StartAnimation();
 
