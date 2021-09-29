@@ -11,6 +11,8 @@ void UInteractionSphereComponent::OnBeginOverlap(UPrimitiveComponent* Overlapped
                                                 bool bFromSweep,
                                                 const FHitResult& SweepResult)
 {
+	Super::OnBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	
 	if (!IsValid(OtherActor) || !IsValid(GetOwner()) || bIsNormalTrigger) return;
 
 	UInteractionQueueComponent* InteractionQue = OtherActor->FindComponentByClass<UInteractionQueueComponent>();
@@ -25,6 +27,8 @@ void UInteractionSphereComponent::OnEndOverlap(UPrimitiveComponent* OverlappedCo
                                               UPrimitiveComponent* OtherComp,
                                               int32 OtherBodyIndex)
 {
+	Super::OnEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
+	
 	if (!IsValid(OtherActor) || !IsValid(GetOwner()) || bIsNormalTrigger) return;
 
 	UInteractionQueueComponent* InteractionQue = OtherActor->FindComponentByClass<UInteractionQueueComponent>();

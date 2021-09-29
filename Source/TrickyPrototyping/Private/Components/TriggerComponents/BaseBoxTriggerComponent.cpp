@@ -52,6 +52,7 @@ void UBaseBoxTriggerComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedCom
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
+	bIsActorInside = true;
 }
 
 void UBaseBoxTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -59,4 +60,5 @@ void UBaseBoxTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedCompo
 	UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
+	bIsActorInside = false;
 }

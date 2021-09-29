@@ -52,6 +52,7 @@ void UBaseSphereTriggerComponent::OnBeginOverlap(UPrimitiveComponent* Overlapped
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
+	bIsActorInside = true;
 }
 
 void UBaseSphereTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -59,5 +60,6 @@ void UBaseSphereTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedCo
 	UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
+	bIsActorInside = false;
 }
 

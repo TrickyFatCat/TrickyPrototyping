@@ -44,6 +44,7 @@ void UBaseCapsuleTriggerComponent::OnBeginOverlap(UPrimitiveComponent* Overlappe
                                                   bool bFromSweep,
                                                   const FHitResult& SweepResult)
 {
+	bIsActorInside = true;
 }
 
 void UBaseCapsuleTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -51,4 +52,5 @@ void UBaseCapsuleTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedC
                                                 UPrimitiveComponent* OtherComp,
                                                 int32 OtherBodyIndex)
 {
+	bIsActorInside = false;
 }
