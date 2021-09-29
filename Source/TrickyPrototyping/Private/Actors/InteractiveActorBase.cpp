@@ -317,16 +317,17 @@ void AInteractiveActorBase::Close()
 
 void AInteractiveActorBase::Lock()
 {
-	if (!IsStateCurrent(EInteractiveActorState::Closed)) return;
-
-	SetState(EInteractiveActorState::Locked);
+	if (IsStateCurrent(EInteractiveActorState::Closed) || IsStateCurrent(EInteractiveActorState::Opened))
+	{
+		SetState(EInteractiveActorState::Locked);
+	}
 }
 
 void AInteractiveActorBase::Unlock()
 {
 	if (!IsStateCurrent(EInteractiveActorState::Locked)) return;
 
-	SetState(EInteractiveActorState::Closed);
+	SetState(StatePrevious);
 }
 
 void AInteractiveActorBase::Enable()

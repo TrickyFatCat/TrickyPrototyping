@@ -135,11 +135,14 @@ protected:
 
 	// States
 public:
-	UFUNCTION(BlueprintCallable, Category="States")
+	UFUNCTION(BlueprintGetter, Category="States")
 	EInteractiveActorState GetStateCurrent() const { return StateCurrent; }
 
-	UFUNCTION(BlueprintCallable, Category="States")
+	UFUNCTION(BlueprintGetter, Category="States")
 	EInteractiveActorState GetStateTarget() const { return StateTarget; }
+
+	UFUNCTION(BlueprintGetter, Category="States")
+	EInteractiveActorState GetStatePrevious() const { return StatePrevious; }
 
 	UPROPERTY(BlueprintAssignable, Category="States")
 	FOnInteractiveActorChangedStateSignature OnActorChangedState;
@@ -153,12 +156,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category="States")
 	bool IsStateCurrent(const EInteractiveActorState DoorState) const { return StateCurrent == DoorState; }
 
+	UFUNCTION(BlueprintCallable, Category="States")
+	bool IsStatePrevious(const EInteractiveActorState DoorState) const { return StatePrevious == DoorState; }
+
+	UFUNCTION(BlueprintCallable, Category="States")
+	bool IsStateTarget(const EInteractiveActorState DoorState) const { return StateTarget == DoorState; }
+
 	UFUNCTION(BlueprintImplementableEvent, Category="States")
 	void OnStateChanged(const EInteractiveActorState NewState);
 
 	UFUNCTION(BlueprintImplementableEvent, Category="States")
 	void OnTransitionStarted();
-	
+
 	UFUNCTION(BlueprintImplementableEvent, Category="States")
 	void OnTransitionReversed();
 protected:
@@ -168,13 +177,13 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StateInitial = EInteractiveActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateCurrent, Category="States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StateCurrent = EInteractiveActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStatePrevious, Category="States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StatePrevious = EInteractiveActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateTarget, Category="States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StateTarget = EInteractiveActorState::Opened;
 
 	void SetTargetState();
