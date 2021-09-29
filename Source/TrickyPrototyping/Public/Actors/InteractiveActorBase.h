@@ -37,13 +37,13 @@ struct FInteractiveActorData
 
 	UPROPERTY(EditAnywhere)
 	bool bAnimateRotation = true;
-	
+
 	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateRotation"))
 	FRotator TargetRotation = FRotator::ZeroRotator;
 
 	UPROPERTY(EditAnywhere)
 	bool bAnimateScale = false;
-	
+
 	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateScale"))
 	FVector TargetScale = FVector(1.f, 1.f, 1.f);
 };
@@ -95,11 +95,10 @@ protected:
 	virtual void StartAnimation();
 	virtual void ReverseAnimation();
 	virtual void StopAnimation();
-	
+
 	UFUNCTION()
 	virtual void FinishAnimation();
 
-private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
@@ -111,7 +110,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
 	TArray<FInteractiveActorData> TargetTransforms;
-	
+
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationDuration,
 		BlueprintSetter=SetAnimationDuration,
@@ -146,10 +145,10 @@ public:
 	FOnInteractiveActorChangedStateSignature OnActorChangedState;
 
 	UPROPERTY(BlueprintAssignable, Category="States")
-	FOnTransitionStartedSignature OnTransitionStarted;
+	FOnTransitionStartedSignature OnActorTransitionStarted;
 
 	UPROPERTY(BlueprintAssignable, Category="States")
-	FOnTransitionReversedSignature OnTransitionReversed;
+	FOnTransitionReversedSignature OnActorTransitionReversed;
 
 	UFUNCTION(BlueprintCallable, Category="States")
 	bool IsStateCurrent(const EInteractiveActorState DoorState) const { return StateCurrent == DoorState; }
@@ -157,13 +156,18 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category="States")
 	void OnStateChanged(const EInteractiveActorState NewState);
 
+	UFUNCTION(BlueprintImplementableEvent, Category="States")
+	void OnTransitionStarted();
+	
+	UFUNCTION(BlueprintImplementableEvent, Category="States")
+	void OnTransitionReversed();
 protected:
 	UFUNCTION(BlueprintCallable, Category="States")
 	void SetState(const EInteractiveActorState NewState);
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StateInitial = EInteractiveActorState::Closed;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StateCurrent = EInteractiveActorState::Closed;
 
@@ -190,7 +194,7 @@ public:
 	virtual void Enable();
 	UFUNCTION(BlueprintCallable, Category="Actions")
 	virtual void Disable();
-	
+
 protected:
 private:
 };

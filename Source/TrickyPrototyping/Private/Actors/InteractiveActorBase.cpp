@@ -129,7 +129,8 @@ void AInteractiveActorBase::StartAnimation()
 {
 	SetTargetState();
 	SetState(EInteractiveActorState::Transition);
-	OnTransitionStarted.Broadcast(StateTarget);
+	OnActorTransitionStarted.Broadcast(StateTarget);
+	OnTransitionStarted();
 
 	switch (StateTarget)
 	{
@@ -176,7 +177,8 @@ void AInteractiveActorBase::ReverseAnimation()
 		break;
 	}
 
-	OnTransitionReversed.Broadcast(StateTarget);
+	OnActorTransitionReversed.Broadcast(StateTarget);
+	OnTransitionReversed();
 }
 
 void AInteractiveActorBase::StopAnimation()
