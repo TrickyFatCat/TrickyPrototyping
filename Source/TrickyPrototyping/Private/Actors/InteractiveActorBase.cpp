@@ -3,7 +3,7 @@
 #include "Actors/InteractiveActorBase.h"
 #include "Components/TimelineComponent.h"
 
-DECLARE_LOG_CATEGORY_CLASS(LogInteractiveObject, All, All);
+DECLARE_LOG_CATEGORY_CLASS(LogInteractiveActor, All, All);
 
 AInteractiveActorBase::AInteractiveActorBase()
 {
@@ -32,7 +32,7 @@ void AInteractiveActorBase::BeginPlay()
 	{
 		AnimationDuration = 0.f;
 	}
-	
+
 	if (AnimatedComponents.Num() > 0)
 	{
 		for (const auto Component : AnimatedComponents)
@@ -57,11 +57,16 @@ void AInteractiveActorBase::BeginPlay()
 		}
 	}
 
-	checkf(TargetTransforms.Num() == InitialTransforms.Num(),
-	       TEXT("Check Target Transforms in %s. Target transforms length %i | Initial transforms length %i"),
-	       *GetName(),
-	       TargetTransforms.Num(),
-	       InitialTransforms.Num());
+	if (TargetTransforms.Num() != InitialTransforms.Num())
+	{
+		UE_LOG(LogInteractiveActor,
+		       Error,
+		       TEXT("Check Target Transforms in %s. Target transforms length %i | Initial transforms length %i"),
+		       *GetName(),
+		       TargetTransforms.Num(),
+		       InitialTransforms.Num());
+		return;
+	}
 
 	switch (StateInitial)
 	{
@@ -127,6 +132,17 @@ void AInteractiveActorBase::FillAnimatedComponents(TArray<USceneComponent*> Comp
 
 void AInteractiveActorBase::StartAnimation()
 {
+	if (TargetTransforms.Num() != InitialTransforms.Num())
+	{
+		UE_LOG(LogInteractiveActor,
+		       Error,
+		       TEXT("Check Target Transforms in %s. Target transforms length %i | Initial transforms length %i"),
+		       *GetName(),
+		       TargetTransforms.Num(),
+		       InitialTransforms.Num());
+		return;
+	}
+	
 	SetTargetState();
 	SetState(EInteractiveActorState::Transition);
 	OnActorTransitionStarted.Broadcast(StateTarget);
