@@ -43,6 +43,7 @@ void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewStat
 	}
 	else
 	{
+		bShowMouseCursor = true;
 		SetInputMode(FInputModeUIOnly());
 		DisableInput(this);
 	}
