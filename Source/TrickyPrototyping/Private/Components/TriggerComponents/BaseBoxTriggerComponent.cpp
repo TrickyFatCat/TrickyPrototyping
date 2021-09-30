@@ -12,8 +12,6 @@ void UBaseBoxTriggerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetGenerateOverlapEvents(true);
-	SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	SetIsEnabled(bIsEnabled);
 
 	OnComponentBeginOverlap.AddDynamic(this, &UBaseBoxTriggerComponent::OnBeginOverlap);

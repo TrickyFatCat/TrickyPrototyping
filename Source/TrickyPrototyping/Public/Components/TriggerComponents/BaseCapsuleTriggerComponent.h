@@ -33,7 +33,18 @@ public:
 
 	UFUNCTION(BlueprintGetter, Category="Trigger")
 	bool GetIsActorInside() const { return bIsActorInside; }
+	
+private:
+	UPROPERTY(EditAnywhere, Category="Trigger", meta=(AllowPrivateAccess="true"))
+	bool bIsEnabled = true;
 
+	virtual void EnableTrigger();
+	virtual void DisableTrigger();
+
+	UPROPERTY(BlueprintGetter= GetIsActorInside, Category="Trigger")
+	bool bIsActorInside = false;
+	
+protected:
 	UFUNCTION()
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	                            AActor* OtherActor,
@@ -47,14 +58,4 @@ public:
 	                          AActor* OtherActor,
 	                          UPrimitiveComponent* OtherComp,
 	                          int32 OtherBodyIndex);
-
-private:
-	UPROPERTY(EditAnywhere, Category="Trigger", meta=(AllowPrivateAccess="true"))
-	bool bIsEnabled = true;
-
-	virtual void EnableTrigger();
-	virtual void DisableTrigger();
-
-	UPROPERTY(BlueprintGetter= GetIsActorInside, Category="Trigger")
-	bool bIsActorInside = false;
 };
