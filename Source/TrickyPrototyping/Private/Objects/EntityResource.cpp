@@ -2,6 +2,7 @@
 
 
 #include "Objects/EntityResource.h"
+#include "TimerManager.h"
 
 void UEntityResource::SetResourceData(const FResourceData& NewResourceData)
 {

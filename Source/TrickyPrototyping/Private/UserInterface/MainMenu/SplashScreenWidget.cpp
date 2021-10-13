@@ -5,6 +5,7 @@
 
 #include "Components/Image.h"
 #include "UserInterface/TransitionScreenWidget.h"
+#include "TimerManager.h"
 
 void USplashScreenWidget::NativeOnInitialized()
 {

@@ -4,6 +4,7 @@
 #include "Core/Session/SessionGameMode.h"
 
 #include "Core/Session/SessionHUD.h"
+#include "TimerManager.h"
 
 ASessionGameMode::ASessionGameMode()
 {
