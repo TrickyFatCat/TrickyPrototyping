@@ -10,6 +10,9 @@ UBaseCapsuleTriggerComponent::UBaseCapsuleTriggerComponent()
 void UBaseCapsuleTriggerComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	OnComponentBeginOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnBeginOverlap);
+	OnComponentEndOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnEndOverlap);
 }
 
 void UBaseCapsuleTriggerComponent::TickComponent(float DeltaTime,
@@ -17,9 +20,6 @@ void UBaseCapsuleTriggerComponent::TickComponent(float DeltaTime,
                                                  FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
-
-	OnComponentBeginOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnBeginOverlap);
-	OnComponentEndOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnEndOverlap);
 }
 
 void UBaseCapsuleTriggerComponent::SetIsEnabled(const bool bEnabled)
