@@ -36,7 +36,7 @@ struct FInteractiveActorData
 	FVector LocationOffset = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere)
-	bool bAnimateRotation = true;
+	bool bAnimateRotation = false;
 
 	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateRotation"))
 	FRotator RotationOffset = FRotator::ZeroRotator;
@@ -45,7 +45,7 @@ struct FInteractiveActorData
 	bool bAnimateScale = false;
 
 	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateScale"))
-	FVector ScaleOffset = FVector(1.f, 1.f, 1.f);
+	FVector ScaleOffset = FVector::ZeroVector;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractiveActorChangedStateSignature, EInteractiveActorState, NewState);
@@ -70,58 +70,60 @@ public:
 
 	// Animation
 public:
-	UFUNCTION(BlueprintGetter, Category="Animation")
+	UFUNCTION(BlueprintGetter, Category="InteractiveActor|Animation")
 	float GetAnimationDuration() const { return AnimationDuration; }
 
-	UFUNCTION(BlueprintSetter, Category="Animation")
+	UFUNCTION(BlueprintSetter, Category="InteractiveActor|Animation")
 	void SetAnimationDuration(const float Value);
 
-	UFUNCTION(BlueprintGetter, Category="Animation")
+	UFUNCTION(BlueprintGetter, Category="InteractiveActor|Animation")
 	bool GetIsReversible() const { return bIsReversible; }
 
-	UFUNCTION(BlueprintSetter, Category="Animation")
+	UFUNCTION(BlueprintSetter, Category="InteractiveActor|Animation")
 	void SetIsReversible(const bool Value) { bIsReversible = Value; }
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category="Components")
 	UTimelineComponent* AnimationTimeline = nullptr;
 
-	UFUNCTION(BlueprintCallable, Category="Animation")
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|Animation")
 	void AddAnimatedComponent(USceneComponent* NewComponent);
 
-	UFUNCTION(BlueprintCallable, Category="Animation")
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|Animation")
 	void FillAnimatedComponents(TArray<USceneComponent*> Components);
 
 	virtual void StartAnimation();
+	
 	virtual void ReverseAnimation();
+	
 	virtual void StopAnimation();
 
 	UFUNCTION()
 	virtual void FinishAnimation();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractiveActor|Animation", meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="InteractiveActor|Animation", meta=(AllowPrivateAccess="true"))
 	TArray<USceneComponent*> AnimatedComponents;
 
 	UPROPERTY()
 	TArray<FTransform> InitialTransforms;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
-	TArray<FInteractiveActorData> TargetTransforms;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractiveActor|Animation", meta=(AllowPrivateAccess="true"))
+	TArray<FInteractiveActorData> TransformOffsets;
 
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationDuration,
 		BlueprintSetter=SetAnimationDuration,
-		Category="Animation",
+		Category="InteractiveActor|Animation",
 		meta=(AllowPrivateAccess="true"))
 	float AnimationDuration = 1.f;
 
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetIsReversible,
 		BlueprintSetter=SetIsReversible,
-		Category="Animation",
+		Category="InteractiveActor|Animation",
 		meta=(AllowPrivateAccess="true"))
 	bool bIsReversible = false;
 
@@ -135,73 +137,79 @@ protected:
 
 	// States
 public:
-	UFUNCTION(BlueprintGetter, Category="States")
+	UFUNCTION(BlueprintGetter, Category="InteractiveActor|States")
 	EInteractiveActorState GetStateCurrent() const { return StateCurrent; }
 
-	UFUNCTION(BlueprintGetter, Category="States")
+	UFUNCTION(BlueprintGetter, Category="InteractiveActor|States")
 	EInteractiveActorState GetStateTarget() const { return StateTarget; }
 
-	UFUNCTION(BlueprintGetter, Category="States")
+	UFUNCTION(BlueprintGetter, Category="InteractiveActor|States")
 	EInteractiveActorState GetStatePrevious() const { return StatePrevious; }
 
-	UPROPERTY(BlueprintAssignable, Category="States")
+	UPROPERTY(BlueprintAssignable, Category="InteractiveActor|States")
 	FOnInteractiveActorChangedStateSignature OnActorChangedState;
 
-	UPROPERTY(BlueprintAssignable, Category="States")
+	UPROPERTY(BlueprintAssignable, Category="InteractiveActor|States")
 	FOnTransitionStartedSignature OnActorTransitionStarted;
 
-	UPROPERTY(BlueprintAssignable, Category="States")
+	UPROPERTY(BlueprintAssignable, Category="InteractiveActor|States")
 	FOnTransitionReversedSignature OnActorTransitionReversed;
 
-	UFUNCTION(BlueprintCallable, Category="States")
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|States")
 	bool IsStateCurrent(const EInteractiveActorState DoorState) const { return StateCurrent == DoorState; }
 
-	UFUNCTION(BlueprintCallable, Category="States")
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|States")
 	bool IsStatePrevious(const EInteractiveActorState DoorState) const { return StatePrevious == DoorState; }
 
-	UFUNCTION(BlueprintCallable, Category="States")
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|States")
 	bool IsStateTarget(const EInteractiveActorState DoorState) const { return StateTarget == DoorState; }
 
-	UFUNCTION(BlueprintImplementableEvent, Category="States")
+	UFUNCTION(BlueprintImplementableEvent, Category="InteractiveActor|States")
 	void OnStateChanged(const EInteractiveActorState NewState);
 
-	UFUNCTION(BlueprintImplementableEvent, Category="States")
+	UFUNCTION(BlueprintImplementableEvent, Category="InteractiveActor|States")
 	void OnTransitionStarted();
 
-	UFUNCTION(BlueprintImplementableEvent, Category="States")
+	UFUNCTION(BlueprintImplementableEvent, Category="InteractiveActor|States")
 	void OnTransitionReversed();
 protected:
-	UFUNCTION(BlueprintCallable, Category="States")
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|States")
 	void SetState(const EInteractiveActorState NewState);
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="InteractiveActor|States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StateInitial = EInteractiveActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateCurrent, Category="States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateCurrent, Category="InteractiveActor|States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StateCurrent = EInteractiveActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStatePrevious, Category="States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStatePrevious, Category="InteractiveActor|States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StatePrevious = EInteractiveActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateTarget, Category="States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateTarget, Category="InteractiveActor|States", meta=(AllowPrivateAccess="true"))
 	EInteractiveActorState StateTarget = EInteractiveActorState::Opened;
 
 	void SetTargetState();
+	
 	bool CanStartAnimation() const;
 
 	// Actions
 public:
-	UFUNCTION(BlueprintCallable, Category="Actions")
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|Actions")
 	virtual void Open();
-	UFUNCTION(BlueprintCallable, Category="Actions")
+	
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|Actions")
 	virtual void Close();
-	UFUNCTION(BlueprintCallable, Category="Actions")
+	
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|Actions")
 	virtual void Lock();
-	UFUNCTION(BlueprintCallable, Category="Actions")
+	
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|Actions")
 	virtual void Unlock();
-	UFUNCTION(BlueprintCallable, Category="Actions")
+	
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|Actions")
 	virtual void Enable();
-	UFUNCTION(BlueprintCallable, Category="Actions")
+	
+	UFUNCTION(BlueprintCallable, Category="InteractiveActor|Actions")
 	virtual void Disable();
 
 protected:

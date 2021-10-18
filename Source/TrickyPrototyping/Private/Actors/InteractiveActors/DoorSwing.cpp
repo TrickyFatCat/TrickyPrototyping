@@ -45,16 +45,16 @@ void ADoorSwing::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 
 void ADoorSwing::CalculateTargetTransform(const AActor* Actor)
 {
-	if (TargetTransforms.Num() == 0 || !Actor) return;
+	if (TransformOffsets.Num() == 0 || !Actor) return;
 
-	for (int32 i = 0; i < TargetTransforms.Num(); ++i)
+	for (int32 i = 0; i < TransformOffsets.Num(); ++i)
 	{
 		PrevSwingDirection = SwingDirection;
 		const float DotProduct = FVector::DotProduct(GetActorForwardVector(),
 													 (GetActorLocation() - Actor->GetActorLocation()).GetSafeNormal());
 		SwingDirection = FMath::Sign(DotProduct);
 
-		const float CurrentYaw = TargetTransforms[i].RotationOffset.Yaw;
+		const float CurrentYaw = TransformOffsets[i].RotationOffset.Yaw;
 
 		if (PrevSwingDirection != SwingDirection)
 		{
@@ -66,11 +66,11 @@ void ADoorSwing::CalculateTargetTransform(const AActor* Actor)
 
 		if (SwingDirection < 0.f && CurrentYawSign < 0.f)
 		{
-			TargetTransforms[i].RotationOffset.Yaw *= SwingDirection;
+			TransformOffsets[i].RotationOffset.Yaw *= SwingDirection;
 		}
 		else if (SwingDirection > 0.f && CurrentYawSign > 0.f)
 		{
-			TargetTransforms[i].RotationOffset.Yaw *= -SwingDirection;
+			TransformOffsets[i].RotationOffset.Yaw *= -SwingDirection;
 		}
 	}
 }

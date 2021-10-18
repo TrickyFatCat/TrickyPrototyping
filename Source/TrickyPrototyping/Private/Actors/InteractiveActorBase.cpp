@@ -43,27 +43,13 @@ void AInteractiveActorBase::BeginPlay()
 		}
 	}
 
-	if (TargetTransforms.Num() > 0)
-	{
-		for (int32 i = 0; i < TargetTransforms.Num(); ++i)
-		{
-			if (!TargetTransforms[i].bAnimateScale) continue;
-
-			FVector DeltaScale = InitialTransforms[i].GetScale3D() - TargetTransforms[i].ScaleOffset;
-			DeltaScale.X = FMath::Abs(DeltaScale.X);
-			DeltaScale.Y = FMath::Abs(DeltaScale.Y);
-			DeltaScale.Z = FMath::Abs(DeltaScale.Z);
-			TargetTransforms[i].ScaleOffset = DeltaScale;
-		}
-	}
-
-	if (TargetTransforms.Num() != InitialTransforms.Num())
+	if (TransformOffsets.Num() != InitialTransforms.Num())
 	{
 		UE_LOG(LogInteractiveActor,
 		       Error,
 		       TEXT("Check Target Transforms in %s. Target transforms length %i | Initial transforms length %i"),
 		       *GetName(),
-		       TargetTransforms.Num(),
+		       TransformOffsets.Num(),
 		       InitialTransforms.Num());
 		return;
 	}
@@ -132,17 +118,17 @@ void AInteractiveActorBase::FillAnimatedComponents(TArray<USceneComponent*> Comp
 
 void AInteractiveActorBase::StartAnimation()
 {
-	if (TargetTransforms.Num() != InitialTransforms.Num())
+	if (TransformOffsets.Num() != InitialTransforms.Num())
 	{
 		UE_LOG(LogInteractiveActor,
 		       Error,
 		       TEXT("Check Target Transforms in %s. Target transforms length %i | Initial transforms length %i"),
 		       *GetName(),
-		       TargetTransforms.Num(),
+		       TransformOffsets.Num(),
 		       InitialTransforms.Num());
 		return;
 	}
-	
+
 	SetTargetState();
 	SetState(EInteractiveActorState::Transition);
 	OnActorTransitionStarted.Broadcast(StateTarget);
@@ -220,16 +206,16 @@ void AInteractiveActorBase::AnimateTransform(const float AnimationProgress)
 	{
 		FTransform NewTransform = InitialTransforms[i];
 		FTransform TargetTransform;
-		TargetTransform.SetLocation(TargetTransforms[i].LocationOffset);
-		TargetTransform.SetRotation(TargetTransforms[i].RotationOffset.Quaternion());
-		TargetTransform.SetScale3D(TargetTransforms[i].ScaleOffset);
+		TargetTransform.SetLocation(TransformOffsets[i].LocationOffset);
+		TargetTransform.SetRotation(TransformOffsets[i].RotationOffset.Quaternion());
+		TargetTransform.SetScale3D(TransformOffsets[i].ScaleOffset);
 
-		if (TargetTransforms[i].bAnimateLocation)
+		if (TransformOffsets[i].bAnimateLocation)
 		{
 			NewTransform.SetLocation(NewTransform.GetLocation() + TargetTransform.GetLocation() * AnimationProgress);
 		}
 
-		if (TargetTransforms[i].bAnimateRotation)
+		if (TransformOffsets[i].bAnimateRotation)
 		{
 			FQuat NewRotation = FRotator(
 					NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() * AnimationProgress).
@@ -237,7 +223,7 @@ void AInteractiveActorBase::AnimateTransform(const float AnimationProgress)
 			NewTransform.SetRotation(NewRotation);
 		}
 
-		if (TargetTransforms[i].bAnimateScale)
+		if (TransformOffsets[i].bAnimateScale)
 		{
 			NewTransform.SetScale3D(NewTransform.GetScale3D() + TargetTransform.GetScale3D() * AnimationProgress);
 		}
@@ -278,7 +264,7 @@ void AInteractiveActorBase::Open()
 	if (IsStateCurrent(EInteractiveActorState::Opened) || !CanStartAnimation()) return;
 
 	if (IsStateCurrent(EInteractiveActorState::Locked) || IsStateCurrent(EInteractiveActorState::Disabled)) return;
-	
+
 	if (CanBeReversed() && StateTarget == EInteractiveActorState::Closed)
 	{
 		ReverseAnimation();
@@ -301,7 +287,7 @@ void AInteractiveActorBase::Close()
 	if (IsStateCurrent(EInteractiveActorState::Closed) || !CanStartAnimation()) return;
 
 	if (IsStateCurrent(EInteractiveActorState::Locked) || IsStateCurrent(EInteractiveActorState::Disabled)) return;
-	
+
 	if (CanBeReversed() && StateTarget == EInteractiveActorState::Opened)
 	{
 		ReverseAnimation();
