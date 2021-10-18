@@ -33,19 +33,19 @@ struct FInteractiveActorData
 	bool bAnimateLocation = true;
 
 	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateLocation"))
-	FVector TargetLocation = FVector::ZeroVector;
+	FVector LocationOffset = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere)
 	bool bAnimateRotation = true;
 
 	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateRotation"))
-	FRotator TargetRotation = FRotator::ZeroRotator;
+	FRotator RotationOffset = FRotator::ZeroRotator;
 
 	UPROPERTY(EditAnywhere)
 	bool bAnimateScale = false;
 
 	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateScale"))
-	FVector TargetScale = FVector(1.f, 1.f, 1.f);
+	FVector ScaleOffset = FVector(1.f, 1.f, 1.f);
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractiveActorChangedStateSignature, EInteractiveActorState, NewState);

@@ -49,11 +49,11 @@ void AInteractiveActorBase::BeginPlay()
 		{
 			if (!TargetTransforms[i].bAnimateScale) continue;
 
-			FVector DeltaScale = InitialTransforms[i].GetScale3D() - TargetTransforms[i].TargetScale;
+			FVector DeltaScale = InitialTransforms[i].GetScale3D() - TargetTransforms[i].ScaleOffset;
 			DeltaScale.X = FMath::Abs(DeltaScale.X);
 			DeltaScale.Y = FMath::Abs(DeltaScale.Y);
 			DeltaScale.Z = FMath::Abs(DeltaScale.Z);
-			TargetTransforms[i].TargetScale = DeltaScale;
+			TargetTransforms[i].ScaleOffset = DeltaScale;
 		}
 	}
 
@@ -220,9 +220,9 @@ void AInteractiveActorBase::AnimateTransform(const float AnimationProgress)
 	{
 		FTransform NewTransform = InitialTransforms[i];
 		FTransform TargetTransform;
-		TargetTransform.SetLocation(TargetTransforms[i].TargetLocation);
-		TargetTransform.SetRotation(TargetTransforms[i].TargetRotation.Quaternion());
-		TargetTransform.SetScale3D(TargetTransforms[i].TargetScale);
+		TargetTransform.SetLocation(TargetTransforms[i].LocationOffset);
+		TargetTransform.SetRotation(TargetTransforms[i].RotationOffset.Quaternion());
+		TargetTransform.SetScale3D(TargetTransforms[i].ScaleOffset);
 
 		if (TargetTransforms[i].bAnimateLocation)
 		{
