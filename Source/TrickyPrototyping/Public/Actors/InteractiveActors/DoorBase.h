@@ -61,7 +61,7 @@ private:
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
 		Category="Door",
-		meta=(AllowPrivateAccess="true", EditCondition="DoorType=EDoorType::Interactive"))
+		meta=(AllowPrivateAccess="true", EditCondition="DoorType == EDoorType::Interactive"))
 	bool bRequireLineOfSight = false;
 
 	void SwitchDoorType() const;

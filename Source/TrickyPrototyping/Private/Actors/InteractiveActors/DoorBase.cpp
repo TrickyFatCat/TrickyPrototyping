@@ -81,7 +81,7 @@ void ADoorBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                       bool bFromSweep,
                                       const FHitResult& SweepResult)
 {
-	if (AutoCloseDelay > 0.f && GetStateCurrent() == EInteractiveActorState::Opened)
+	if (AutoCloseDelay > 0.f && GetStateCurrent() == EInteractiveActorState::Opened && !GetIsReversible())
 	{
 		StopAutoClose();
 		return;
@@ -90,7 +90,7 @@ void ADoorBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	switch (DoorType)
 	{
 	case EDoorType::Auto:
-		if (GetStateCurrent() != EInteractiveActorState::Closed) return;
+		if (GetStateCurrent() != EInteractiveActorState::Closed && !GetIsReversible()) return;
 		
 		Open();
 		break;
@@ -105,7 +105,7 @@ void ADoorBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
                                     UPrimitiveComponent* OtherComp,
                                     int32 OtherBodyIndex)
 {
-	if (AutoCloseDelay > 0.f && IsStateCurrent(EInteractiveActorState::Opened))
+	if (AutoCloseDelay > 0.f && IsStateCurrent(EInteractiveActorState::Opened) && !GetIsReversible())
 	{
 		StartAutoClose();
 		return;
@@ -114,7 +114,7 @@ void ADoorBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 	switch (DoorType)
 	{
 	case EDoorType::Auto:
-		if (GetStateCurrent() != EInteractiveActorState::Opened) return;
+		if (GetStateCurrent() != EInteractiveActorState::Opened && !GetIsReversible()) return;
 		
 		Close();
 		break;
@@ -137,7 +137,9 @@ bool ADoorBase::ProcessInteraction_Implementation(APlayerController* PlayerContr
 
 void ADoorBase::StartAutoClose()
 {
-	GetWorldTimerManager().SetTimer(AutoCloseDelayHandle, this, &ADoorBase::ProcessAutoClose, AutoCloseDelay, false);
+	if (GetIsReversible()) return;
+	
+	GetWorldTimerManager().SetTimer(AutoCloseDelayHandle, this, &ADoorBase::Close, AutoCloseDelay, false);
 }
 
 void ADoorBase::StopAutoClose()
