@@ -39,7 +39,7 @@ void AInteractiveActorBase::BeginPlay()
 		{
 			if (!Component) continue;
 
-			InitialTransforms.Add(Component->GetRelativeTransform());
+			InitialTransforms.Add(Component->GetComponentTransform());
 		}
 	}
 
@@ -228,7 +228,7 @@ void AInteractiveActorBase::AnimateTransform(const float AnimationProgress)
 			NewTransform.SetScale3D(NewTransform.GetScale3D() + TargetTransform.GetScale3D() * AnimationProgress);
 		}
 
-		AnimatedComponents[i]->SetRelativeTransform(NewTransform);
+		AnimatedComponents[i]->SetWorldTransform(NewTransform);
 	}
 }
 
