@@ -1,4 +1,4 @@
-// Created by Artyom Volkov during the UE4 course
+// Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 #pragma once
 
