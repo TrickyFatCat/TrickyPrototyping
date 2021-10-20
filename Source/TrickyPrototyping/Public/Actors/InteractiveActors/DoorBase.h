@@ -85,6 +85,9 @@ protected:
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess="true"))
+	USceneComponent* DoorRoot = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess="true"))
 	UInteractionBoxComponent* DoorTrigger = nullptr;
 
 	// Interaction

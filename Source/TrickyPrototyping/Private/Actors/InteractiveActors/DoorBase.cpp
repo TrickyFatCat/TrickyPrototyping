@@ -8,8 +8,11 @@
 
 ADoorBase::ADoorBase()
 {
+	DoorRoot = CreateDefaultSubobject<USceneComponent>("DoorRoot");
+	SetRootComponent(DoorRoot);
+	
 	DoorTrigger = CreateDefaultSubobject<UInteractionBoxComponent>("DoorTrigger");
-	SetRootComponent(DoorTrigger);
+	DoorTrigger->SetupAttachment(GetRootComponent());
 }
 
 void ADoorBase::BeginPlay()
