@@ -10,11 +10,11 @@ ADoorSwing::ADoorSwing()
 void ADoorSwing::BeginPlay()
 {
 	Super::BeginPlay();
+	DefaultOffsets = TransformOffsets;
 }
 
 void ADoorSwing::Close()
 {
-	SwingDirection *= -1;
 	Super::Close();
 }
 
@@ -33,42 +33,48 @@ void ADoorSwing::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                        bool bFromSweep,
                                        const FHitResult& SweepResult)
 {
-	if (GetDoorType() == EDoorType::Interactive)
-	{
-		CalculateTargetTransform(OtherActor);
-	}
+	CalculateTargetTransform(OtherActor);
 
 	Super::OnTriggerBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
 
+void ADoorSwing::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
+                                     AActor* OtherActor,
+                                     UPrimitiveComponent* OtherComp,
+                                     int32 OtherBodyIndex)
+{
+	CalculateTargetTransform(OtherActor);
+	Super::OnTriggerEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
+}
+
 void ADoorSwing::CalculateTargetTransform(const AActor* Actor)
 {
-	if (TransformOffsets.Num() == 0 || !Actor) return;
+	if (TransformOffsets.Num() == 0 || !Actor || GetDoorType() == EDoorType::Manual) return;
+
+	PrevSwingDirection = SwingDirection;
+
+	const float DotProduct = FVector::DotProduct(GetActorForwardVector(),
+	                                             Actor->GetActorForwardVector());
+	SwingDirection = FMath::Sign(DotProduct);
+
+	if (PrevSwingDirection != SwingDirection)
+	{
+		PrevSwingDirection = SwingDirection;
+		return;
+	}
+
+	if (SwingDirection > 0)
+	{
+		TransformOffsets = DefaultOffsets;
+		return;
+	}
 
 	for (int32 i = 0; i < TransformOffsets.Num(); ++i)
 	{
-		PrevSwingDirection = SwingDirection;
-		const float DotProduct = FVector::DotProduct(GetActorForwardVector(),
-													 (GetActorLocation() - Actor->GetActorLocation()).GetSafeNormal());
-		SwingDirection = FMath::Sign(DotProduct);
+		const float OffsetYawSign = FMath::Sign(TransformOffsets[i].RotationOffset.Yaw);
 
-		const float CurrentYaw = TransformOffsets[i].RotationOffset.Yaw;
+		if (OffsetYawSign == -FMath::Sign(DefaultOffsets[i].RotationOffset.Yaw)) continue;
 
-		if (PrevSwingDirection != SwingDirection)
-		{
-			PrevSwingDirection = SwingDirection;;
-			return;
-		}
-
-		const float CurrentYawSign = FMath::Sign(CurrentYaw);
-
-		if (SwingDirection < 0.f && CurrentYawSign < 0.f)
-		{
-			TransformOffsets[i].RotationOffset.Yaw *= SwingDirection;
-		}
-		else if (SwingDirection > 0.f && CurrentYawSign > 0.f)
-		{
-			TransformOffsets[i].RotationOffset.Yaw *= -SwingDirection;
-		}
+		TransformOffsets[i].RotationOffset.Yaw *= -1;
 	}
 }

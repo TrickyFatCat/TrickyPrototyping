@@ -21,10 +21,12 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Close() override;
-	
+
 	float SwingDirection = 1.f;
 
 	float PrevSwingDirection = 1.f;
+
+	TArray<FInteractiveActorData> DefaultOffsets;
 
 	virtual bool ProcessInteraction_Implementation(AActor* TargetActor) override;
 
@@ -35,6 +37,10 @@ protected:
 	                                   bool bFromSweep,
 	                                   const FHitResult& SweepResult) override;
 
+	virtual void OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
+	                                 AActor* OtherActor,
+	                                 UPrimitiveComponent* OtherComp,
+	                                 int32 OtherBodyIndex) override;
 
 	void CalculateTargetTransform(const AActor* Actor);
 };
