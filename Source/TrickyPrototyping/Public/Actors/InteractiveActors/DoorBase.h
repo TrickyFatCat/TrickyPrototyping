@@ -8,6 +8,7 @@
 #include "DoorBase.generated.h"
 
 class UInteractionBoxComponent;
+class UKeyType;
 
 /**
  * A base door class
@@ -88,7 +89,7 @@ private:
 
 	// Interaction
 protected:
-	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
+	virtual bool ProcessInteraction_Implementation(AActor* TargetActor) override;
 
 	// Auto close
 protected:
@@ -103,4 +104,15 @@ protected:
 	virtual void StopAutoClose();
 	
 	virtual void ProcessAutoClose();
+
+	// Key
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Door|Keys", meta=(AllowPrivateAccess="true"))
+	bool bRequireKey = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Door|Keys", meta=(AllowPrivateAccess="true", EditCondition="bRequireKey"))
+	TSubclassOf<UKeyType> DoorKey = nullptr;
+
+	bool HasKey(const AActor* Actor) const;
 };

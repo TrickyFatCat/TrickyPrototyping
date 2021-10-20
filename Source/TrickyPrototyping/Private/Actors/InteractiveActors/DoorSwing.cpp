@@ -18,14 +18,12 @@ void ADoorSwing::Close()
 	Super::Close();
 }
 
-bool ADoorSwing::ProcessInteraction_Implementation(APlayerController* PlayerController)
+bool ADoorSwing::ProcessInteraction_Implementation(AActor* TargetActor)
 {
-	const AActor* PlayerActor = Cast<AActor>(PlayerController->GetPawn());
+	if (!TargetActor) return false;
 
-	if (!PlayerActor) return false;
-
-	CalculateTargetTransform(PlayerActor);
-	return Super::ProcessInteraction_Implementation(PlayerController);
+	CalculateTargetTransform(TargetActor);
+	return Super::ProcessInteraction_Implementation(TargetActor);
 }
 
 void ADoorSwing::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,

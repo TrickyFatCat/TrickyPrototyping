@@ -2,6 +2,8 @@
 
 
 #include "Actors/InteractiveActors/DoorBase.h"
+
+#include "Components/KeyRingComponent.h"
 #include "Components/TriggerComponents/InteractionBoxComponent.h"
 
 ADoorBase::ADoorBase()
@@ -90,6 +92,8 @@ void ADoorBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	switch (DoorType)
 	{
 	case EDoorType::Auto:
+		if (bRequireKey && !HasKey(OtherActor)) return;
+		
 		if (GetStateCurrent() != EInteractiveActorState::Closed && !GetIsReversible()) return;
 		
 		Open();
@@ -124,14 +128,41 @@ void ADoorBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 	}
 }
 
-bool ADoorBase::ProcessInteraction_Implementation(APlayerController* PlayerController)
+bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 {
-	if (!PlayerController || DoorType != EDoorType::Interactive) return false;
+	if (!TargetActor || DoorType != EDoorType::Interactive) return false;
+	
+	if (bRequireKey && !HasKey(TargetActor)) return false;
 
-	if (!GetIsReversible() && GetStateCurrent() == EInteractiveActorState::Transition) return false;
+	if (GetIsReversible() && GetStateCurrent() == EInteractiveActorState::Transition)
+	{
+		switch (GetStateTarget())
+		{
+		case EInteractiveActorState::Opened:
+			Close();
+			break;
+
+		case EInteractiveActorState::Closed:
+			Open();
+			break;
+		}
+		
+		return true;
+	}
 
 	StopAutoClose();
-	StartAnimation();
+	
+	switch (GetStateCurrent())
+	{
+	case EInteractiveActorState::Opened:
+		Close();
+		break;
+
+	case EInteractiveActorState::Closed:
+		Open();
+		break;
+	}
+	
 	return true;
 }
 
@@ -153,4 +184,15 @@ void ADoorBase::StopAutoClose()
 void ADoorBase::ProcessAutoClose()
 {
 	Close();
+}
+
+bool ADoorBase::HasKey(const AActor* Actor) const
+{
+	if (!IsValid(Actor)) return false;
+
+	UKeyRingComponent* KeyRingComponent = Actor->FindComponentByClass<UKeyRingComponent>();
+
+	if (!KeyRingComponent) return false;
+
+	return KeyRingComponent->HasKey(DoorKey);
 }

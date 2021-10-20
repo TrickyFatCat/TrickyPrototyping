@@ -26,7 +26,7 @@ protected:
 
 	float PrevSwingDirection = 1.f;
 
-	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
+	virtual bool ProcessInteraction_Implementation(AActor* TargetActor) override;
 
 	virtual void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	                                   AActor* OtherActor,

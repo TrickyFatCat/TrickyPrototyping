@@ -52,11 +52,7 @@ bool UInteractionQueueComponent::Interact()
 
 	if (InteractionQueue[0].bRequireLineOfSight && TargetActor != ActorInSight) return false;
 
-	APlayerController* PlayerController = Cast<APlayerController>(GetOwner()->GetInstigatorController());
-
-	if (!PlayerController) return false;
-
-	return IInteractionInterface::Execute_ProcessInteraction(TargetActor, PlayerController);
+	return IInteractionInterface::Execute_ProcessInteraction(TargetActor, GetOwner());
 }
 
 AActor* UInteractionQueueComponent::GetFirstActorInQueue() const

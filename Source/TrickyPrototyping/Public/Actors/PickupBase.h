@@ -49,7 +49,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Pickup", meta=(AllowPrivateAccess="true"))
 	USoundCue* PickupSound = nullptr;
 	
-	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
+	virtual bool ProcessInteraction_Implementation(AActor* TargetActor) override;
 
 	UFUNCTION()
 	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,

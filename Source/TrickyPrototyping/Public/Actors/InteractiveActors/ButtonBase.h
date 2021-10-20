@@ -82,7 +82,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Button", meta=(AllowPrivateAccess="true"))
 	bool bPressOnce = false;
 
-	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
+	virtual bool ProcessInteraction_Implementation(AActor* TargetActor) override;
 
 	UFUNCTION()
 	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,

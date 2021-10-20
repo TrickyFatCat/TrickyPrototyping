@@ -85,14 +85,37 @@ void AButtonBase::FinishAnimation()
 	}
 }
 
-bool AButtonBase::ProcessInteraction_Implementation(APlayerController* PlayerController)
+bool AButtonBase::ProcessInteraction_Implementation(AActor* TargetActor)
 {
-	if (!PlayerController || !bRequireInteraction || IsStateCurrent(EInteractiveActorState::Locked)) return false;
+	if (!TargetActor || !bRequireInteraction || IsStateCurrent(EInteractiveActorState::Locked)) return false;
 
-	if (!GetIsReversible() && IsStateCurrent(EInteractiveActorState::Transition)) return false;
+	if (GetIsReversible() && GetStateCurrent() == EInteractiveActorState::Transition)
+	{
+		switch (GetStateTarget())
+		{
+		case EInteractiveActorState::Opened:
+			Close();
+			break;
+
+		case EInteractiveActorState::Closed:
+			Open();
+			break;
+		}
+		
+		return true;
+	}
+
+	switch (GetStateCurrent())
+	{
+	case EInteractiveActorState::Opened:
+		Close();
+		break;
+
+	case EInteractiveActorState::Closed:
+		Open();
+		break;
+	}
 	
-	StartAnimation();
-
 	return true;
 }
 
@@ -145,7 +168,7 @@ void AButtonBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (!GetIsReversible()) return;
 
 		TimerManager.SetTimer(EndOverlapDelayHandle, this, &AButtonBase::ProcessTriggerOverlap, EndOverlapDelay, false);
-		
+
 		return;
 	}
 
