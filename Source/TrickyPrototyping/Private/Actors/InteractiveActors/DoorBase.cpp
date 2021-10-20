@@ -181,11 +181,6 @@ void ADoorBase::StopAutoClose()
 	}
 }
 
-void ADoorBase::ProcessAutoClose()
-{
-	Close();
-}
-
 bool ADoorBase::HasKey(const AActor* Actor) const
 {
 	if (!IsValid(Actor)) return false;

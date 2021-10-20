@@ -103,10 +103,7 @@ protected:
 	
 	virtual void StopAutoClose();
 	
-	virtual void ProcessAutoClose();
-
 	// Key
-
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Door|Keys", meta=(AllowPrivateAccess="true"))
 	bool bRequireKey = false;
