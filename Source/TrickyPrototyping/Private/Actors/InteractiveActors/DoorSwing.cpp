@@ -15,6 +15,7 @@ void ADoorSwing::BeginPlay()
 
 void ADoorSwing::Close()
 {
+	PrevSwingDirection = SwingDirection;
 	Super::Close();
 }
 
@@ -33,7 +34,10 @@ void ADoorSwing::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                        bool bFromSweep,
                                        const FHitResult& SweepResult)
 {
-	CalculateTargetTransform(OtherActor);
+	if (GetStateCurrent() != EInteractiveActorState::Transition)
+	{
+		CalculateTargetTransform(OtherActor);
+	}
 
 	Super::OnTriggerBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
@@ -43,7 +47,11 @@ void ADoorSwing::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
                                      UPrimitiveComponent* OtherComp,
                                      int32 OtherBodyIndex)
 {
-	CalculateTargetTransform(OtherActor);
+	if (GetStateCurrent() != EInteractiveActorState::Transition)
+	{
+		CalculateTargetTransform(OtherActor);
+	}
+	
 	Super::OnTriggerEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
 }
 
