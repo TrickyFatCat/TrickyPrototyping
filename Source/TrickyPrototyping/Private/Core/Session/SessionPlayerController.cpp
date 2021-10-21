@@ -35,16 +35,26 @@ void ASessionPlayerController::Tick(float DeltaSeconds)
 
 void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewState)
 {
-	if (NewState == ESessionState::Progress)
+	switch (NewState)
 	{
+	case ESessionState::Progress:
 		bShowMouseCursor = bShowCursorOnStart;
 		SetInputMode(FInputModeGameOnly());
 		EnableInput(this);
-	}
-	else
-	{
+		break;
+
+	case ESessionState::GameOver:
 		bShowMouseCursor = true;
 		SetInputMode(FInputModeUIOnly());
 		DisableInput(this);
+		StopMovement();
+		GetPawn()->TurnOff();
+		break;
+
+	default:
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeUIOnly());
+		DisableInput(this);
+		break;
 	}
 }
