@@ -30,8 +30,8 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	UTransitionScreenWidget* TransitionScreen = nullptr;
 
-	UPROPERTY(meta=(BindWidget))
-	USplashScreenWidget* SplashScreen = nullptr;
+	// UPROPERTY(meta=(BindWidget))
+	// USplashScreenWidget* SplashScreen = nullptr;
 	
 	UPROPERTY(meta=(BindWidget))
 	UButton* Button_StartGame = nullptr;
@@ -40,10 +40,10 @@ protected:
 	UButton* Button_QuitGame = nullptr;
 
 private:
-	ETransitionCommand Command;
+	ETransitionCommand Command = ETransitionCommand::None;
 
-	UFUNCTION()
-	void OnSplashFinished();
+	// UFUNCTION()
+	// void OnSplashFinished();
 	
 	UFUNCTION()
 	void ProcessTransition();
