@@ -10,6 +10,7 @@ class UImage;
 class UTransitionScreenWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplashFinishedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSplashChangedSignature, const int32, SplashIndex, const UTexture2D*, SplashImage);
 
 /**
  * 
@@ -20,23 +21,30 @@ class TRICKYPROTOTYPING_API USplashScreenWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintAssignable, Category="Animation")
+	UPROPERTY(BlueprintAssignable, Category="SplashScreen")
 	FOnSplashFinishedSignature OnSplashFinished;
+
+	UPROPERTY(BlueprintAssignable, Category="SplashScreen")
+	FOnSplashChangedSignature OnSplashChanged;
 
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UTransitionScreenWidget* TransitionScreen;
 	
 	UPROPERTY(meta=(BindWidget))
-	UImage* Image_JamSplash = nullptr;
+	UImage* Image_SplashScreen = nullptr;
 	
-	UPROPERTY(meta=(BindWidget))
-	UImage* Image_TeamSplash = nullptr;
+	UPROPERTY(EditDefaultsOnly)
+	TArray<UTexture2D*> SplashImages;
+
+	int32 CurrentSplashIndex = 0;
 
 	virtual void NativeOnInitialized() override;
 
 private:
-	const float SplashDuration = 1.5f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	float SplashDuration = 1.5f;
+	
 	FTimerHandle SplashTimerHandle;
 
 	UFUNCTION()
@@ -44,4 +52,7 @@ private:
 
 	UFUNCTION()
 	void SwitchSplashScreen();
+
+	UFUNCTION()
+	void LoadMainMenu() const;
 };
