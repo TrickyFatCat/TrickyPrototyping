@@ -4,6 +4,7 @@
 #include "Core/Session/SessionPlayerController.h"
 
 #include "Core/Session/SessionGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 ASessionPlayerController::ASessionPlayerController()
 {
@@ -26,11 +27,20 @@ void ASessionPlayerController::BeginPlay()
 	}
 
 	bShowMouseCursor = false;
+	SetTickableWhenPaused(true);
 }
 
 void ASessionPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+}
+
+void ASessionPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	FInputActionBinding& PauseBinding = InputComponent->BindAction("Pause", IE_Pressed, this, &ASessionPlayerController::PauseGame);
+	PauseBinding.bExecuteWhenPaused = true;
 }
 
 void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewState)
@@ -53,8 +63,21 @@ void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewStat
 
 	default:
 		bShowMouseCursor = true;
-		SetInputMode(FInputModeUIOnly());
+		SetInputMode(FInputModeGameAndUI());
 		DisableInput(this);
 		break;
 	}
+}
+
+void ASessionPlayerController::PauseGame()
+{
+	// if (!GetWorld()) return;
+
+	if (IsPaused())
+	{
+		UGameplayStatics::SetGamePaused(GetWorld(), false);
+		return;
+	}
+
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
