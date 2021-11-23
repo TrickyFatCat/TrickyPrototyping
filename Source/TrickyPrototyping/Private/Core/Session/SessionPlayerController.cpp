@@ -39,7 +39,10 @@ void ASessionPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	FInputActionBinding& PauseBinding = InputComponent->BindAction("Pause", IE_Pressed, this, &ASessionPlayerController::PauseGame);
+	FInputActionBinding& PauseBinding = InputComponent->BindAction("Pause",
+	                                                               IE_Pressed,
+	                                                               this,
+	                                                               &ASessionPlayerController::PauseGame);
 	PauseBinding.bExecuteWhenPaused = true;
 }
 
@@ -63,7 +66,7 @@ void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewStat
 
 	default:
 		bShowMouseCursor = true;
-		SetInputMode(FInputModeGameAndUI());
+		SetInputMode(FInputModeUIOnly());
 		DisableInput(this);
 		break;
 	}
@@ -71,13 +74,5 @@ void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewStat
 
 void ASessionPlayerController::PauseGame()
 {
-	// if (!GetWorld()) return;
-
-	if (IsPaused())
-	{
-		UGameplayStatics::SetGamePaused(GetWorld(), false);
-		return;
-	}
-
-	UGameplayStatics::SetGamePaused(GetWorld(), true);
+	IsPaused() ? UGameplayStatics::SetGamePaused(GetWorld(), false) : UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
