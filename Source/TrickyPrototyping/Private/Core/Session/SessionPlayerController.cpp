@@ -64,6 +64,11 @@ void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewStat
 		GetPawn()->TurnOff();
 		break;
 
+	case ESessionState::Pause:
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeGameAndUI());
+		break;
+
 	default:
 		bShowMouseCursor = true;
 		SetInputMode(FInputModeUIOnly());
