@@ -12,23 +12,24 @@ void UBaseUserWidget::NativeOnInitialized()
 
 void UBaseUserWidget::Show()
 {
-	SetVisibility(ESlateVisibility::Visible);
-	PlayAnimation(ShowAnimation);
+	PlayAnimation(ShowAnimation, CalculateStartTime(HideAnimation));
 }
 
 void UBaseUserWidget::Hide()
 {
-	PlayAnimation(HideAnimation);
+	PlayAnimation(HideAnimation, CalculateStartTime(ShowAnimation));
 }
 
 void UBaseUserWidget::OnAnimationStarted_Implementation(const UWidgetAnimation* Animation)
 {
+	SetVisibility(ESlateVisibility::Visible);
 }
 
 void UBaseUserWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
 {
 	if (Animation == ShowAnimation)
 	{
+		SetVisibility(ESlateVisibility::Visible); // In case, if the player starts pressing the "Pause" action rapidly.
 		OnShowed.Broadcast();
 	}
 	else
@@ -43,4 +44,9 @@ ASessionGameMode* UBaseUserWidget::GetSessionGameMode() const
 	if (!GetWorld()) return nullptr;
 
 	return Cast<ASessionGameMode>(GetWorld()->GetAuthGameMode());
+}
+
+float UBaseUserWidget::CalculateStartTime(const UWidgetAnimation* Animation) const
+{
+	return GetAnimationCurrentTime(Animation) * static_cast<float>(IsAnimationPlaying(Animation));
 }

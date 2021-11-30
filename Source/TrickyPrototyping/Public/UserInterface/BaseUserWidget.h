@@ -46,4 +46,6 @@ protected:
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
 	
 	ASessionGameMode* GetSessionGameMode() const;
+
+	float CalculateStartTime(const UWidgetAnimation* Animation) const;
 };
