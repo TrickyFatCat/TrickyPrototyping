@@ -12,12 +12,12 @@ void UBaseUserWidget::NativeOnInitialized()
 
 void UBaseUserWidget::Show()
 {
-	PlayAnimation(ShowAnimation, CalculateStartTime(HideAnimation));
+	PlayAnimation(ShowAnimation, CalculateStartTime(HideAnimation, ShowAnimation));
 }
 
 void UBaseUserWidget::Hide()
 {
-	PlayAnimation(HideAnimation, CalculateStartTime(ShowAnimation));
+	PlayAnimation(HideAnimation, CalculateStartTime(ShowAnimation, HideAnimation));
 }
 
 void UBaseUserWidget::OnAnimationStarted_Implementation(const UWidgetAnimation* Animation)
@@ -46,7 +46,9 @@ ASessionGameMode* UBaseUserWidget::GetSessionGameMode() const
 	return Cast<ASessionGameMode>(GetWorld()->GetAuthGameMode());
 }
 
-float UBaseUserWidget::CalculateStartTime(const UWidgetAnimation* Animation) const
+float UBaseUserWidget::CalculateStartTime(const UWidgetAnimation* CurrentAnimation, const UWidgetAnimation* NewAnimation) const
 {
-	return GetAnimationCurrentTime(Animation) * static_cast<float>(IsAnimationPlaying(Animation));
+	const float AnimationEndTime = CurrentAnimation->GetEndTime();
+	const float TargetTime = ((AnimationEndTime - GetAnimationCurrentTime(CurrentAnimation))/AnimationEndTime) * NewAnimation->GetEndTime();
+	return TargetTime * static_cast<float>(IsAnimationPlaying(CurrentAnimation));
 }

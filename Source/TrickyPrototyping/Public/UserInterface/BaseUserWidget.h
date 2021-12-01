@@ -47,5 +47,5 @@ protected:
 	
 	ASessionGameMode* GetSessionGameMode() const;
 
-	float CalculateStartTime(const UWidgetAnimation* Animation) const;
+	float CalculateStartTime(const UWidgetAnimation* CurrentAnimation, const UWidgetAnimation* NewAnimation) const;
 };
