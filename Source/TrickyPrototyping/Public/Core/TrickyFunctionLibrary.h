@@ -28,6 +28,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	static FString ConvertTimeSeconds(const float TimeSeconds, const ETimeFormat ConvertMethod);
 
+	UFUNCTION(BlueprintCallable)
+	static void ApproachInt32(UPARAM(ref) int32& CurrentValue, const int32 TargetValue, const int32 DeltaValue);
+
+	UFUNCTION(BlueprintCallable)
+	static void ApproachFloat(UPARAM(ref) float& CurrentValue, const float TargetValue, const float DeltaValue);
+
 private:
 	static int32 ConvertMilliseconds(const int32 InitialValue, const float Fraction);
 };
