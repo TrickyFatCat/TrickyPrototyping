@@ -101,6 +101,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	FTimerHandle AutoCloseDelayHandle;
+
+	bool IsClosingAutomatically() const;
 	
 	virtual void StartAutoClose();
 	

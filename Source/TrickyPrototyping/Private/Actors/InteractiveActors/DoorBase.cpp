@@ -10,7 +10,7 @@ ADoorBase::ADoorBase()
 {
 	DoorRoot = CreateDefaultSubobject<USceneComponent>("DoorRoot");
 	SetRootComponent(DoorRoot);
-	
+
 	DoorTrigger = CreateDefaultSubobject<UInteractionBoxComponent>("DoorTrigger");
 	DoorTrigger->SetupAttachment(GetRootComponent());
 }
@@ -47,9 +47,29 @@ void ADoorBase::FinishAnimation()
 {
 	Super::FinishAnimation();
 
-	if (AutoCloseDelay <= 0.f || DoorTrigger->GetIsActorInside()) return;
+	switch (GetStateCurrent())
+	{
+	case EInteractiveActorState::Opened:
+		if (IsClosingAutomatically() && !DoorTrigger->GetIsActorInside())
+		{
+			StartAutoClose();
+			return;
+		}
 
-	StartAutoClose();
+		if (!IsClosingAutomatically() && !DoorTrigger->GetIsActorInside())
+		{
+			Close();
+			return;
+		}
+		break;
+
+	case EInteractiveActorState::Closed:
+		if (DoorTrigger->GetIsActorInside())
+		{
+			Open();
+		}
+		break;
+	}
 }
 
 void ADoorBase::SetDoorType(const EDoorType Value)
@@ -86,20 +106,32 @@ void ADoorBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                       bool bFromSweep,
                                       const FHitResult& SweepResult)
 {
-	if (AutoCloseDelay > 0.f && GetStateCurrent() == EInteractiveActorState::Opened && !GetIsReversible())
+	if (IsClosingAutomatically() && IsStateCurrent(EInteractiveActorState::Opened))
 	{
 		StopAutoClose();
 		return;
 	}
-	
+
 	switch (DoorType)
 	{
 	case EDoorType::Auto:
 		if (bRequireKey && !HasKey(OtherActor)) return;
-		
-		if (GetStateCurrent() != EInteractiveActorState::Closed && !GetIsReversible()) return;
-		
-		Open();
+
+		if (GetIsReversible())
+		{
+			Open();
+			return;
+		}
+
+		if (IsStateCurrent(EInteractiveActorState::Closed))
+		{
+			Open();
+		}
+		else if (IsStateCurrent(EInteractiveActorState::Opened))
+		{
+			Close();
+		}
+
 		break;
 
 	case EDoorType::Interactive:
@@ -112,17 +144,17 @@ void ADoorBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
                                     UPrimitiveComponent* OtherComp,
                                     int32 OtherBodyIndex)
 {
-	if (AutoCloseDelay > 0.f && IsStateCurrent(EInteractiveActorState::Opened) && !GetIsReversible())
+	if (IsClosingAutomatically() && IsStateCurrent(EInteractiveActorState::Opened))
 	{
 		StartAutoClose();
 		return;
 	}
-	
+
 	switch (DoorType)
 	{
 	case EDoorType::Auto:
 		if (GetStateCurrent() != EInteractiveActorState::Opened && !GetIsReversible()) return;
-		
+
 		Close();
 		break;
 
@@ -134,7 +166,7 @@ void ADoorBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 {
 	if (!TargetActor || DoorType != EDoorType::Interactive) return false;
-	
+
 	if (bRequireKey && !HasKey(TargetActor)) return false;
 
 	if (GetIsReversible() && GetStateCurrent() == EInteractiveActorState::Transition)
@@ -149,12 +181,12 @@ bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 			Open();
 			break;
 		}
-		
+
 		return true;
 	}
 
 	StopAutoClose();
-	
+
 	switch (GetStateCurrent())
 	{
 	case EInteractiveActorState::Opened:
@@ -165,14 +197,19 @@ bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 		Open();
 		break;
 	}
-	
+
 	return true;
+}
+
+bool ADoorBase::IsClosingAutomatically() const
+{
+	return AutoCloseDelay > 0.f;
 }
 
 void ADoorBase::StartAutoClose()
 {
-	if (GetIsReversible()) return;
-	
+	if (!IsStateCurrent(EInteractiveActorState::Opened)) return;
+
 	GetWorldTimerManager().SetTimer(AutoCloseDelayHandle, this, &ADoorBase::Close, AutoCloseDelay, false);
 }
 
