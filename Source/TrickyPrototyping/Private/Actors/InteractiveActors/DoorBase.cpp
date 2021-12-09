@@ -64,7 +64,7 @@ void ADoorBase::FinishAnimation()
 		break;
 
 	case EInteractiveActorState::Closed:
-		if (DoorTrigger->GetIsActorInside())
+		if (DoorTrigger->GetIsActorInside() && DoorType == EDoorType::Auto)
 		{
 			Open();
 		}
@@ -169,7 +169,7 @@ bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 
 	if (bRequireKey && !HasKey(TargetActor)) return false;
 
-	if (GetIsReversible() && GetStateCurrent() == EInteractiveActorState::Transition)
+	if (GetIsReversible() && IsStateCurrent(EInteractiveActorState::Transition))
 	{
 		switch (GetStateTarget())
 		{
