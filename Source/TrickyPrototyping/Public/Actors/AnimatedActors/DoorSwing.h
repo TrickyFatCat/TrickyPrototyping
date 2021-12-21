@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/InteractiveActors/DoorBase.h"
+#include "Actors/AnimatedActors/DoorBase.h"
 #include "DoorSwing.generated.h"
 
 /**
@@ -17,16 +17,21 @@ class TRICKYPROTOTYPING_API ADoorSwing : public ADoorBase
 public:
 	ADoorSwing();
 
+	virtual void Close() override;
+	
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void Close() override;
-
+	virtual void FinishAnimation() override;
+	
 	float SwingDirection = 1.f;
 
 	float PrevSwingDirection = 1.f;
 
-	TArray<FInteractiveActorData> DefaultOffsets;
+	TArray<FAnimatedActorData> DefaultOffsets;
+
+	UPROPERTY()
+	AActor* Initiator = nullptr;
 
 	virtual bool ProcessInteraction_Implementation(AActor* TargetActor) override;
 

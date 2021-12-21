@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/InteractiveActorBase.h"
+#include "Actors/AnimatedActor.h"
 #include "Interfaces/InteractionInterface.h"
 #include "DoorBase.generated.h"
 
@@ -23,7 +23,7 @@ enum class EDoorType : uint8
 };
 
 UCLASS()
-class TRICKYPROTOTYPING_API ADoorBase : public AInteractiveActorBase, public IInteractionInterface
+class TRICKYPROTOTYPING_API ADoorBase : public AAnimatedActor, public IInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -83,11 +83,13 @@ protected:
 	                                 UPrimitiveComponent* OtherComp,
 	                                 int32 OtherBodyIndex);
 
+	UInteractionBoxComponent* GetDoorTrigger() const { return DoorTrigger; }
+
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
 	USceneComponent* DoorRoot = nullptr;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
 	UInteractionBoxComponent* DoorTrigger = nullptr;
 
 	// Interaction

@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Actors/InteractiveActors/DoorBase.h"
+#include "Actors/AnimatedActors/DoorBase.h"
 
 #include "Components/KeyRingComponent.h"
 #include "Components/TriggerComponents/InteractionBoxComponent.h"
@@ -49,7 +49,7 @@ void ADoorBase::FinishAnimation()
 
 	switch (GetStateCurrent())
 	{
-	case EInteractiveActorState::Opened:
+	case EAnimatedActorState::Opened:
 		if (IsClosingAutomatically() && !DoorTrigger->GetIsActorInside())
 		{
 			StartAutoClose();
@@ -63,7 +63,7 @@ void ADoorBase::FinishAnimation()
 		}
 		break;
 
-	case EInteractiveActorState::Closed:
+	case EAnimatedActorState::Closed:
 		if (DoorTrigger->GetIsActorInside() && DoorType == EDoorType::Auto)
 		{
 			Open();
@@ -106,7 +106,7 @@ void ADoorBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                       bool bFromSweep,
                                       const FHitResult& SweepResult)
 {
-	if (IsClosingAutomatically() && IsStateCurrent(EInteractiveActorState::Opened))
+	if (IsClosingAutomatically() && IsStateCurrent(EAnimatedActorState::Opened))
 	{
 		StopAutoClose();
 		return;
@@ -123,11 +123,11 @@ void ADoorBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 			return;
 		}
 
-		if (IsStateCurrent(EInteractiveActorState::Closed))
+		if (IsStateCurrent(EAnimatedActorState::Closed))
 		{
 			Open();
 		}
-		else if (IsStateCurrent(EInteractiveActorState::Opened))
+		else if (IsStateCurrent(EAnimatedActorState::Opened))
 		{
 			Close();
 		}
@@ -144,7 +144,7 @@ void ADoorBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
                                     UPrimitiveComponent* OtherComp,
                                     int32 OtherBodyIndex)
 {
-	if (IsClosingAutomatically() && IsStateCurrent(EInteractiveActorState::Opened))
+	if (IsClosingAutomatically() && IsStateCurrent(EAnimatedActorState::Opened))
 	{
 		StartAutoClose();
 		return;
@@ -153,7 +153,7 @@ void ADoorBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 	switch (DoorType)
 	{
 	case EDoorType::Auto:
-		if (GetStateCurrent() != EInteractiveActorState::Opened && !GetIsReversible()) return;
+		if (GetStateCurrent() != EAnimatedActorState::Opened && !GetIsReversible()) return;
 
 		Close();
 		break;
@@ -169,15 +169,15 @@ bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 
 	if (bRequireKey && !HasKey(TargetActor)) return false;
 
-	if (GetIsReversible() && IsStateCurrent(EInteractiveActorState::Transition))
+	if (GetIsReversible() && IsStateCurrent(EAnimatedActorState::Transition))
 	{
 		switch (GetStateTarget())
 		{
-		case EInteractiveActorState::Opened:
+		case EAnimatedActorState::Opened:
 			Close();
 			break;
 
-		case EInteractiveActorState::Closed:
+		case EAnimatedActorState::Closed:
 			Open();
 			break;
 		}
@@ -189,11 +189,11 @@ bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 
 	switch (GetStateCurrent())
 	{
-	case EInteractiveActorState::Opened:
+	case EAnimatedActorState::Opened:
 		Close();
 		break;
 
-	case EInteractiveActorState::Closed:
+	case EAnimatedActorState::Closed:
 		Open();
 		break;
 	}
@@ -208,7 +208,7 @@ bool ADoorBase::IsClosingAutomatically() const
 
 void ADoorBase::StartAutoClose()
 {
-	if (!IsStateCurrent(EInteractiveActorState::Opened)) return;
+	if (!IsStateCurrent(EAnimatedActorState::Opened)) return;
 
 	GetWorldTimerManager().SetTimer(AutoCloseDelayHandle, this, &ADoorBase::Close, AutoCloseDelay, false);
 }
