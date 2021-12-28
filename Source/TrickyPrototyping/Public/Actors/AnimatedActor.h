@@ -29,22 +29,22 @@ struct FAnimatedActorData
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Animation")
 	bool bAnimateLocation = true;
 
-	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateLocation"))
+	UPROPERTY(EditAnywhere, Category="Animation", meta=(EditCondition="bAnimateLocation"))
 	FVector LocationOffset = FVector::ZeroVector;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Animation")
 	bool bAnimateRotation = false;
 
-	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateRotation"))
+	UPROPERTY(EditAnywhere, Category="Animation", meta=(EditCondition="bAnimateRotation"))
 	FRotator RotationOffset = FRotator::ZeroRotator;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Animation")
 	bool bAnimateScale = false;
 
-	UPROPERTY(EditAnywhere, meta=(EditCondition="bAnimateScale"))
+	UPROPERTY(EditAnywhere, Category="Animation", meta=(EditCondition="bAnimateScale"))
 	FVector ScaleOffset = FVector::ZeroVector;
 };
 
@@ -93,9 +93,9 @@ protected:
 	void FillAnimatedComponents(TArray<USceneComponent*> Components);
 
 	virtual void StartAnimation();
-	
+
 	virtual void ReverseAnimation();
-	
+
 	virtual void StopAnimation();
 
 	UFUNCTION()
@@ -104,7 +104,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimatedActor|Animation", meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimatedActor|Animation", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimatedActor|Animation",
+		meta=(AllowPrivateAccess="true"))
 	TArray<USceneComponent*> AnimatedComponents;
 
 	UPROPERTY()
@@ -179,36 +180,39 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimatedActor|States", meta=(AllowPrivateAccess="true"))
 	EAnimatedActorState StateInitial = EAnimatedActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateCurrent, Category="AnimatedActor|States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateCurrent, Category="AnimatedActor|States",
+		meta=(AllowPrivateAccess="true"))
 	EAnimatedActorState StateCurrent = EAnimatedActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStatePrevious, Category="AnimatedActor|States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStatePrevious, Category="AnimatedActor|States",
+		meta=(AllowPrivateAccess="true"))
 	EAnimatedActorState StatePrevious = EAnimatedActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateTarget, Category="AnimatedActor|States", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateTarget, Category="AnimatedActor|States",
+		meta=(AllowPrivateAccess="true"))
 	EAnimatedActorState StateTarget = EAnimatedActorState::Opened;
 
 	void SetTargetState();
-	
+
 	bool CanStartAnimation() const;
 
 	// Actions
 public:
 	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
 	virtual void Open();
-	
+
 	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
 	virtual void Close();
-	
+
 	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
 	virtual void Lock();
-	
+
 	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
 	virtual void Unlock();
-	
+
 	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
 	virtual void Enable();
-	
+
 	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
 	virtual void Disable();
 

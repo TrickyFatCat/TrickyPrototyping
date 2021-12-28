@@ -34,7 +34,7 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	UImage* Image_SplashScreen = nullptr;
 	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="SplashScreen")
 	TArray<UTexture2D*> SplashImages;
 
 	int32 CurrentSplashIndex = 0;
@@ -42,7 +42,7 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="SplashScreen",  meta=(AllowPrivateAccess="true"))
 	float SplashDuration = 1.5f;
 	
 	FTimerHandle SplashTimerHandle;

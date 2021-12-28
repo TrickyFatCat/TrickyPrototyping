@@ -101,7 +101,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Door", meta=(ClampMint="0"))
 	float AutoCloseDelay = 2.f;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category="Door")
 	FTimerHandle AutoCloseDelayHandle;
 
 	bool IsClosingAutomatically() const;

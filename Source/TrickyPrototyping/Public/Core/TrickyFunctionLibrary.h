@@ -25,13 +25,13 @@ class TRICKYPROTOTYPING_API UTrickyFunctionLibrary : public UBlueprintFunctionLi
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category="TrickyFunctionLibrary")
 	static FString ConvertTimeSeconds(const float TimeSeconds, const ETimeFormat ConvertMethod);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="TrickyFunctionLibrary")
 	static void ApproachInt32(UPARAM(ref) int32& CurrentValue, const int32 TargetValue, const int32 DeltaValue);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="TrickyFunctionLibrary")
 	static void ApproachFloat(UPARAM(ref) float& CurrentValue, const float TargetValue, const float DeltaValue);
 
 private:

@@ -20,6 +20,6 @@ class TRICKYPROTOTYPING_API IInteractionInterface
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Interaction")
 	bool ProcessInteraction(AActor* TargetActor);
 };
