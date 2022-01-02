@@ -9,7 +9,7 @@
 /**
  * A capsule component which adds an actor to an interaction queeu
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class TRICKYPROTOTYPING_API UInteractionCapsuleComponent : public UBaseCapsuleTriggerComponent
 {
 	GENERATED_BODY()

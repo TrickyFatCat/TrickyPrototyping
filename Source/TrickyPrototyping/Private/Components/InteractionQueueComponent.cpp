@@ -69,6 +69,13 @@ AActor* UInteractionQueueComponent::GetFirstActorInQueue() const
 	return TargetActor;
 }
 
+FInteractionData UInteractionQueueComponent::GetFirstDataInQueue() const
+{
+	if (IsQueueEmpty()) return FInteractionData();
+
+	return InteractionQueue[0];
+}
+
 void UInteractionQueueComponent::CheckLineOfSight()
 {
 	if (IsQueueEmpty()) return;
