@@ -47,7 +47,7 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components")
 	UInteractionSphereComponent* ButtonTrigger = nullptr;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Button")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Button")
 	EButtonBehaviour ButtonBehaviour = EButtonBehaviour::Switch;
 
 private:
