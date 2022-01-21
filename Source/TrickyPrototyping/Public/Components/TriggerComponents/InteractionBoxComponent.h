@@ -9,7 +9,7 @@
 /**
  * A box trigger which adds an actor to an interaction queue
  */
-UCLASS()
+UCLASS(ClassGroup=(Interaction), BlueprintType, meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UInteractionBoxComponent : public UBaseBoxTriggerComponent
 {
 	GENERATED_BODY()
@@ -24,7 +24,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category="Trigger")
 	bool bRequireLineOfSight = false;
 private:
-	UPROPERTY(EditDefaultsOnly,
+	UPROPERTY(VisibleAnywhere,
 		BlueprintGetter=GetIsNormalTrigger,
 		BlueprintSetter=SetIsNormalTrigger,
 		Category="Trigger",
