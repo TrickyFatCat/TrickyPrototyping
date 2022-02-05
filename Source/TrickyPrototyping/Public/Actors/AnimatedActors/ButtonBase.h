@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/InteractiveActorBase.h"
+#include "Actors/AnimatedActor.h"
 #include "Interfaces/InteractionInterface.h"
 #include "ButtonBase.generated.h"
 
@@ -22,7 +22,7 @@ enum class EButtonBehaviour : uint8
 };
 
 UCLASS()
-class TRICKYPROTOTYPING_API AButtonBase : public AInteractiveActorBase, public IInteractionInterface
+class TRICKYPROTOTYPING_API AButtonBase : public AAnimatedActor, public IInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -41,13 +41,13 @@ public:
 protected:
 	virtual void FinishAnimation() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components")
 	USceneComponent* ButtonRoot = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components")
 	UInteractionSphereComponent* ButtonTrigger = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Button")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Button")
 	EButtonBehaviour ButtonBehaviour = EButtonBehaviour::Switch;
 
 private:
@@ -57,18 +57,18 @@ private:
 		meta=(AllowPrivateAccess="true", EditCondition="ButtonBehaviour == EButtonBehaviour::Key", ClampMin="0"))
 	float KeyAutoCloseDelayDuration = 1.f;
 
-	UPROPERTY(EditDefaultsOnly, Category="Button")
+	UPROPERTY(EditAnywhere, Category="Button")
 	bool bRequireInteraction = true;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Button", meta=(AllowPrivateAccess="true", EditCondition="bRequireInteraction"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Button", meta=(AllowPrivateAccess="true", EditCondition="bRequireInteraction"))
 	bool bRequireLineOfSight = false;
 
-	UPROPERTY(EditDefaultsOnly,
+	UPROPERTY(EditAnywhere,
 		Category="Button",
 		meta=(AllowPrivateAccess="true", EditCondition="!bRequireInteraction", ClampMin="0"))
 	float BeginOverlapDelay = 1.f;
 
-	UPROPERTY(EditDefaultsOnly,
+	UPROPERTY(EditAnywhere,
 		Category="Button",
 		meta=(AllowPrivateAccess="true", EditCondition="!bRequireInteraction", ClampMin="0"))
 	float EndOverlapDelay = 1.f;
@@ -82,7 +82,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Button", meta=(AllowPrivateAccess="true"))
 	bool bPressOnce = false;
 
-	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
+	virtual bool ProcessInteraction_Implementation(AActor* TargetActor) override;
 
 	UFUNCTION()
 	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,

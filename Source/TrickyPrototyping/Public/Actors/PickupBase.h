@@ -29,13 +29,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category="Components")
 	USceneComponent* PickupRoot = nullptr;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category="Components")
 	UInteractionSphereComponent* InteractionTrigger = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category="Components")
 	USceneComponent* MeshScene = nullptr;
 
 	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
@@ -49,7 +49,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Pickup", meta=(AllowPrivateAccess="true"))
 	USoundCue* PickupSound = nullptr;
 	
-	virtual bool ProcessInteraction_Implementation(APlayerController* PlayerController) override;
+	virtual bool ProcessInteraction_Implementation(AActor* TargetActor) override;
 
 	UFUNCTION()
 	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,

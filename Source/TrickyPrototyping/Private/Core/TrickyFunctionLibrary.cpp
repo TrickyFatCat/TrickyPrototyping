@@ -3,6 +3,7 @@
 
 #include "Core/TrickyFunctionLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Core/TrickyUtils.h"
 
 FString UTrickyFunctionLibrary::ConvertTimeSeconds(const float TimeSeconds, const ETimeFormat ConvertMethod)
 {
@@ -49,6 +50,16 @@ FString UTrickyFunctionLibrary::ConvertTimeSeconds(const float TimeSeconds, cons
 	}
 
 	return Result;
+}
+
+void UTrickyFunctionLibrary::ApproachInt32(int32& CurrentValue, const int32 TargetValue, const int32 DeltaValue)
+{
+	FTrickyUtils::Approach<int32>(CurrentValue, TargetValue, DeltaValue);
+}
+
+void UTrickyFunctionLibrary::ApproachFloat(float& CurrentValue, const float TargetValue, const float DeltaValue)
+{
+	FTrickyUtils::Approach<float>(CurrentValue, TargetValue, DeltaValue);
 }
 
 int32 UTrickyFunctionLibrary::ConvertMilliseconds(const int32 InitialValue, const float Fraction)

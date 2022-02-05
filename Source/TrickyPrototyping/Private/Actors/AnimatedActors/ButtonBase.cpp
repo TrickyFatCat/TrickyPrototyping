@@ -1,10 +1,11 @@
 // Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Actors/InteractiveActors/ButtonBase.h"
+#include "Actors/AnimatedActors/ButtonBase.h"
 #include "Components/TriggerComponents/InteractionSphereComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/TimelineComponent.h"
+#include "TimerManager.h"
 
 AButtonBase::AButtonBase()
 {
@@ -62,7 +63,7 @@ void AButtonBase::FinishAnimation()
 	switch (ButtonBehaviour)
 	{
 	case EButtonBehaviour::Key:
-		if (IsStateCurrent(EInteractiveActorState::Opened))
+		if (IsStateCurrent(EAnimatedActorState::Opened))
 		{
 			if (!GetWorld()) return;
 
@@ -72,7 +73,7 @@ void AButtonBase::FinishAnimation()
 			                                       KeyAutoCloseDelayDuration,
 			                                       false);
 		}
-		else if (IsStateCurrent(EInteractiveActorState::Closed))
+		else if (IsStateCurrent(EAnimatedActorState::Closed))
 		{
 			ButtonTrigger->SetIsEnabled(true);
 		}
@@ -84,14 +85,37 @@ void AButtonBase::FinishAnimation()
 	}
 }
 
-bool AButtonBase::ProcessInteraction_Implementation(APlayerController* PlayerController)
+bool AButtonBase::ProcessInteraction_Implementation(AActor* TargetActor)
 {
-	if (!PlayerController || !bRequireInteraction) return false;
+	if (!TargetActor || !bRequireInteraction || IsStateCurrent(EAnimatedActorState::Locked)) return false;
 
-	if (!GetIsReversible() && GetStateCurrent() == EInteractiveActorState::Transition) return false;
+	if (GetIsReversible() && GetStateCurrent() == EAnimatedActorState::Transition)
+	{
+		switch (GetStateTarget())
+		{
+		case EAnimatedActorState::Opened:
+			Close();
+			break;
+
+		case EAnimatedActorState::Closed:
+			Open();
+			break;
+		}
+		
+		return true;
+	}
+
+	switch (GetStateCurrent())
+	{
+	case EAnimatedActorState::Opened:
+		Close();
+		break;
+
+	case EAnimatedActorState::Closed:
+		Open();
+		break;
+	}
 	
-	StartAnimation();
-
 	return true;
 }
 
@@ -144,7 +168,7 @@ void AButtonBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (!GetIsReversible()) return;
 
 		TimerManager.SetTimer(EndOverlapDelayHandle, this, &AButtonBase::ProcessTriggerOverlap, EndOverlapDelay, false);
-		
+
 		return;
 	}
 
@@ -153,17 +177,17 @@ void AButtonBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 
 void AButtonBase::ProcessTriggerOverlap()
 {
-	const EInteractiveActorState State = AnimationTimeline->IsPlaying() && GetIsReversible()
+	const EAnimatedActorState State = AnimationTimeline->IsPlaying() && GetIsReversible()
 		                                     ? GetStateTarget()
 		                                     : GetStateCurrent();
 
 	switch (State)
 	{
-	case EInteractiveActorState::Closed:
+	case EAnimatedActorState::Closed:
 		Open();
 		break;
 
-	case EInteractiveActorState::Opened:
+	case EAnimatedActorState::Opened:
 		if (ButtonBehaviour == EButtonBehaviour::Key) return;
 
 		Close();

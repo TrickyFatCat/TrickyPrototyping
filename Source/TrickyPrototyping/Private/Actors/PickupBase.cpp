@@ -50,11 +50,11 @@ void APickupBase::DestroyPickup()
 	Destroy();
 }
 
-bool APickupBase::ProcessInteraction_Implementation(APlayerController* PlayerController)
+bool APickupBase::ProcessInteraction_Implementation(AActor* TargetActor)
 {
-	if (!PlayerController || !PlayerController->GetPawn() || !bRequireInteraction) return false;
+	if (!TargetActor || !bRequireInteraction) return false;
 
-	if (ActivatePickup(Cast<AActor>(PlayerController->GetPawn())))
+	if (ActivatePickup(TargetActor))
 	{
 		DestroyPickup();
 		return true;

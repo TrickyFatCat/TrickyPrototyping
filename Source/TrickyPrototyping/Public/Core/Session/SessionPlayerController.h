@@ -25,8 +25,14 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	
 protected:
+	virtual void SetupInputComponent() override;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controller")
 	bool bShowCursorOnStart = false;
+	
 	UFUNCTION()
 	void OnSessionStateChanged(const ESessionState NewState);
+
+	UFUNCTION()
+	void PauseGame();
 };

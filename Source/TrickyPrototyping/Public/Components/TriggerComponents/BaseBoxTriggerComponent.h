@@ -9,7 +9,7 @@
 /**
  * A base box trigger component for creating different trigger components
  */
-UCLASS(Blueprintable)
+UCLASS(ClassGroup=(Triggers), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UBaseBoxTriggerComponent : public UBoxComponent
 {
 	GENERATED_BODY()
@@ -25,19 +25,30 @@ public:
 	                           ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintCallable, Category="Trigger")
+	UFUNCTION(BlueprintSetter, Category="Trigger")
 	void SetIsEnabled(const bool bEnabled);
 
-	UFUNCTION(BlueprintCallable, Category="Trigger")
+	UFUNCTION(BlueprintGetter, Category="Trigger")
 	bool GetIsEnabled() const { return bIsEnabled; }
 
+	UFUNCTION(BlueprintGetter, Category="Trigger")
+	bool GetIsActorInside() const { return bIsActorInside; }
+
 private:
-	UPROPERTY(EditAnywhere, Category="Trigger", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere,
+		BlueprintSetter=SetIsEnabled,
+		BlueprintGetter=GetIsEnabled,
+		Category="Trigger",
+		meta=(AllowPrivateAccess="true"))
 	bool bIsEnabled = true;
+
+	UPROPERTY(BlueprintGetter= GetIsActorInside, Category="Trigger")
+	bool bIsActorInside = false;
 
 	virtual void EnableTrigger();
 	virtual void DisableTrigger();
 
+protected:
 	UFUNCTION()
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	                            AActor* OtherActor,

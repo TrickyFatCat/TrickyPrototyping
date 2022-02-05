@@ -40,7 +40,7 @@ protected:
 private:
 	// Health
 public:
-	UPROPERTY()
+	UPROPERTY(BlueprintAssignable)
 	FOnHealthChangedSignature OnHealthChanged;
 
 	UFUNCTION(BlueprintCallable, Category="Health")
@@ -70,7 +70,7 @@ protected:
 private:
 	// Damage calculation
 public:
-	UPROPERTY()
+	UPROPERTY(BlueprintAssignable)
 	FOnDeathSignature OnDeath;
 
 	bool GetIsDead() const { return GetHealth() <= 0.f; }

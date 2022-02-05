@@ -5,6 +5,11 @@
 
 #include "Components/Image.h"
 #include "UserInterface/TransitionScreenWidget.h"
+#include "TimerManager.h"
+#include "Core/TrickyGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+
+DECLARE_LOG_CATEGORY_CLASS(LogSplashScreen, All, All);
 
 void USplashScreenWidget::NativeOnInitialized()
 {
@@ -14,6 +19,16 @@ void USplashScreenWidget::NativeOnInitialized()
 	{
 		TransitionScreen->OnHidden.AddDynamic(this, &USplashScreenWidget::StartSplashTimer);
 		TransitionScreen->OnShowed.AddDynamic(this, &USplashScreenWidget::SwitchSplashScreen);
+
+		if (SplashImages.Num() == 0)
+		{
+			OnSplashFinished.Broadcast();
+			UE_LOG(LogSplashScreen, Error, TEXT("Splash screen images array is empty."));
+			LoadMainMenu();
+			return;
+		}
+
+		Image_SplashScreen->SetBrushFromTexture(SplashImages[CurrentSplashIndex], true);
 		TransitionScreen->Hide();
 	}
 }
@@ -22,12 +37,6 @@ void USplashScreenWidget::StartSplashTimer()
 {
 	if (!GetWorld()) return;
 
-	if (Image_TeamSplash->GetVisibility() == ESlateVisibility::Hidden)
-	{
-		OnSplashFinished.Broadcast();
-		return;
-	}
-	
 	GetWorld()->GetTimerManager().SetTimer(SplashTimerHandle,
 	                                       TransitionScreen,
 	                                       &UTransitionScreenWidget::Show,
@@ -37,18 +46,41 @@ void USplashScreenWidget::StartSplashTimer()
 
 void USplashScreenWidget::SwitchSplashScreen()
 {
-	if (!Image_JamSplash || !Image_TeamSplash) return;
+	if (!Image_SplashScreen) return;
 
-	if (Image_JamSplash->GetVisibility() != ESlateVisibility::Hidden)
+	++CurrentSplashIndex;
+
+	if (CurrentSplashIndex >= SplashImages.Num())
 	{
-		Image_JamSplash->SetVisibility(ESlateVisibility::Hidden);
-		TransitionScreen->Hide();
+		OnSplashFinished.Broadcast();
+		LoadMainMenu();
 		return;
 	}
 
-	if (Image_TeamSplash->GetVisibility() != ESlateVisibility::Hidden)
+	if (SplashImages[CurrentSplashIndex])
 	{
-		Image_TeamSplash->SetVisibility(ESlateVisibility::Hidden);
-		TransitionScreen->Hide();
+		Image_SplashScreen->SetBrushFromTexture(SplashImages[CurrentSplashIndex], true);
+		OnSplashChanged.Broadcast(CurrentSplashIndex, SplashImages[CurrentSplashIndex]);
 	}
+	else
+	{
+		UE_LOG(LogSplashScreen, Error, TEXT("Splashscreen %d is nullptr. Please, set this splashscreen."), CurrentSplashIndex);
+	}
+
+	TransitionScreen->Hide();
+}
+
+void USplashScreenWidget::LoadMainMenu() const
+{
+	if (!GetWorld()) return;
+
+	UTrickyGameInstance* GameInstance = GetWorld()->GetGameInstance<UTrickyGameInstance>();
+
+	if (!GameInstance) return;
+
+	const FName MenuLevelName = GameInstance->GetMainMenuLevelName();
+
+	if (MenuLevelName.IsNone()) return;
+
+	UGameplayStatics::OpenLevel(this, MenuLevelName);
 }

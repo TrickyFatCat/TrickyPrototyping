@@ -9,7 +9,7 @@
 /**
  * A sphere trigger which adds an actor to an interaction queue
  */
-UCLASS()
+UCLASS(ClassGroup=(Interaction), BlueprintType, meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UInteractionSphereComponent : public UBaseSphereTriggerComponent
 {
 	GENERATED_BODY()
@@ -21,10 +21,11 @@ public:
 	UFUNCTION(BlueprintSetter, Category="Trigger")
 	void SetIsNormalTrigger(const bool Value) { bIsNormalTrigger = Value; }
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Trigger")
 	bool bRequireLineOfSight = false;
 
 private:
-	UPROPERTY(EditDefaultsOnly,
+	UPROPERTY(VisibleAnywhere,
 		BlueprintGetter=GetIsNormalTrigger,
 		BlueprintSetter=SetIsNormalTrigger,
 		Category="Trigger",

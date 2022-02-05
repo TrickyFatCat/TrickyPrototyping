@@ -18,15 +18,16 @@ struct FResourceAutoChangeData
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(
+		EditAnywhere, BlueprintReadWrite, Category="EntityResource")
 	bool bIsEnabled = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bIsEnabled", ClampMin="0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EntityResource", meta=(EditCondition="bIsEnabled", ClampMin="0.0"))
 	float TickValue = 1.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bIsEnabled", ClampMin="0.0", ClampMax="1.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EntityResource",meta=(EditCondition="bIsEnabled", ClampMin="0.0", ClampMax="1.0"))
 	float Threshold = 1.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bIsEnabled", ClampMin="0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EntityResource",meta=(EditCondition="bIsEnabled", ClampMin="0.0"))
 	float StartDelay = 1.f; // In seconds
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bIsEnabled", ClampMin="0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EntityResource", meta=(EditCondition="bIsEnabled", ClampMin="0.0"))
 	float Frequency = 1.f; // Ticks in second
 	UPROPERTY()
 	float Time = 1.f; // Time between ticks in seconds.
@@ -37,18 +38,18 @@ struct FResourceData
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="EntityResource")
 	float Value = 100.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EntityResource", meta=(ClampMin="0.0"))
 	float ValueMax = 100.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EntityResource")
 	bool bUseCustomInitialValue = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(EditCondition="bUseCustomInitialValue", ClampMin="0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EntityResource", meta=(EditCondition="bUseCustomInitialValue", ClampMin="0.0"))
 	float ValueInitial = 100.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EntityResource")
 	FResourceAutoChangeData AutoIncreaseData;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="EntityResource")
 	FResourceAutoChangeData AutoDecreaseData;
 };
 

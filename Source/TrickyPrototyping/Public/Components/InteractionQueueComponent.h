@@ -22,7 +22,7 @@ struct FInteractionData
  * A component which manages interaction queue
  */
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(Interaction), meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UInteractionQueueComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -48,6 +48,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Interaction")
 	AActor* GetFirstActorInQueue() const;
 
+	UFUNCTION(BlueprintCallable, Category="Interaction")
+	FInteractionData GetFirstDataInQueue() const;
+
+	UFUNCTION(BlueprintGetter, Category="Interaction")
+	AActor* GetActorInSight() const { return ActorInSight; }
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Interaction")
 	bool bSortByLineOfSight = false;
@@ -58,7 +64,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category="Interaction")
 	TArray<FInteractionData> InteractionQueue;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintGetter=GetActorInSight, Category="Interaction")
 	AActor* ActorInSight = nullptr;
 
 	void CheckLineOfSight();

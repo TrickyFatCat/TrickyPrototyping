@@ -10,6 +10,9 @@ UBaseCapsuleTriggerComponent::UBaseCapsuleTriggerComponent()
 void UBaseCapsuleTriggerComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	OnComponentBeginOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnBeginOverlap);
+	OnComponentEndOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnEndOverlap);
 }
 
 void UBaseCapsuleTriggerComponent::TickComponent(float DeltaTime,
@@ -44,6 +47,7 @@ void UBaseCapsuleTriggerComponent::OnBeginOverlap(UPrimitiveComponent* Overlappe
                                                   bool bFromSweep,
                                                   const FHitResult& SweepResult)
 {
+	bIsActorInside = true;
 }
 
 void UBaseCapsuleTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -51,4 +55,5 @@ void UBaseCapsuleTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedC
                                                 UPrimitiveComponent* OtherComp,
                                                 int32 OtherBodyIndex)
 {
+	bIsActorInside = false;
 }

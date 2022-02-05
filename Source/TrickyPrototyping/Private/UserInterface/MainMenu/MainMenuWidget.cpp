@@ -19,10 +19,10 @@ void UMainMenuWidget::NativeOnInitialized()
 		TransitionScreen->OnShowed.AddDynamic(this, &UMainMenuWidget::ProcessTransition);
 	}
 
-	if (SplashScreen)
-	{
-		SplashScreen->OnSplashFinished.AddDynamic(this, &UMainMenuWidget::OnSplashFinished);
-	}
+	// if (SplashScreen)
+	// {
+	// 	SplashScreen->OnSplashFinished.AddDynamic(this, &UMainMenuWidget::OnSplashFinished);
+	// }
 
 	if (Button_StartGame)
 	{
@@ -41,15 +41,18 @@ void UMainMenuWidget::NativeOnInitialized()
 		Controller->SetInputMode(FInputModeUIOnly());
 		Controller->bShowMouseCursor = false;
 	}
+
+	TransitionScreen->SetVisibility(ESlateVisibility::Visible);
+	TransitionScreen->Hide();
 }
 
-void UMainMenuWidget::OnSplashFinished()
-{
-	if (!GetOwningPlayer()) return;
-
-	SplashScreen->SetVisibility(ESlateVisibility::Hidden);
-	GetOwningPlayer()->bShowMouseCursor = true;
-}
+// void UMainMenuWidget::OnSplashFinished()
+// {
+// 	if (!GetOwningPlayer()) return;
+//
+// 	SplashScreen->SetVisibility(ESlateVisibility::Hidden);
+// 	GetOwningPlayer()->bShowMouseCursor = true;
+// }
 
 void UMainMenuWidget::ProcessTransition()
 {
@@ -67,6 +70,13 @@ void UMainMenuWidget::ProcessTransition()
 
 	case ETransitionCommand::Quit:
 		UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, true);
+		break;
+
+	default:
+		if (GetOwningPlayer())
+		{
+			GetOwningPlayer()->bShowMouseCursor = true;
+		}
 		break;
 	}
 }

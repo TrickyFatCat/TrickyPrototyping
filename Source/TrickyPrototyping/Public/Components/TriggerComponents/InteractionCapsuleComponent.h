@@ -9,7 +9,7 @@
 /**
  * A capsule component which adds an actor to an interaction queeu
  */
-UCLASS()
+UCLASS(ClassGroup=(Interaction), BlueprintType, meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UInteractionCapsuleComponent : public UBaseCapsuleTriggerComponent
 {
 	GENERATED_BODY()
@@ -21,10 +21,11 @@ public:
 	UFUNCTION(BlueprintSetter, Category="Trigger")
 	void SetIsNormalTrigger(const bool Value) { bIsNormalTrigger = Value; }
 	
+	UPROPERTY(BlueprintReadWrite, Category="Trigger")	
 	bool bRequireLineOfSight = false;
 
 private:
-	UPROPERTY(EditDefaultsOnly,
+	UPROPERTY(VisibleAnywhere,
 		BlueprintGetter=GetIsNormalTrigger,
 		BlueprintSetter=SetIsNormalTrigger,
 		Category="Trigger",

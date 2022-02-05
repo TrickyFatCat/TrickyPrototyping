@@ -69,6 +69,7 @@ private:
 	UFUNCTION()
 	void StartSession();
 
+public:
 	UFUNCTION()
 	void FinishSession();
 };

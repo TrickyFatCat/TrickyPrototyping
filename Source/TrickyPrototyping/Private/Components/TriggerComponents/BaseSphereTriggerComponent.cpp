@@ -12,8 +12,6 @@ void UBaseSphereTriggerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetGenerateOverlapEvents(true);
-	SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	SetIsEnabled(bIsEnabled);
 
 	OnComponentBeginOverlap.AddDynamic(this, &UBaseSphereTriggerComponent::OnBeginOverlap);
@@ -52,6 +50,7 @@ void UBaseSphereTriggerComponent::OnBeginOverlap(UPrimitiveComponent* Overlapped
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
+	bIsActorInside = true;
 }
 
 void UBaseSphereTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -59,5 +58,6 @@ void UBaseSphereTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedCo
 	UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
+	bIsActorInside = false;
 }
 
