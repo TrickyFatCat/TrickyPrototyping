@@ -8,8 +8,8 @@ void UEntityResource::SetResourceData(const FResourceData& NewResourceData)
 {
 	ResourceData = NewResourceData;
 	ResourceData.Value = ResourceData.bUseCustomInitialValue ? ResourceData.ValueInitial : ResourceData.ValueMax;
-	ResourceData.AutoIncreaseData.Time = 1 / ResourceData.AutoIncreaseData.Frequency;
-	ResourceData.AutoDecreaseData.Time = 1 / ResourceData.AutoDecreaseData.Frequency;
+	ResourceData.AutoIncreaseData.Time = 1 / ResourceData.AutoIncreaseData.TickFrequency;
+	ResourceData.AutoDecreaseData.Time = 1 / ResourceData.AutoDecreaseData.TickFrequency;
 
 	if (ResourceData.ValueMax <= 0)
 	{
@@ -22,10 +22,10 @@ void UEntityResource::SetResourceData(const FResourceData& NewResourceData)
 		{
 			ResourceData.AutoDecreaseData.bIsEnabled = false;
 		}
-
-		StartAutoIncrease();
-		StartAutoDecrease();
 	}
+	
+	StartAutoIncrease();
+	StartAutoDecrease();
 }
 
 void UEntityResource::SetValue(const float NewValue)
@@ -70,7 +70,7 @@ void UEntityResource::SetValueMax(const float NewValue, const bool bClampValue)
 	{
 		SetValue(FMath::Clamp(ResourceData.Value, 0.f, GetValueMax()));
 	}
-	
+
 	OnValueMaxChanged.Broadcast(ResourceData.ValueMax);
 }
 
@@ -84,7 +84,7 @@ void UEntityResource::DecreaseValueMax(const float DeltaValue, const bool bClamp
 	{
 		SetValue(FMath::Clamp(ResourceData.Value, 0.f, GetValueMax()));
 	}
-	
+
 	OnValueMaxChanged.Broadcast(ResourceData.ValueMax);
 }
 
@@ -98,7 +98,7 @@ void UEntityResource::IncreaseValueMax(const float DeltaValue, const bool bClamp
 	{
 		SetValue(ResourceData.ValueMax);
 	}
-	
+
 	OnValueMaxChanged.Broadcast(ResourceData.ValueMax);
 }
 
@@ -116,7 +116,7 @@ void UEntityResource::StopTimer(FTimerHandle& TimerHandle) const
 
 void UEntityResource::ProcessAutoIncrease()
 {
-	IncreaseValue(ResourceData.AutoIncreaseData.TickValue, false);
+	IncreaseValue(ResourceData.AutoIncreaseData.TickPower, false);
 
 	if (GetNormalizedValue() >= ResourceData.AutoIncreaseData.Threshold)
 	{
@@ -158,7 +158,7 @@ void UEntityResource::SetAutoIncreaseFrequency(const float NewFrequency)
 {
 	if (NewFrequency <= 0.f) return;
 
-	ResourceData.AutoIncreaseData.Frequency = NewFrequency;
+	ResourceData.AutoIncreaseData.TickFrequency = NewFrequency;
 	ResourceData.AutoIncreaseData.Time = 1.f / NewFrequency;
 	StartAutoIncrease();
 }
@@ -167,7 +167,7 @@ void UEntityResource::SetAutoIncreaseValue(const float NewValue)
 {
 	if (NewValue <= 0.f) return;
 
-	ResourceData.AutoIncreaseData.TickValue = NewValue;
+	ResourceData.AutoIncreaseData.TickPower = NewValue;
 	StartAutoIncrease();
 }
 
@@ -188,7 +188,7 @@ void UEntityResource::SetAutoIncreaseStartDelay(const float NewDelay)
 
 void UEntityResource::ProcessAutoDecrease()
 {
-	DecreaseValue(ResourceData.AutoDecreaseData.TickValue);
+	DecreaseValue(ResourceData.AutoDecreaseData.TickPower);
 
 	if (GetNormalizedValue() <= ResourceData.AutoDecreaseData.Threshold)
 	{
@@ -199,7 +199,8 @@ void UEntityResource::ProcessAutoDecrease()
 void UEntityResource::StartAutoDecrease()
 {
 	if (!ResourceData.AutoDecreaseData.bIsEnabled || GetNormalizedValue() <= ResourceData.AutoDecreaseData.Threshold ||
-		!GetWorld()) return;
+		!GetWorld())
+		return;
 
 	StopTimer(AutoDecreaseTimerHandle);
 	GetWorld()->GetTimerManager().SetTimer(AutoDecreaseTimerHandle,
@@ -229,7 +230,7 @@ void UEntityResource::SetAutoDecreaseFrequency(const float NewFrequency)
 {
 	if (NewFrequency <= 0.f) return;
 
-	ResourceData.AutoDecreaseData.Frequency = NewFrequency;
+	ResourceData.AutoDecreaseData.TickFrequency = NewFrequency;
 	ResourceData.AutoDecreaseData.Time = 1.f / NewFrequency;
 	StartAutoDecrease();
 }
@@ -238,7 +239,7 @@ void UEntityResource::SetAutoDecreaseValue(const float NewValue)
 {
 	if (NewValue <= 0.f) return;
 
-	ResourceData.AutoDecreaseData.TickValue = NewValue;
+	ResourceData.AutoDecreaseData.TickPower = NewValue;
 	StartAutoDecrease();
 }
 
