@@ -10,8 +10,8 @@
  * This object contains logic for basic entity resources such as Health Points, Armor, Stamina, etc.
  */
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnValueChangedSignature, float, float);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnValueMaxChangedSignature, float);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnValueChangedSignature, float, NewValue, float, DeltaValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnValueMaxChangedSignature, float, NewValueMax, float, DeltaValueMax);
 
 USTRUCT(BlueprintType)
 struct FResourceAutoChangeData
@@ -124,6 +124,9 @@ public:
 	UFUNCTION(BlueprintGetter, Category="EntityResource")
 	FResourceData GetResourceData() const { return ResourceData; }
 
+	UFUNCTION(BlueprintCallable, Category="EntityResoure")
+	void GetResourceDataByRef(UPARAM(ref, DisplayName = "Resource Data") FResourceData& Data);
+
 	// Value
 	/**
 	 * Sets current Value of the resource.
@@ -193,9 +196,22 @@ public:
 	void IncreaseValueMax(const float DeltaValue, const bool bClampValue = false);
 
 	// Delegates
+	/**
+	 * Broadcast when current Value changed.
+	 * @param NewValue - updated current Value;
+	 * @param DeltaValue - how much current Value changed. If < 0 Value was decreased, if > 0 Value was increased;
+	 */
+	UPROPERTY(BlueprintAssignable, Category="EntityResource|CurrentValue")
 	FOnValueChangedSignature OnValueChanged;
 
+	/**
+	 * Broadcast when ValueMax changed.
+	 * @param NewValueMax - updated ValueMax;
+	 * @param DeltaValueMax - how much ValueMax changed. If < 0 ValueMax was decreased, if > 0 ValueMax was increased;
+	 */
+	UPROPERTY(BlueprintAssignable, Category="EntityResource|MaxValue")
 	FOnValueMaxChangedSignature OnValueMaxChanged;
+	
 protected:
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintGetter=GetResourceData,

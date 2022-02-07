@@ -28,12 +28,19 @@ void UEntityResource::SetResourceData(const FResourceData& NewResourceData)
 	StartAutoDecrease();
 }
 
+void UEntityResource::GetResourceDataByRef(FResourceData& Data)
+{
+	Data = ResourceData;	
+}
+
 void UEntityResource::SetValue(const float NewValue)
 {
-	if (NewValue < 0.f || ResourceData.Value <= 0.f) return;
+	if (NewValue < 0.f || ResourceData.Value <= 0.f || NewValue == ResourceData.Value) return;
 
+	const float OldValue = ResourceData.Value;
 	ResourceData.Value = NewValue;
-	OnValueChanged.Broadcast(ResourceData.Value, ResourceData.Value - NewValue);
+	const float DeltaValue = NewValue > OldValue ? NewValue - OldValue : OldValue - NewValue;
+	OnValueChanged.Broadcast(ResourceData.Value, DeltaValue);
 }
 
 void UEntityResource::DecreaseValue(const float DeltaValue)
@@ -41,7 +48,7 @@ void UEntityResource::DecreaseValue(const float DeltaValue)
 	if (DeltaValue <= 0.f || GetValue() <= 0.f) return;
 
 	ResourceData.Value = FMath::Max(ResourceData.Value - DeltaValue, 0.f);
-	OnValueChanged.Broadcast(ResourceData.Value, DeltaValue);
+	OnValueChanged.Broadcast(ResourceData.Value, -DeltaValue);
 	StartAutoIncrease();
 }
 
@@ -64,14 +71,16 @@ void UEntityResource::SetValueMax(const float NewValue, const bool bClampValue)
 {
 	if (NewValue <= 0.f) return;
 
+	const float OldValue = ResourceData.ValueMax;
 	ResourceData.ValueMax = NewValue;
+	const float DeltaValue = NewValue > OldValue ? NewValue - OldValue : OldValue - NewValue;
 
 	if (bClampValue)
 	{
 		SetValue(FMath::Clamp(ResourceData.Value, 0.f, GetValueMax()));
 	}
 
-	OnValueMaxChanged.Broadcast(ResourceData.ValueMax);
+	OnValueMaxChanged.Broadcast(ResourceData.ValueMax, DeltaValue);
 }
 
 void UEntityResource::DecreaseValueMax(const float DeltaValue, const bool bClampValue)
@@ -85,7 +94,7 @@ void UEntityResource::DecreaseValueMax(const float DeltaValue, const bool bClamp
 		SetValue(FMath::Clamp(ResourceData.Value, 0.f, GetValueMax()));
 	}
 
-	OnValueMaxChanged.Broadcast(ResourceData.ValueMax);
+	OnValueMaxChanged.Broadcast(ResourceData.ValueMax, -DeltaValue);
 }
 
 void UEntityResource::IncreaseValueMax(const float DeltaValue, const bool bClampValue)
@@ -99,7 +108,7 @@ void UEntityResource::IncreaseValueMax(const float DeltaValue, const bool bClamp
 		SetValue(ResourceData.ValueMax);
 	}
 
-	OnValueMaxChanged.Broadcast(ResourceData.ValueMax);
+	OnValueMaxChanged.Broadcast(ResourceData.ValueMax, DeltaValue);
 }
 
 void UEntityResource::StopTimer(FTimerHandle& TimerHandle) const
