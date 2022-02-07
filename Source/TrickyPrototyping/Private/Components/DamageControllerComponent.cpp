@@ -82,6 +82,13 @@ void UDamageControllerComponent::SetGeneralDamageModifier(const float NewModifie
 	GeneralDamageModifier = NewModifier;
 }
 
+void UDamageControllerComponent::SetRadialDamageModifier(const float Value)
+{
+	if (Value < 0.f) return;
+
+	RadialDamageModifier = Value;
+}
+
 float UDamageControllerComponent::GetPointDamageModifier(AActor* Actor, const FName& BoneName)
 {
 	const ACharacter* Character = Cast<ACharacter>(Actor);
@@ -101,7 +108,7 @@ void UDamageControllerComponent::CalculateDamage_Implementation(const float Dama
 {
 	if (Damage <= 0.f) return;
 
-	DecreaseHealth(Damage * GeneralDamageModifier);
+	DecreaseHealth(Damage);
 
 	if (GetIsDead())
 	{
@@ -128,7 +135,7 @@ void UDamageControllerComponent::OnTakePointDamage(AActor* DamagedActor,
                                                    const UDamageType* DamageType,
                                                    AActor* DamageCauser)
 {
-	float FinalDamage = Damage;
+	float FinalDamage = Damage * GeneralDamageModifier;
 
 	if (bUsePointDamageModifier && PointDamageModifiers.Num() > 0)
 	{
@@ -146,5 +153,7 @@ void UDamageControllerComponent::OnTakeRadialDamage(AActor* DamagedActor,
                                                     AController* InstigatedBy,
                                                     AActor* DamageCauser)
 {
-	CalculateDamage(Damage, DamagedActor, InstigatedBy, DamageCauser, DamageType);
+	float FinalDamage = Damage * GeneralDamageModifier;
+	FinalDamage *= RadialDamageModifier;
+	CalculateDamage(FinalDamage, DamagedActor, InstigatedBy, DamageCauser, DamageType);
 }

@@ -106,6 +106,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="DamageController|Damage")
 	void SetIsInvulnerable(const bool bIsInvulnerable) { GeneralDamageModifier = bIsInvulnerable; }
 
+	UFUNCTION(BlueprintGetter, Category="DamageController|Damage")
+	float GetRadialDamageModifier() const { return RadialDamageModifier; }
+
+	UFUNCTION(BlueprintSetter, Category="DamageController|Damage")
+	void SetRadialDamageModifier(const float Value);
+
 protected:
 	/**
 	 * Applies to all receiving damage.
@@ -117,9 +123,20 @@ protected:
 	float GeneralDamageModifier = 1.f;
 
 	/**
+	 * Applies to radial damage only.
+	 */
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetRadialDamageModifier,
+		BlueprintSetter=SetRadialDamageModifier,
+		Category="DamageController|Damage",
+		meta=(ClampMin="0"))
+	float RadialDamageModifier = 1.0f;
+
+	/**
 	 * Determines if input damage depends on a part of body to which it was applied.
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="DamageController|Damage")
+	UPROPERTY
+	(EditDefaultsOnly, BlueprintReadWrite, Category="DamageController|Damage")
 	bool bUsePointDamageModifier = false;
 
 	/**
