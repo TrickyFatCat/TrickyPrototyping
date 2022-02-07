@@ -15,6 +15,8 @@ class UPhysicalMaterial;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedSignature, float, NewHealth, float, DeltaHealth);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMaxHealthChagedSignature, float, NewMaxHealth, float, DeltaMaxHeath);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnDeathSignature,
                                                AController*,
                                                DeathInstigator,
@@ -40,27 +42,36 @@ protected:
 private:
 	// Health
 public:
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category="DamageController|Health")
 	FOnHealthChangedSignature OnHealthChanged;
 
-	UFUNCTION(BlueprintCallable, Category="Health")
+	UPROPERTY(BlueprintCallable, Category="DamageController|Health")
+	FOnMaxHealthChagedSignature OnMaxHealthChanged;
+
+	UFUNCTION(BlueprintCallable, Category="DamageController|Health")
 	float GetHealth() const { return HealthObject->GetValue(); }
 
-	UFUNCTION(BlueprintCallable, Category="Health")
+	UFUNCTION(BlueprintCallable, Category="DamageController|Health")
 	float GetMaxHealth() const { return HealthObject->GetValueMax(); }
 
-	UFUNCTION(BlueprintCallable, Category="Health")
+	UFUNCTION(BlueprintCallable, Category="DamageController|Health")
 	float GetNormalizedHealth() const { return HealthObject->GetNormalizedValue(); }
 
-	UFUNCTION(BlueprintCallable, Category="Health")
+	UFUNCTION(BlueprintCallable, Category="DamageController|Health")
 	void DecreaseHealth(const float Amount);
-	UFUNCTION(BlueprintCallable, Category="Health")
+
+	UFUNCTION(BlueprintCallable, Category="DamageController|Health")
 	void IncreaseHealth(const float Amount, const bool bClampToMax = true);
-	UFUNCTION(BlueprintCallable, Category="Health")
+
+	UFUNCTION(BlueprintCallable, Category="DamageController|Health")
 	void DecreaseMaxHealth(const float Amount, const bool bClampCurrentHealth = true);
-	UFUNCTION(BlueprintCallable, Category="Health")
+
+	UFUNCTION(BlueprintCallable, Category="DamageController|Health")
 	void IncreaseMaxHealth(const float Amount, const bool bClampCurrentHealth = true);
+
 	void BroadcastOnHealthChanged(const float NewHealth, const float DeltaHealth);
+
+	void BroadcastOnMaxHealthChanged(const float NewMaxHealth, const float DeltaMaxHealth);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="DamageController", meta=(AllowPrivateAccess="true"))
@@ -74,26 +85,32 @@ public:
 	FOnDeathSignature OnDeath;
 
 	bool GetIsDead() const { return GetHealth() <= 0.f; }
-	UFUNCTION(BlueprintCallable, Category="Damage")
+	UFUNCTION(BlueprintCallable, Category="DamageController|Damage")
 	float GetGeneralDamageModifier() const { return GeneralDamageModifier; }
 
-	UFUNCTION(BlueprintCallable, Category="Dmage")
+	UFUNCTION(BlueprintCallable, Category="DamageController|Dmage")
 	void SetGeneralDamageModifier(const float NewModifier);
+
 protected:
 	/** Is used for any damage. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Damage")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="DamageController|Damage")
 	float GeneralDamageModifier = 1.f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Damage")
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="DamageController|Damage")
 	bool bUsePointDamageModifier = false;
+	
 	/** Is used only for point damage. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Damage", meta=(EditCondition="bUsePointDamageModifier"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="DamageController|Damage", meta=(EditCondition="bUsePointDamageModifier"))
 	TMap<UPhysicalMaterial*, float> PointDamageModifiers;
+
 	float GetPointDamageModifier(AActor* Actor, const FName& BoneName);
+
 	virtual void CalculateDamage(const float Damage,
 	                             AActor* DamagedActor,
 	                             AController* Instigator,
 	                             AActor* Causer,
 	                             const UDamageType* DamageType);
+
 	UFUNCTION()
 	virtual void OnTakeAnyDamage(AActor* DamageActor,
 	                             float Damage,
@@ -121,5 +138,6 @@ protected:
 	                                FHitResult HitInfo,
 	                                class AController* InstigatedBy,
 	                                AActor* DamageCauser);
+
 private:
 };

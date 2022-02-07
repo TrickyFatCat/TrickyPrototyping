@@ -18,7 +18,8 @@ void UDamageControllerComponent::BeginPlay()
 
 	HealthObject = NewObject<UEntityResource>(this, TEXT("HealthObject"));
 	HealthObject->SetResourceData(HealthData);
-	HealthObject->OnValueChanged.AddUObject(this, &UDamageControllerComponent::BroadcastOnHealthChanged);
+	HealthObject->OnValueChanged.AddDynamic(this, &UDamageControllerComponent::BroadcastOnHealthChanged);
+	HealthObject->OnValueMaxChanged.AddDynamic(this, &UDamageControllerComponent::BroadcastOnMaxHealthChanged);
 
 	AActor* ComponentOwner = GetOwner();
 
@@ -58,12 +59,15 @@ void UDamageControllerComponent::IncreaseMaxHealth(const float Amount, const boo
 	HealthObject->IncreaseValueMax(Amount, bClampCurrentHealth);
 }
 
-
 void UDamageControllerComponent::BroadcastOnHealthChanged(const float NewHealth, const float DeltaHealth)
 {
 	OnHealthChanged.Broadcast(NewHealth, DeltaHealth);
 }
 
+void UDamageControllerComponent::BroadcastOnMaxHealthChanged(const float NewMaxHealth, const float DeltaMaxHealth)
+{
+	OnMaxHealthChanged.Broadcast(NewMaxHealth, DeltaMaxHealth);
+}
 
 void UDamageControllerComponent::SetGeneralDamageModifier(const float NewModifier)
 {
@@ -85,12 +89,16 @@ float UDamageControllerComponent::GetPointDamageModifier(AActor* Actor, const FN
 	return PointDamageModifiers[PhysMat];
 }
 
-void UDamageControllerComponent::CalculateDamage(const float Damage, AActor* DamagedActor, AController* Instigator, AActor* Causer,const UDamageType* DamageType)
+void UDamageControllerComponent::CalculateDamage(const float Damage,
+                                                 AActor* DamagedActor,
+                                                 AController* Instigator,
+                                                 AActor* Causer,
+                                                 const UDamageType* DamageType)
 {
 	if (Damage <= 0.f) return;
 
 	DecreaseHealth(Damage * GeneralDamageModifier);
-	
+
 	if (GetIsDead())
 	{
 		HealthObject->SetAutoIncreaseEnabled(false);
@@ -117,7 +125,7 @@ void UDamageControllerComponent::OnTakePointDamage(AActor* DamagedActor,
                                                    AActor* DamageCauser)
 {
 	float FinalDamage = Damage;
-	
+
 	if (bUsePointDamageModifier && PointDamageModifiers.Num() > 0)
 	{
 		FinalDamage *= GetPointDamageModifier(DamagedActor, BoneName);
