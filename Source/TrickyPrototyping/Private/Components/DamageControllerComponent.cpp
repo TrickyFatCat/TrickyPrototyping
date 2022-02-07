@@ -59,6 +59,12 @@ void UDamageControllerComponent::IncreaseMaxHealth(const float Amount, const boo
 	HealthObject->IncreaseValueMax(Amount, bClampCurrentHealth);
 }
 
+void UDamageControllerComponent::SetHealthData(const FResourceData& NewData)
+{
+	HealthData = NewData;
+	HealthObject->SetResourceData(HealthData);
+}
+
 void UDamageControllerComponent::BroadcastOnHealthChanged(const float NewHealth, const float DeltaHealth)
 {
 	OnHealthChanged.Broadcast(NewHealth, DeltaHealth);
@@ -71,29 +77,27 @@ void UDamageControllerComponent::BroadcastOnMaxHealthChanged(const float NewMaxH
 
 void UDamageControllerComponent::SetGeneralDamageModifier(const float NewModifier)
 {
-	if (NewModifier < 0.f) return;
+	if (NewModifier <= 0.f) return;
 
 	GeneralDamageModifier = NewModifier;
 }
 
 float UDamageControllerComponent::GetPointDamageModifier(AActor* Actor, const FName& BoneName)
 {
-	ACharacter* Character = Cast<ACharacter>(Actor);
+	const ACharacter* Character = Cast<ACharacter>(Actor);
 
 	if (!Character || !Character->GetMesh() || !Character->GetMesh()->GetBodyInstance(BoneName)) return 1.f;
 
 	const UPhysicalMaterial* PhysMat = Character->GetMesh()->GetBodyInstance(BoneName)->GetSimplePhysicalMaterial();
 
-	if (!PointDamageModifiers.Contains(PhysMat)) return 1.f;
-
-	return PointDamageModifiers[PhysMat];
+	return PointDamageModifiers.Contains(PhysMat) ? PointDamageModifiers[PhysMat] : 1.f;
 }
 
-void UDamageControllerComponent::CalculateDamage(const float Damage,
-                                                 AActor* DamagedActor,
-                                                 AController* Instigator,
-                                                 AActor* Causer,
-                                                 const UDamageType* DamageType)
+void UDamageControllerComponent::CalculateDamage_Implementation(const float Damage,
+                                                                AActor* DamagedActor,
+                                                                AController* Instigator,
+                                                                AActor* Causer,
+                                                                const UDamageType* DamageType)
 {
 	if (Damage <= 0.f) return;
 

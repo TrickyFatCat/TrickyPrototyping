@@ -25,7 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnDeathSignature,
                                                const UDamageType*,
                                                DamageType);
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(TrickyPrototyping), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UDamageControllerComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -36,10 +36,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	// General
-public:
-protected:
-private:
 	// Health
 public:
 	UPROPERTY(BlueprintAssignable, Category="DamageController|Health")
@@ -69,14 +65,28 @@ public:
 	UFUNCTION(BlueprintCallable, Category="DamageController|Health")
 	void IncreaseMaxHealth(const float Amount, const bool bClampCurrentHealth = true);
 
+	UFUNCTION(BlueprintCallable, Category="DamageController|Health")
+	bool GetIsDead() const { return GetHealth() <= 0.f; }
+
+	UFUNCTION(BlueprintSetter, Category="DamageController|Health")
+	void SetHealthData(UPARAM(DisplayName = "NewHeathData") const FResourceData& NewData);
+
+	UFUNCTION(BlueprintGetter, Category="DamageController|Health")
+	FResourceData GetHealthData() const { return HealthData; }
+
+protected:
 	void BroadcastOnHealthChanged(const float NewHealth, const float DeltaHealth);
 
 	void BroadcastOnMaxHealthChanged(const float NewMaxHealth, const float DeltaMaxHealth);
 
-protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="DamageController", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetHealthData,
+		BlueprintSetter=SetHealthData,
+		Category="DamageController",
+		meta=(AllowPrivateAccess="true"))
 	FResourceData HealthData;
-	UPROPERTY()
+
+	UPROPERTY(BlueprintReadOnly, Category="DamageController")
 	UEntityResource* HealthObject = nullptr;
 private:
 	// Damage calculation
@@ -84,32 +94,57 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnDeathSignature OnDeath;
 
-	bool GetIsDead() const { return GetHealth() <= 0.f; }
-	UFUNCTION(BlueprintCallable, Category="DamageController|Damage")
+	UFUNCTION(BlueprintGetter, Category="DamageController|Damage")
 	float GetGeneralDamageModifier() const { return GeneralDamageModifier; }
 
-	UFUNCTION(BlueprintCallable, Category="DamageController|Dmage")
+	UFUNCTION(BlueprintSetter, Category="DamageController|Dmage")
 	void SetGeneralDamageModifier(const float NewModifier);
 
+	UFUNCTION(BlueprintPure, Category="DamageController|Damage")
+	bool GetIsInvulnerable() const { return GeneralDamageModifier == 0.f; }
+
+	UFUNCTION(BlueprintCallable, Category="DamageController|Damage")
+	void SetIsInvulnerable(const bool bIsInvulnerable) { GeneralDamageModifier = bIsInvulnerable; }
+
 protected:
-	/** Is used for any damage. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="DamageController|Damage")
+	/**
+	 * Applies to all receiving damage.
+	 */
+	UPROPERTY(VisibleAnywhere,
+		BlueprintGetter=GetGeneralDamageModifier,
+		BlueprintSetter=SetGeneralDamageModifier,
+		Category="DamageController|Damage")
 	float GeneralDamageModifier = 1.f;
-	
+
+	/**
+	 * Determines if input damage depends on a part of body to which it was applied.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="DamageController|Damage")
 	bool bUsePointDamageModifier = false;
-	
-	/** Is used only for point damage. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="DamageController|Damage", meta=(EditCondition="bUsePointDamageModifier"))
+
+	/**
+	 * Is used only for point damage.
+	 */
+	UPROPERTY(EditDefaultsOnly,
+		BlueprintReadWrite,
+		Category="DamageController|Damage",
+		meta=(EditCondition="bUsePointDamageModifier"))
 	TMap<UPhysicalMaterial*, float> PointDamageModifiers;
 
 	float GetPointDamageModifier(AActor* Actor, const FName& BoneName);
 
-	virtual void CalculateDamage(const float Damage,
-	                             AActor* DamagedActor,
-	                             AController* Instigator,
-	                             AActor* Causer,
-	                             const UDamageType* DamageType);
+	UFUNCTION(BlueprintNativeEvent, Category="DamageController")
+	void CalculateDamage(const float Damage,
+	                     AActor* DamagedActor,
+	                     AController* Instigator,
+	                     AActor* Causer,
+	                     const UDamageType* DamageType);
+
+	virtual void CalculateDamage_Implementation(const float Damage,
+	                                            AActor* DamagedActor,
+	                                            AController* Instigator,
+	                                            AActor* Causer,
+	                                            const UDamageType* DamageType);
 
 	UFUNCTION()
 	virtual void OnTakeAnyDamage(AActor* DamageActor,
