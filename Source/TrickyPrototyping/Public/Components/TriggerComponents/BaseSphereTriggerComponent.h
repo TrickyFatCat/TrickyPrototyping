@@ -9,7 +9,7 @@
 /**
  * A base sphere trigger component for creating different trigger components
  */
-UCLASS(ClassGroup=(Triggers), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(TrickyPrototyping), Blueprintable, BlueprintType, meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UBaseSphereTriggerComponent : public USphereComponent
 {
 	GENERATED_BODY()
@@ -25,27 +25,35 @@ public:
 	                           ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintSetter, Category="Trigger")
+	UFUNCTION(BlueprintSetter, Category="TriggerComponent")
 	void SetIsEnabled(const bool bEnabled);
 
-	UFUNCTION(BlueprintGetter, Category="Trigger")
+	UFUNCTION(BlueprintGetter, Category="TriggerComponent")
 	bool GetIsEnabled() const { return bIsEnabled; }
 
-	UFUNCTION(BlueprintGetter, Category="Trigger")
+	UFUNCTION(BlueprintGetter, Category="TriggerComponent")
 	bool GetIsActorInside() const { return bIsActorInside; }
 
+protected:
+	UFUNCTION(BlueprintNativeEvent, Category="TriggerComponent")
+	void EnableTrigger();
+
+	virtual void EnableTrigger_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, Category="TriggerComponent")
+	void DisableTrigger();
+
+	virtual void DisableTrigger_Implementation();
+
 private:
-	UPROPERTY(VisibleAnywhere,
+	UPROPERTY(EditDefaultsOnly,
 		BlueprintSetter=SetIsEnabled,
 		BlueprintGetter=GetIsEnabled,
-		Category="Trigger",
+		Category="TriggerComponent",
 		meta=(AllowPrivateAccess="true"))
 	bool bIsEnabled = true;
 
-	virtual void EnableTrigger();
-	virtual void DisableTrigger();
-
-	UPROPERTY(BlueprintGetter= GetIsActorInside, Category="Trigger")
+	UPROPERTY(VisibleAnywhere, BlueprintGetter= GetIsActorInside, Category="TriggerComponent")
 	bool bIsActorInside = false;
 
 protected:

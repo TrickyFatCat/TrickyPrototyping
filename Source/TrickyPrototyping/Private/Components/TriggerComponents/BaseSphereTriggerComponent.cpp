@@ -12,10 +12,9 @@ void UBaseSphereTriggerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetIsEnabled(bIsEnabled);
-
 	OnComponentBeginOverlap.AddDynamic(this, &UBaseSphereTriggerComponent::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UBaseSphereTriggerComponent::OnEndOverlap);
+	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
 }
 
 void UBaseSphereTriggerComponent::TickComponent(float DeltaTime,
@@ -30,15 +29,15 @@ void UBaseSphereTriggerComponent::SetIsEnabled(const bool bEnabled)
 	if (bIsEnabled == bEnabled) return;
 
 	bIsEnabled = bEnabled;
-	bIsEnabled ? EnableTrigger() : DisableTrigger();
+	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
 }
 
-void UBaseSphereTriggerComponent::EnableTrigger()
+void UBaseSphereTriggerComponent::EnableTrigger_Implementation()
 {
 	SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
-void UBaseSphereTriggerComponent::DisableTrigger()
+void UBaseSphereTriggerComponent::DisableTrigger_Implementation()
 {
 	SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
