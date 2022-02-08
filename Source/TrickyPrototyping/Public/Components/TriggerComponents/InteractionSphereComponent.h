@@ -28,7 +28,7 @@ public:
 	FString InteractionMessage = "";
 
 private:
-	UPROPERTY(VisibleAnywhere,
+	UPROPERTY(EditDefaultsOnly,
 		BlueprintGetter=GetIsNormalTrigger,
 		BlueprintSetter=SetIsNormalTrigger,
 		Category="TriggerComponent|Interaction",
