@@ -5,6 +5,7 @@
 
 #include "Core/TrickyUtils.h"
 #include "Interfaces/InteractionInterface.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 UInteractionQueueComponent::UInteractionQueueComponent()
 {
@@ -25,13 +26,13 @@ void UInteractionQueueComponent::TickComponent(float DeltaTime,
 	CheckLineOfSight();
 }
 
-void UInteractionQueueComponent::AddToQue(AActor* Actor, bool bRequireLineOfSight)
+void UInteractionQueueComponent::AddToQueue(AActor* Actor,
+                                            const bool bRequireLineOfSight,
+                                            const FString& InteractionMessage)
 {
 	if (!IsValid(Actor) || QueueContainsActor(Actor)) return;
 
-	FInteractionData NewData;
-	NewData.Actor = Actor;
-	NewData.bRequireLineOfSight = bRequireLineOfSight;
+	const FInteractionData NewData{Actor, bRequireLineOfSight, InteractionMessage};
 	InteractionQueue.Add(NewData);
 }
 
@@ -76,6 +77,13 @@ FInteractionData UInteractionQueueComponent::GetFirstDataInQueue() const
 	return InteractionQueue[0];
 }
 
+FString UInteractionQueueComponent::GetInteractionMessage() const
+{
+	if (InteractionQueue.Num() == 0) return "";
+
+	return InteractionQueue[0].InteractionMessage;
+}
+
 void UInteractionQueueComponent::CheckLineOfSight()
 {
 	if (IsQueueEmpty()) return;
@@ -87,21 +95,25 @@ void UInteractionQueueComponent::CheckLineOfSight()
 
 	FVector TraceStart = ViewLocation;
 	FVector TraceDirection = ViewRotation.Vector();
-	FVector TraceEnd = TraceStart + TraceDirection * SortDistance;
+	FVector TraceEnd = TraceStart + TraceDirection * SightDistance;
 
 	if (!GetWorld()) return;
 
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionQueryParams;
 	CollisionQueryParams.AddIgnoredActor(GetOwner());
-	GetWorld()->LineTraceSingleByChannel(HitResult,
-	                                     TraceStart,
-	                                     TraceEnd,
-	                                     ECollisionChannel::ECC_Visibility,
-	                                     CollisionQueryParams);
+	UKismetSystemLibrary::SphereTraceSingle(GetWorld(),
+	                                        TraceStart,
+	                                        TraceEnd,
+	                                        SightRadius,
+	                                        UEngineTypes::ConvertToTraceType(ECC_Visibility),
+	                                        false,
+	                                        {GetOwner()},
+	                                        EDrawDebugTrace::None,
+	                                        HitResult,
+	                                        true);
 
 	ActorInSight = HitResult.GetActor();
-
 	SortQueueByLineOfSight(HitResult);
 }
 
@@ -130,12 +142,15 @@ bool UInteractionQueueComponent::QueueContainsActor(const AActor* Actor) const
 AActor* UInteractionQueueComponent::GetQueuedActor(const AActor* Actor) const
 {
 	const FInteractionData FinalData = *InteractionQueue.FindByPredicate(
-		[&](const FInteractionData& Data) { return Data.Actor == Actor; });
+	                                                                     [&](const FInteractionData& Data)
+	                                                                     {
+		                                                                     return Data.Actor == Actor;
+	                                                                     });
 	return FinalData.Actor;
 }
 
 int32 UInteractionQueueComponent::GetInteractionDataIndex(const AActor* Actor) const
 {
 	return InteractionQueue.IndexOfByPredicate(
-		[&](const FInteractionData& Data) { return Data.Actor == Actor; });
+	                                           [&](const FInteractionData& Data) { return Data.Actor == Actor; });
 }

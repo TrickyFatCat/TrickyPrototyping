@@ -16,13 +16,16 @@ struct FInteractionData
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="InteractionData")
 	bool bRequireLineOfSight = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="InteractionData")
+	FString InteractionMessage = "";
 };
 
 /**
  * A component which manages interaction queue
  */
 
-UCLASS(ClassGroup=(Interaction), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(TrickyPrototyping), meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UInteractionQueueComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -34,18 +37,24 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
-	void AddToQue(AActor* Actor, bool bRequireLineOfSight);
-	
+	virtual void TickComponent(float DeltaTime,
+	                           ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
+
+	void AddToQueue(AActor* Actor, const bool bRequireLineOfSight, const FString& InteractionMessage);
+
 	void RemoveFromQueue(const AActor* Actor);
 
+	/**
+	 * Call ProcessInteraction function inside a target actor.
+	 */
 	UFUNCTION(BlueprintCallable, Category="Interaction")
 	bool Interact();
-	
+
+	UFUNCTION(BlueprintCallable, Category="Interaction|Queue")
 	bool IsQueueEmpty() const { return InteractionQueue.Num() == 0; };
 
-	UFUNCTION(BlueprintCallable, Category="Interaction")
+	UFUNCTION(BlueprintCallable, Category="Interaction|Queue")
 	AActor* GetFirstActorInQueue() const;
 
 	UFUNCTION(BlueprintCallable, Category="Interaction")
@@ -54,13 +63,22 @@ public:
 	UFUNCTION(BlueprintGetter, Category="Interaction")
 	AActor* GetActorInSight() const { return ActorInSight; }
 
+	UFUNCTION(BlueprintCallable, Category="Interaction")
+	FString GetInteractionMessage() const;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Interaction")
 	bool bSortByLineOfSight = false;
 
-	UPROPERTY(EditDefaultsOnly, Category="Interaction", meta=(EditCondition="bSortByLineOfSight", ClampMin="0"))
-	float SortDistance = 60.f;
-	
+	UPROPERTY(EditDefaultsOnly,
+		BlueprintReadOnly,
+		Category="Interaction",
+		meta=(AllowPrivateAccess = "true", EditCondition="bSortByLineOfSight", ClampMin="1"))
+	float SightDistance = 120.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess="true", EditCondition="bSortByLineOfSight", ClampMin="1"))
+	float SightRadius = 60.f;
+
 	UPROPERTY(VisibleAnywhere, Category="Interaction")
 	TArray<FInteractionData> InteractionQueue;
 
