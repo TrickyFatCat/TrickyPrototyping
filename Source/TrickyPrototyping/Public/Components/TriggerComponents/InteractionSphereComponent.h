@@ -21,13 +21,22 @@ public:
 	UFUNCTION(BlueprintSetter, Category="TriggerComponent|Interaction")
 	void SetIsNormalTrigger(const bool Value) { bIsNormalTrigger = Value; }
 
+	/**
+     * Determine if the owen require the line of sight check for interaction.
+     */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TriggerComponent|Interaction")
 	bool bRequireLineOfSight = false;
 
+	/**
+	 * A message which can be used in hints.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TriggerComponent|Interaction")
 	FString InteractionMessage = "";
 
 private:
+	/**
+	 * If true, the trigger will behave as a normal one.
+	 */
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintGetter=GetIsNormalTrigger,
 		BlueprintSetter=SetIsNormalTrigger,

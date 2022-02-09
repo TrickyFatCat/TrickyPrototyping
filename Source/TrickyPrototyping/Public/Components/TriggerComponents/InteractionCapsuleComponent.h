@@ -13,21 +13,30 @@ UCLASS(ClassGroup=(TrickyPrototyping), BlueprintType, meta=(BlueprintSpawnableCo
 class TRICKYPROTOTYPING_API UInteractionCapsuleComponent : public UBaseCapsuleTriggerComponent
 {
 	GENERATED_BODY()
-	
+
 public:
 	UFUNCTION(BlueprintGetter, Category="TriggerComponent|Interaction")
 	bool GetIsNormalTrigger() const { return bIsNormalTrigger; }
 
 	UFUNCTION(BlueprintSetter, Category="TriggerComponent|Interaction")
 	void SetIsNormalTrigger(const bool Value) { bIsNormalTrigger = Value; }
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TriggerComponent|Interaction")	
+
+	/**
+     * Determine if the owen require the line of sight check for interaction.
+     */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TriggerComponent|Interaction")
 	bool bRequireLineOfSight = false;
 
+	/**
+	 * A message which can be used in hints.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="TriggerComponent|Interaction")
 	FString InteractionMessage = "";
 
 private:
+	/**
+	 * If true, the trigger will behave as a normal one.
+     */
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintGetter=GetIsNormalTrigger,
 		BlueprintSetter=SetIsNormalTrigger,
