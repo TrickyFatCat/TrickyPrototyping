@@ -7,7 +7,8 @@
 #include "KeyType.generated.h"
 
 /**
- * 
+ * A simple key object class to create different keys.
+ * @warning this class does not spawn in runtime.
  */
 UCLASS(Blueprintable, BlueprintType)
 class TRICKYPROTOTYPING_API UKeyType : public UBaseObject
