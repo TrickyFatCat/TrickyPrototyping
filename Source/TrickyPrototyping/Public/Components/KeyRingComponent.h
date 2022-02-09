@@ -8,12 +8,12 @@
 
 class UKeyType;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(TrickyPrototyping), meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UKeyRingComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UKeyRingComponent();
 
 protected:
