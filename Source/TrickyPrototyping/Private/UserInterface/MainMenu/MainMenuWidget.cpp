@@ -19,11 +19,6 @@ void UMainMenuWidget::NativeOnInitialized()
 		TransitionScreen->OnShowed.AddDynamic(this, &UMainMenuWidget::ProcessTransition);
 	}
 
-	// if (SplashScreen)
-	// {
-	// 	SplashScreen->OnSplashFinished.AddDynamic(this, &UMainMenuWidget::OnSplashFinished);
-	// }
-
 	if (Button_StartGame)
 	{
 		Button_StartGame->OnClicked.AddDynamic(this, &UMainMenuWidget::OnStartGame);
@@ -45,14 +40,6 @@ void UMainMenuWidget::NativeOnInitialized()
 	TransitionScreen->SetVisibility(ESlateVisibility::Visible);
 	TransitionScreen->Hide();
 }
-
-// void UMainMenuWidget::OnSplashFinished()
-// {
-// 	if (!GetOwningPlayer()) return;
-//
-// 	SplashScreen->SetVisibility(ESlateVisibility::Hidden);
-// 	GetOwningPlayer()->bShowMouseCursor = true;
-// }
 
 void UMainMenuWidget::ProcessTransition()
 {
