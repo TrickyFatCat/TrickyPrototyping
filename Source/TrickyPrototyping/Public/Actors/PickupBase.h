@@ -14,6 +14,8 @@ class USoundCue;
  * Base pickup class. Use for creating various pickups
  */
 
+//TODO Implement logic which allows to choose either to destroy the pickup on activation or deactivate it.
+
 UCLASS()
 class TRICKYPROTOTYPING_API APickupBase : public AActor, public IInteractionInterface
 {
@@ -29,15 +31,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components")
 	USceneComponent* PickupRoot = nullptr;
 	
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components")
 	UInteractionSphereComponent* InteractionTrigger = nullptr;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components")
 	USceneComponent* MeshScene = nullptr;
-
+	
 	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
 	bool ActivatePickup(AActor* TargetActor);
 
@@ -59,24 +61,32 @@ private:
 	                           bool bFromSweep,
 	                           const FHitResult& SweepResult);
 
+	/**
+	 * Determines if the pickup requires interaction.
+	 * Use this parameter instead of the similar one in the interaction trigger.
+	 */
 	UPROPERTY(EditDefaultsOnly, Category="Pickup")
 	bool bRequireInteraction = false;
 
+	/**
+	 * Determine if the pickup requires the line of sight check for interaction.
+	 * Use this parameter instead of the similar on in the interaction trigger.
+	 */
 	UPROPERTY(EditDefaultsOnly, Category="Pickup", meta=(EditCondition="bRequireInteraction"))
 	bool bRequireLineOfSight = false;
 
 	// Animation
 private:
-	FVector InitialLocation = FVector::ZeroVector;
+	FVector InitialLocation{FVector::ZeroVector};
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
-	bool bAnimateRotation = true;
+	bool bAnimateRotation = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
 	float RotationSpeed = 1.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
-	bool bAnimatePosition = true;
+	bool bAnimatePosition = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Animation", meta=(AllowPrivateAccess="true"))
 	float Amplitude = 1.f;
