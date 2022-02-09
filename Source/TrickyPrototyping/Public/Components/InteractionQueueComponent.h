@@ -11,12 +11,21 @@ struct FInteractionData
 {
 	GENERATED_USTRUCT_BODY()
 
+	/**
+	 * An actor which has an interaction interface.
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="InteractionData")
 	AActor* Actor = nullptr;
 
+	/**
+	 * Determines if the actor required to be in line of sight for interaction.
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="InteractionData")
 	bool bRequireLineOfSight = false;
 
+	/**
+	 * A message which can be used in HUD to show a type of interaction.
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="InteractionData")
 	FString InteractionMessage = "";
 };
@@ -57,7 +66,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Interaction|Queue")
 	AActor* GetFirstActorInQueue() const;
 
-	UFUNCTION(BlueprintCallable, Category="Interaction")
+	UFUNCTION(BlueprintCallable, Category="Interaction|Queue")
 	FInteractionData GetFirstDataInQueue() const;
 
 	UFUNCTION(BlueprintGetter, Category="Interaction")
@@ -67,15 +76,24 @@ public:
 	FString GetInteractionMessage() const;
 
 private:
+	/**
+	 * Determine if the line of sight check is enabled.
+	 */
 	UPROPERTY(EditDefaultsOnly, Category="Interaction")
 	bool bSortByLineOfSight = false;
 
+	/**
+	 * Determines length of sphere trace for the line of sight check;
+	 */
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintReadOnly,
 		Category="Interaction",
 		meta=(AllowPrivateAccess = "true", EditCondition="bSortByLineOfSight", ClampMin="1"))
 	float SightDistance = 120.f;
 
+	/**
+	 * Determines radius of sphere trace for the line of sight check;
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction", meta=(AllowPrivateAccess="true", EditCondition="bSortByLineOfSight", ClampMin="1"))
 	float SightRadius = 60.f;
 

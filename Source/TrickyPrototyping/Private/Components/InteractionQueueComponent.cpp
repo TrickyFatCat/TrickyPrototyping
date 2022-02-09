@@ -10,6 +10,7 @@
 UInteractionQueueComponent::UInteractionQueueComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.TickInterval = 0.1;
 }
 
 void UInteractionQueueComponent::BeginPlay()
@@ -86,7 +87,7 @@ FString UInteractionQueueComponent::GetInteractionMessage() const
 
 void UInteractionQueueComponent::CheckLineOfSight()
 {
-	if (IsQueueEmpty()) return;
+	if (IsQueueEmpty() || !bSortByLineOfSight) return;
 
 	FVector ViewLocation = FVector::ZeroVector;
 	FRotator ViewRotation = FRotator::ZeroRotator;
@@ -119,14 +120,30 @@ void UInteractionQueueComponent::CheckLineOfSight()
 
 void UInteractionQueueComponent::SortQueueByLineOfSight(FHitResult& HitResult)
 {
-	if (!bSortByLineOfSight || !HitResult.GetActor()) return;
+	auto ReplaceFirstElement = [&](const int32 Index)
+	{
+		const FInteractionData Data{InteractionQueue[Index]};
+		InteractionQueue.RemoveAt(Index);
+		InteractionQueue.Insert(Data, 0);
+	};
+
+	if (!HitResult.GetActor() && InteractionQueue[0].bRequireLineOfSight)
+	{
+		for (int32 i = 0; i < InteractionQueue.Num(); i++)
+		{
+			if (InteractionQueue[i].bRequireLineOfSight) continue;
+
+			ReplaceFirstElement(i);
+			break;
+		}
+
+		return;
+	}
 
 	if (QueueContainsActor(HitResult.GetActor()))
 	{
 		const int32 Index = GetInteractionDataIndex(HitResult.GetActor());
-		const FInteractionData Data = InteractionQueue[Index];
-		InteractionQueue.RemoveAt(Index);
-		InteractionQueue.Insert(Data, 0);
+		ReplaceFirstElement(Index);
 	}
 }
 
