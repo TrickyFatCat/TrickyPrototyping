@@ -2,3 +2,22 @@
 
 
 #include "Objects/BaseObject.h"
+
+UWorld* UBaseObject::GetWorld() const
+{
+	if (GIsEditor && !GIsPlayInEditorWorld) return nullptr;
+
+	if (GetOuter()) return GetOuter()->GetWorld();
+
+	return nullptr;
+}
+
+void UBaseObject::PostInitProperties()
+{
+	UObject::PostInitProperties();
+
+	if (GetWorld())
+	{
+		BeginPlay();
+	}
+}
