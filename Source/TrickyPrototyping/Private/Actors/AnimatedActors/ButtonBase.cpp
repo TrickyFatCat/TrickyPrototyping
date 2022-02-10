@@ -62,26 +62,26 @@ void AButtonBase::FinishAnimation_Implementation()
 
 	switch (ButtonBehaviour)
 	{
-	case EButtonBehaviour::Key:
-		if (IsStateCurrent(EAnimatedActorState::Opened))
-		{
-			if (!GetWorld()) return;
+		case EButtonBehaviour::Key:
+			if (IsStateCurrent(EAnimatedActorState::Opened))
+			{
+				if (!GetWorld()) return;
 
-			GetWorld()->GetTimerManager().SetTimer(AutoCloseDelayHandle,
-			                                       this,
-			                                       &AButtonBase::Close,
-			                                       KeyAutoCloseDelayDuration,
-			                                       false);
-		}
-		else if (IsStateCurrent(EAnimatedActorState::Closed))
-		{
+				GetWorld()->GetTimerManager().SetTimer(AutoCloseDelayHandle,
+				                                       this,
+				                                       &AButtonBase::Close,
+				                                       KeyAutoCloseDelayDuration,
+				                                       false);
+			}
+			else if (IsStateCurrent(EAnimatedActorState::Closed))
+			{
+				ButtonTrigger->SetIsEnabled(true);
+			}
+			break;
+
+		case EButtonBehaviour::Switch:
 			ButtonTrigger->SetIsEnabled(true);
-		}
-		break;
-
-	case EButtonBehaviour::Switch:
-		ButtonTrigger->SetIsEnabled(true);
-		break;
+			break;
 	}
 }
 
@@ -93,6 +93,20 @@ bool AButtonBase::ProcessInteraction_Implementation(AActor* TargetActor)
 	{
 		switch (GetStateTarget())
 		{
+			case EAnimatedActorState::Opened:
+				Close();
+				break;
+
+			case EAnimatedActorState::Closed:
+				Open();
+				break;
+		}
+
+		return true;
+	}
+
+	switch (GetStateCurrent())
+	{
 		case EAnimatedActorState::Opened:
 			Close();
 			break;
@@ -100,22 +114,8 @@ bool AButtonBase::ProcessInteraction_Implementation(AActor* TargetActor)
 		case EAnimatedActorState::Closed:
 			Open();
 			break;
-		}
-		
-		return true;
 	}
 
-	switch (GetStateCurrent())
-	{
-	case EAnimatedActorState::Opened:
-		Close();
-		break;
-
-	case EAnimatedActorState::Closed:
-		Open();
-		break;
-	}
-	
 	return true;
 }
 
@@ -178,19 +178,19 @@ void AButtonBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 void AButtonBase::ProcessTriggerOverlap()
 {
 	const EAnimatedActorState State = AnimationTimeline->IsPlaying() && GetIsReversible()
-		                                     ? GetStateTarget()
-		                                     : GetStateCurrent();
+		                                  ? GetStateTarget()
+		                                  : GetStateCurrent();
 
 	switch (State)
 	{
-	case EAnimatedActorState::Closed:
-		Open();
-		break;
+		case EAnimatedActorState::Closed:
+			Open();
+			break;
 
-	case EAnimatedActorState::Opened:
-		if (ButtonBehaviour == EButtonBehaviour::Key) return;
+		case EAnimatedActorState::Opened:
+			if (ButtonBehaviour == EButtonBehaviour::Key) return;
 
-		Close();
-		break;
+			Close();
+			break;
 	}
 }
