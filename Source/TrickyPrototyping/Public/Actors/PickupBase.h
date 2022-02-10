@@ -14,9 +14,7 @@ class USoundCue;
  * Base pickup class. Use for creating various pickups
  */
 
-//TODO Implement logic which allows to choose either to destroy the pickup on activation or deactivate it.
-
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class TRICKYPROTOTYPING_API APickupBase : public AActor, public IInteractionInterface
 {
 	GENERATED_BODY()
@@ -29,7 +27,18 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+	
+	UFUNCTION(BlueprintGetter, Category="Pickup")
+	bool GetDestroyOnEffectActivation() const { return bDestroyOnEffectActivation; }
 
+	UFUNCTION(BlueprintSetter, Category="Pickup")
+	void SetDestroyOnEffectActivation(const bool Value) { bDestroyOnEffectActivation = Value; }
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category="Pickup")
+	void ActivatePickup();
+
+	virtual void ActivatePickup_Implementation();
+	
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components")
 	USceneComponent* PickupRoot = nullptr;
@@ -41,11 +50,16 @@ protected:
 	USceneComponent* MeshScene = nullptr;
 	
 	UFUNCTION(BlueprintNativeEvent, Category="Pickup")
-	bool ActivatePickup(AActor* TargetActor);
+	bool ActivatePickupEffect(AActor* TargetActor);
 
-	virtual bool ActivatePickup_Implementation(AActor* TargetActor);
+	virtual bool ActivatePickupEffect_Implementation(AActor* TargetActor);
 
 	virtual void DestroyPickup();
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Pickup")
+	void DeactivatePickup();
+
+	virtual void DeactivatePickup_Implementation();
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Pickup", meta=(AllowPrivateAccess="true"))
@@ -74,6 +88,16 @@ private:
 	 */
 	UPROPERTY(EditDefaultsOnly, Category="Pickup", meta=(EditCondition="bRequireInteraction"))
 	bool bRequireLineOfSight = false;
+	
+	/**
+	 * If true, the pickup will be destroyed, else it'll be deactivated and hidden in game.
+	 */
+	UPROPERTY(EditDefaultsOnly,
+		BlueprintGetter=GetDestroyOnEffectActivation,
+		BlueprintSetter=SetDestroyOnEffectActivation,
+		Category="Pickup",
+		meta=(AllowPrivateAccess="true"))
+	bool bDestroyOnEffectActivation = true;
 
 	// Animation
 private:

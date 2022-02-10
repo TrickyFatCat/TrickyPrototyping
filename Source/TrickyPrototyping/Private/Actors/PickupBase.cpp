@@ -38,7 +38,16 @@ void APickupBase::Tick(float DeltaTime)
 	AnimateRotation();
 }
 
-bool APickupBase::ActivatePickup_Implementation(AActor* TargetActor)
+void APickupBase::ActivatePickup_Implementation()
+{
+	if (!GetRootComponent()->bHiddenInGame) return;
+
+	GetRootComponent()->SetHiddenInGame(false, true);
+	PrimaryActorTick.bCanEverTick = true;
+	InteractionTrigger->SetIsEnabled(true);
+}
+
+bool APickupBase::ActivatePickupEffect_Implementation(AActor* TargetActor)
 {
 	return true;
 }
@@ -50,13 +59,20 @@ void APickupBase::DestroyPickup()
 	Destroy();
 }
 
+void APickupBase::DeactivatePickup_Implementation()
+{
+	GetRootComponent()->SetHiddenInGame(true, true);
+	PrimaryActorTick.bCanEverTick = false;
+	InteractionTrigger->SetIsEnabled(false);
+}
+
 bool APickupBase::ProcessInteraction_Implementation(AActor* TargetActor)
 {
 	if (!TargetActor || !bRequireInteraction) return false;
 
-	if (ActivatePickup(TargetActor))
+	if (ActivatePickupEffect(TargetActor))
 	{
-		DestroyPickup();
+		bDestroyOnEffectActivation ? DestroyPickup() : DeactivatePickup();
 		return true;
 	}
 
@@ -72,7 +88,7 @@ void APickupBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	if (bRequireInteraction || !IsValid(OtherActor)) return;
 
-	if (ActivatePickup(OtherActor))
+	if (ActivatePickupEffect(OtherActor))
 	{
 		DestroyPickup();
 	}

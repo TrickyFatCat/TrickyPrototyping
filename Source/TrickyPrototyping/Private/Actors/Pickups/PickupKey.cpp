@@ -3,7 +3,7 @@
 #include "Actors/Pickups/PickupKey.h"
 #include "Components/KeyRingComponent.h"
 
-bool APickupKey::ActivatePickup_Implementation(AActor* TargetActor)
+bool APickupKey::ActivatePickupEffect_Implementation(AActor* TargetActor)
 {
 	if (!TargetActor) return false;
 

@@ -20,5 +20,5 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Pickup")
 	TSubclassOf<UKeyType> KeyType = nullptr;
 
-	virtual bool ActivatePickup_Implementation(AActor* TargetActor) override;
+	virtual bool ActivatePickupEffect_Implementation(AActor* TargetActor) override;
 };

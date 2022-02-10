@@ -5,7 +5,7 @@
 
 #include "Components/DamageControllerComponent.h"
 
-bool APickupHealth::ActivatePickup_Implementation(AActor* TargetActor)
+bool APickupHealth::ActivatePickupEffect_Implementation(AActor* TargetActor)
 {
 	if (!TargetActor) return false;
 
