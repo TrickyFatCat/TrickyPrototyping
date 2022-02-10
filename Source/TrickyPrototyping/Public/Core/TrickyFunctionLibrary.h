@@ -25,15 +25,23 @@ class TRICKYPROTOTYPING_API UTrickyFunctionLibrary : public UBlueprintFunctionLi
 	GENERATED_BODY()
 
 public:
+	/**
+	 * Converts given time in seconds in different time formats.
+	 */
 	UFUNCTION(BlueprintPure, Category="TrickyFunctionLibrary")
-	static FString ConvertTimeSeconds(const float TimeSeconds, const ETimeFormat ConvertMethod);
+	static FString ConvertTimeSeconds(const float TimeSeconds, const ETimeFormat TimeFormat);
 
+	/**
+	 * Changes the given variable by a given delta value up to a target value.
+	 * If CurrentValue > TargetValue, it will be decreased, else increased.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyFunctionLibrary")
 	static void ApproachInt32(UPARAM(ref) int32& CurrentValue, const int32 TargetValue, const int32 DeltaValue);
 
+	/**
+	 * Changes the given variable by a given delta value up to a target value.
+	 * If CurrentValue > TargetValue, it will be decreased, else increased.
+	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyFunctionLibrary")
 	static void ApproachFloat(UPARAM(ref) float& CurrentValue, const float TargetValue, const float DeltaValue);
-
-private:
-	static int32 ConvertMilliseconds(const int32 InitialValue, const float Fraction);
 };
