@@ -28,7 +28,7 @@ protected:
 
 	float PrevSwingDirection = 1.f;
 
-	TArray<FAnimatedActorData> DefaultOffsets;
+	TArray<FTransform> DefaultOffsets;
 
 	UPROPERTY()
 	AActor* Initiator = nullptr;

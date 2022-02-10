@@ -93,12 +93,12 @@ void ADoorSwing::CalculateTargetTransform(const AActor* Actor)
 	// 	return;
 	// }
 	//
-	for (int32 i = 0; i < TransformOffsets.Num(); ++i)
-	{
-		const float OffsetYawSign = FMath::Sign(TransformOffsets[i].RotationOffset.Yaw);
-	
-		if (OffsetYawSign == -FMath::Sign(DefaultOffsets[i].RotationOffset.Yaw)) continue;
-	
-		TransformOffsets[i].RotationOffset.Yaw *= -1;
-	}
+	// for (int32 i = 0; i < TransformOffsets.Num(); ++i)
+	// {
+	// 	const float OffsetYawSign = FMath::Sign(TransformOffsets[i].RotationOffset.Yaw);
+	//
+	// 	if (OffsetYawSign == -FMath::Sign(DefaultOffsets[i].RotationOffset.Yaw)) continue;
+	//
+	// 	TransformOffsets[i].RotationOffset.Yaw *= -1;
+	// }
 }
