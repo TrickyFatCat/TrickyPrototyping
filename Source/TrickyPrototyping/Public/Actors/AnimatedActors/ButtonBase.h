@@ -94,7 +94,7 @@ private:
 	 */
 	UPROPERTY(EditAnywhere,
 		Category="Button",
-		meta=(AllowPrivateAccess="true", EditCondition="!bRequireInteraction", ClampMin="0"))
+		meta=(AllowPrivateAccess="true", ClampMin="0"))
 	float EndOverlapDelay = 1.f;
 
 	FTimerHandle BeginOverlapDelayHandle;
