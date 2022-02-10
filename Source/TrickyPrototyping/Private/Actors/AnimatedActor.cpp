@@ -39,7 +39,7 @@ void AAnimatedActor::BeginPlay()
 		{
 			if (!Component) continue;
 
-			InitialTransforms.Add(Component->GetComponentTransform());
+			InitialTransforms.Add(Component->GetRelativeTransform());
 		}
 	}
 
@@ -54,30 +54,7 @@ void AAnimatedActor::BeginPlay()
 		return;
 	}
 
-	switch (StateInitial)
-	{
-	case EAnimatedActorState::Opened:
-		SetState(EAnimatedActorState::Opened);
-		AnimateTransform(1.f);
-		break;
-
-	case EAnimatedActorState::Closed:
-		SetState(EAnimatedActorState::Closed);
-		AnimateTransform(0.f);
-		break;
-
-	case EAnimatedActorState::Locked:
-		SetState(EAnimatedActorState::Locked);
-		AnimateTransform(0.f);
-		break;
-
-	case EAnimatedActorState::Disabled:
-		Disable();
-		break;
-
-	default:
-		break;
-	}
+	SetInitialTransform();
 }
 
 void AAnimatedActor::Tick(float DeltaTime)
@@ -95,11 +72,15 @@ void AAnimatedActor::SetAnimationDuration(const float Value)
 
 void AAnimatedActor::AddAnimatedComponent(USceneComponent* NewComponent)
 {
-	AnimatedComponents.Empty();
+	if (AnimatedComponents.Num() > 1)
+	{
+		AnimatedComponents.Empty();
+	}
 
 	if (AnimatedComponents.Contains(NewComponent) || !NewComponent) return;
 
 	AnimatedComponents.AddUnique(NewComponent);
+	SetInitialTransform();
 }
 
 void AAnimatedActor::FillAnimatedComponents(TArray<USceneComponent*> Components)
@@ -113,6 +94,36 @@ void AAnimatedActor::FillAnimatedComponents(TArray<USceneComponent*> Components)
 		if (!Component || AnimatedComponents.Contains(Component)) continue;
 
 		AnimatedComponents.AddUnique(Component);
+	}
+
+	SetInitialTransform();
+}
+
+void AAnimatedActor::SetInitialTransform()
+{
+	switch (StateInitial)
+	{
+		case EAnimatedActorState::Opened:
+			SetState(EAnimatedActorState::Opened);
+			AnimateTransform(1.f);
+			break;
+
+		case EAnimatedActorState::Closed:
+			SetState(EAnimatedActorState::Closed);
+			AnimateTransform(0.f);
+			break;
+
+		case EAnimatedActorState::Locked:
+			SetState(EAnimatedActorState::Locked);
+			AnimateTransform(0.f);
+			break;
+
+		case EAnimatedActorState::Disabled:
+			Disable();
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -136,28 +147,28 @@ void AAnimatedActor::StartAnimation()
 
 	switch (StateTarget)
 	{
-	case EAnimatedActorState::Opened:
-		if (GetAnimationDuration() > 0.f)
-		{
-			AnimationTimeline->PlayFromStart();
-		}
-		else
-		{
-			AnimateTransform(1.0);
-			FinishAnimation();
-		}
-		break;
-	case EAnimatedActorState::Closed:
-		if (GetAnimationDuration() > 0.f)
-		{
-			AnimationTimeline->ReverseFromEnd();
-		}
-		else
-		{
-			AnimateTransform(0.f);
-			FinishAnimation();
-		}
-		break;
+		case EAnimatedActorState::Opened:
+			if (GetAnimationDuration() > 0.f)
+			{
+				AnimationTimeline->PlayFromStart();
+			}
+			else
+			{
+				AnimateTransform(1.0);
+				FinishAnimation();
+			}
+			break;
+		case EAnimatedActorState::Closed:
+			if (GetAnimationDuration() > 0.f)
+			{
+				AnimationTimeline->ReverseFromEnd();
+			}
+			else
+			{
+				AnimateTransform(0.f);
+				FinishAnimation();
+			}
+			break;
 	}
 }
 
@@ -171,12 +182,12 @@ void AAnimatedActor::ReverseAnimation()
 
 	switch (StateTarget)
 	{
-	case EAnimatedActorState::Opened:
-		AnimationTimeline->Play();
-		break;
-	case EAnimatedActorState::Closed:
-		AnimationTimeline->Reverse();
-		break;
+		case EAnimatedActorState::Opened:
+			AnimationTimeline->Play();
+			break;
+		case EAnimatedActorState::Closed:
+			AnimationTimeline->Reverse();
+			break;
 	}
 
 	OnActorTransitionReversed.Broadcast(StateTarget);
@@ -195,9 +206,12 @@ void AAnimatedActor::FinishAnimation()
 
 void AAnimatedActor::CalculatePlayRate()
 {
-	if (!AnimationTimeline) return;
+	if (!AnimationTimeline || !AnimationCurve) return;
 
-	AnimationTimeline->SetPlayRate(1.f / AnimationDuration);
+	float MinTime, MaxTime;
+	AnimationCurve->GetTimeRange(MinTime, MaxTime);
+
+	AnimationTimeline->SetPlayRate(MaxTime / AnimationDuration);
 }
 
 void AAnimatedActor::AnimateTransform(const float AnimationProgress)
@@ -217,9 +231,9 @@ void AAnimatedActor::AnimateTransform(const float AnimationProgress)
 
 		if (TransformOffsets[i].bAnimateRotation)
 		{
-			FQuat NewRotation = FRotator(
-					NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() * AnimationProgress).
-				Quaternion();
+			FQuat NewRotation{
+				FRotator(NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() *
+				         AnimationProgress).Quaternion()};
 			NewTransform.SetRotation(NewRotation);
 		}
 
@@ -228,7 +242,7 @@ void AAnimatedActor::AnimateTransform(const float AnimationProgress)
 			NewTransform.SetScale3D(NewTransform.GetScale3D() + TargetTransform.GetScale3D() * AnimationProgress);
 		}
 
-		AnimatedComponents[i]->SetWorldTransform(NewTransform);
+		AnimatedComponents[i]->SetRelativeTransform(NewTransform);
 	}
 }
 

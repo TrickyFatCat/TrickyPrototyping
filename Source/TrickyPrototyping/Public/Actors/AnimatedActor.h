@@ -83,14 +83,16 @@ public:
 	void SetIsReversible(const bool Value) { bIsReversible = Value; }
 
 protected:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category="Components")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components")
 	UTimelineComponent* AnimationTimeline = nullptr;
-
+	
 	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Animation")
 	void AddAnimatedComponent(USceneComponent* NewComponent);
 
 	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Animation")
 	void FillAnimatedComponents(TArray<USceneComponent*> Components);
+
+	void SetInitialTransform();
 
 	virtual void StartAnimation();
 
@@ -101,10 +103,15 @@ protected:
 	UFUNCTION()
 	virtual void FinishAnimation();
 
+	/**
+	 * It's highly recommended to use 1 second long curves.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimatedActor|Animation", meta=(AllowPrivateAccess="true"))
 	UCurveFloat* AnimationCurve = nullptr;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimatedActor|Animation",
+	UPROPERTY(VisibleDefaultsOnly,
+		BlueprintReadOnly,
+		Category="AnimatedActor|Animation",
 		meta=(AllowPrivateAccess="true"))
 	TArray<USceneComponent*> AnimatedComponents;
 
@@ -114,6 +121,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimatedActor|Animation", meta=(AllowPrivateAccess="true"))
 	TArray<FAnimatedActorData> TransformOffsets;
 
+	/**
+	 * Determine how long the animation lasts in seconds.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetAnimationDuration,
 		BlueprintSetter=SetAnimationDuration,
@@ -121,6 +131,9 @@ protected:
 		meta=(AllowPrivateAccess="true"))
 	float AnimationDuration = 1.f;
 
+	/**
+	 * Determine if the animation can be reversed during transition state.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetIsReversible,
 		BlueprintSetter=SetIsReversible,
@@ -173,22 +186,30 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category="AnimatedActor|States")
 	void OnTransitionReversed();
+
 protected:
 	UFUNCTION(BlueprintCallable, Category="AnimatedActor|States")
 	void SetState(const EAnimatedActorState NewState);
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimatedActor|States", meta=(AllowPrivateAccess="true"))
 	EAnimatedActorState StateInitial = EAnimatedActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateCurrent, Category="AnimatedActor|States",
+	UPROPERTY(VisibleAnywhere,
+		BlueprintGetter=GetStateCurrent,
+		Category="AnimatedActor|States",
 		meta=(AllowPrivateAccess="true"))
 	EAnimatedActorState StateCurrent = EAnimatedActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStatePrevious, Category="AnimatedActor|States",
+	UPROPERTY(VisibleAnywhere,
+		BlueprintGetter=GetStatePrevious,
+		Category="AnimatedActor|States",
 		meta=(AllowPrivateAccess="true"))
 	EAnimatedActorState StatePrevious = EAnimatedActorState::Closed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintGetter=GetStateTarget, Category="AnimatedActor|States",
+	UPROPERTY(VisibleAnywhere,
+		BlueprintGetter=GetStateTarget,
+		Category="AnimatedActor|States",
 		meta=(AllowPrivateAccess="true"))
 	EAnimatedActorState StateTarget = EAnimatedActorState::Opened;
 
