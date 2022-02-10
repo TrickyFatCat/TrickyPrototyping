@@ -59,6 +59,11 @@ private:
 		meta=(AllowPrivateAccess="true"))
 	EDoorType DoorType = EDoorType::Manual;
 
+	/**
+	 * Determine if the door requires the line of sight check for interaction.
+	 * Works only with Interactive doors.
+	 * Use this parameter instead of the similar one in the interaction trigger.
+	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
 		Category="Door",
@@ -98,6 +103,9 @@ protected:
 
 	// Auto close
 protected:
+	/**
+	 * Pause duration after which the door automatically starts closing.
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Door", meta=(ClampMint="0"))
 	float AutoCloseDelay = 2.f;
 
@@ -112,11 +120,12 @@ protected:
 	
 	// Key
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Door|Keys", meta=(AllowPrivateAccess="true"))
-	bool bRequireKey = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Door|Keys", meta=(AllowPrivateAccess="true", EditCondition="bRequireKey"))
-	TSubclassOf<UKeyType> DoorKey = nullptr;
+	/**
+	 * The key class which is required to interact with the door.
+	 * If none, the door does not require the key.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Door", meta=(AllowPrivateAccess="true", EditCondition="bRequireKey"))
+	TSubclassOf<UKeyType> KeyClass = nullptr;
 
 	bool HasKey(const AActor* Actor) const;
 };

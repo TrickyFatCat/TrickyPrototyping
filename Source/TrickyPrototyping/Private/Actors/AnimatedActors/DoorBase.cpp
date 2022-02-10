@@ -5,6 +5,7 @@
 
 #include "Components/KeyRingComponent.h"
 #include "Components/TriggerComponents/InteractionBoxComponent.h"
+#include "Objects/KeyType.h"
 
 ADoorBase::ADoorBase()
 {
@@ -114,8 +115,8 @@ void ADoorBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	switch (DoorType)
 	{
-	case EDoorType::Auto:
-		if (bRequireKey && !HasKey(OtherActor)) return;
+		case EDoorType::Auto:
+		if (KeyClass && !HasKey(OtherActor)) return;
 
 		if (GetIsReversible())
 		{
@@ -167,7 +168,7 @@ bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 {
 	if (!TargetActor || DoorType != EDoorType::Interactive) return false;
 
-	if (bRequireKey && !HasKey(TargetActor)) return false;
+	if (KeyClass && !HasKey(TargetActor)) return false;
 
 	if (GetIsReversible() && IsStateCurrent(EAnimatedActorState::Transition))
 	{
@@ -225,9 +226,9 @@ bool ADoorBase::HasKey(const AActor* Actor) const
 {
 	if (!IsValid(Actor)) return false;
 
-	UKeyRingComponent* KeyRingComponent = Actor->FindComponentByClass<UKeyRingComponent>();
+	const UKeyRingComponent* KeyRingComponent = Actor->FindComponentByClass<UKeyRingComponent>();
 
 	if (!KeyRingComponent) return false;
 
-	return KeyRingComponent->HasKey(DoorKey);
+	return KeyRingComponent->HasKey(KeyClass);
 }
