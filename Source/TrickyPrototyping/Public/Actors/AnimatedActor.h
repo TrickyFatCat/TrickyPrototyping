@@ -24,30 +24,6 @@ enum class EAnimatedActorState : uint8
 	Transition UMETA(Hidden)
 };
 
-USTRUCT(BlueprintType)
-struct FAnimatedActorData
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, Category="Animation")
-	bool bAnimateLocation = true;
-
-	UPROPERTY(EditAnywhere, Category="Animation", meta=(EditCondition="bAnimateLocation"))
-	FVector LocationOffset = FVector::ZeroVector;
-
-	UPROPERTY(EditAnywhere, Category="Animation")
-	bool bAnimateRotation = false;
-
-	UPROPERTY(EditAnywhere, Category="Animation", meta=(EditCondition="bAnimateRotation"))
-	FRotator RotationOffset = FRotator::ZeroRotator;
-
-	UPROPERTY(EditAnywhere, Category="Animation")
-	bool bAnimateScale = false;
-
-	UPROPERTY(EditAnywhere, Category="Animation", meta=(EditCondition="bAnimateScale"))
-	FVector ScaleOffset = FVector::ZeroVector;
-};
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAnimatedActorChangedStateSignature, EAnimatedActorState, NewState);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTransitionStartedSignature, EAnimatedActorState, TargetState);
@@ -92,6 +68,8 @@ protected:
 	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Animation")
 	void FillAnimatedComponents(TArray<USceneComponent*> Components);
 
+	void FillInitialTransforms();
+	
 	void SetInitialTransform();
 
 	virtual void StartAnimation();
@@ -119,7 +97,7 @@ protected:
 	TArray<FTransform> InitialTransforms;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AnimatedActor|Animation", meta=(AllowPrivateAccess="true"))
-	TArray<FAnimatedActorData> TransformOffsets;
+	TArray<FTransform> TransformOffsets;
 
 	/**
 	 * Determine how long the animation lasts in seconds.

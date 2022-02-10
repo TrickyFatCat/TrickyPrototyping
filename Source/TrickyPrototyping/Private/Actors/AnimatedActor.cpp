@@ -33,16 +33,6 @@ void AAnimatedActor::BeginPlay()
 		AnimationDuration = 0.f;
 	}
 
-	if (AnimatedComponents.Num() > 0)
-	{
-		for (const auto Component : AnimatedComponents)
-		{
-			if (!Component) continue;
-
-			InitialTransforms.Add(Component->GetRelativeTransform());
-		}
-	}
-
 	if (TransformOffsets.Num() != InitialTransforms.Num())
 	{
 		UE_LOG(LogAnimatedActor,
@@ -53,8 +43,6 @@ void AAnimatedActor::BeginPlay()
 		       InitialTransforms.Num());
 		return;
 	}
-
-	SetInitialTransform();
 }
 
 void AAnimatedActor::Tick(float DeltaTime)
@@ -80,6 +68,7 @@ void AAnimatedActor::AddAnimatedComponent(USceneComponent* NewComponent)
 	if (AnimatedComponents.Contains(NewComponent) || !NewComponent) return;
 
 	AnimatedComponents.AddUnique(NewComponent);
+	FillInitialTransforms();
 	SetInitialTransform();
 }
 
@@ -96,11 +85,28 @@ void AAnimatedActor::FillAnimatedComponents(TArray<USceneComponent*> Components)
 		AnimatedComponents.AddUnique(Component);
 	}
 
+	FillInitialTransforms();
 	SetInitialTransform();
+}
+
+void AAnimatedActor::FillInitialTransforms()
+{
+	if (AnimatedComponents.Num() <= 0) return;
+
+	InitialTransforms.Empty();
+	
+	for (const auto Component : AnimatedComponents)
+	{
+		if (!Component) continue;
+
+		InitialTransforms.Add(Component->GetRelativeTransform());
+	}
 }
 
 void AAnimatedActor::SetInitialTransform()
 {
+	if (AnimatedComponents.Num() == 0) return;
+
 	switch (StateInitial)
 	{
 		case EAnimatedActorState::Opened:
@@ -216,28 +222,31 @@ void AAnimatedActor::CalculatePlayRate()
 
 void AAnimatedActor::AnimateTransform(const float AnimationProgress)
 {
+	if (InitialTransforms.Num() == 0 || TransformOffsets.Num() == 0) return; // TODO Print error
+
 	for (int32 i = 0; i < AnimatedComponents.Num(); ++i)
 	{
 		FTransform NewTransform = InitialTransforms[i];
 		FTransform TargetTransform;
-		TargetTransform.SetLocation(TransformOffsets[i].LocationOffset);
-		TargetTransform.SetRotation(TransformOffsets[i].RotationOffset.Quaternion());
-		TargetTransform.SetScale3D(TransformOffsets[i].ScaleOffset);
+		TargetTransform.SetLocation(TransformOffsets[i].GetLocation());
+		TargetTransform.SetRotation(TransformOffsets[i].GetRotation());
+		TargetTransform.SetScale3D(TransformOffsets[i].GetScale3D());
 
-		if (TransformOffsets[i].bAnimateLocation)
+		if (TargetTransform.GetLocation() != FVector::ZeroVector)
 		{
 			NewTransform.SetLocation(NewTransform.GetLocation() + TargetTransform.GetLocation() * AnimationProgress);
 		}
 
-		if (TransformOffsets[i].bAnimateRotation)
+		if (TargetTransform.GetRotation() != FRotator::ZeroRotator.Quaternion())
 		{
 			FQuat NewRotation{
 				FRotator(NewTransform.GetRotation().Rotator() + TargetTransform.GetRotation().Rotator() *
-				         AnimationProgress).Quaternion()};
+				         AnimationProgress).Quaternion()
+			};
 			NewTransform.SetRotation(NewRotation);
 		}
 
-		if (TransformOffsets[i].bAnimateScale)
+		if (TargetTransform.GetLocation() != FVector::ZeroVector)
 		{
 			NewTransform.SetScale3D(NewTransform.GetScale3D() + TargetTransform.GetScale3D() * AnimationProgress);
 		}
