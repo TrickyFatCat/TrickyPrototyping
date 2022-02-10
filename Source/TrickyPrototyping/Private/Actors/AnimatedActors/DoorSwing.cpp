@@ -8,10 +8,10 @@ ADoorSwing::ADoorSwing()
 {
 }
 
-void ADoorSwing::Close()
+void ADoorSwing::Close_Implementation()
 {
 	PrevSwingDirection = SwingDirection;
-	Super::Close();
+	Super::Close_Implementation();
 }
 
 void ADoorSwing::BeginPlay()
@@ -20,9 +20,9 @@ void ADoorSwing::BeginPlay()
 	DefaultOffsets = TransformOffsets;
 }
 
-void ADoorSwing::FinishAnimation()
+void ADoorSwing::FinishAnimation_Implementation()
 {
-	Super::FinishAnimation();
+	Super::FinishAnimation_Implementation();
 
 	if (GetDoorTrigger()->GetIsActorInside())
 	{

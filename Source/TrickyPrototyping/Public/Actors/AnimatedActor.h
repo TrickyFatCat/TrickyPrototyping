@@ -78,8 +78,10 @@ protected:
 
 	virtual void StopAnimation();
 
-	UFUNCTION()
-	virtual void FinishAnimation();
+	UFUNCTION(BlueprintNativeEvent, Category="AnimatedActor|Animation")
+	void FinishAnimation();
+
+	virtual void FinishAnimation_Implementation();
 
 	/**
 	 * It's highly recommended to use 1 second long curves.
@@ -197,23 +199,35 @@ private:
 
 	// Actions
 public:
-	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
-	virtual void Open();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="AnimatedActor|Actions")
+	void Open();
 
-	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
-	virtual void Close();
+	virtual void Open_Implementation();
 
-	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
-	virtual void Lock();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="AnimatedActor|Actions")
+	void Close();
 
-	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
-	virtual void Unlock();
+	virtual void Close_Implementation();
 
-	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
-	virtual void Enable();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="AnimatedActor|Actions")
+	void Lock();
 
-	UFUNCTION(BlueprintCallable, Category="AnimatedActor|Actions")
-	virtual void Disable();
+	virtual void Lock_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="AnimatedActor|Actions")
+	void Unlock();
+
+	virtual void Unlock_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="AnimatedActor|Actions")
+	void Enable();
+
+	virtual void Enable_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="AnimatedActor|Actions")
+	void Disable();
+
+	virtual void Disable_Implementation();
 
 protected:
 private:

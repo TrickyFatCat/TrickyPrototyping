@@ -36,12 +36,12 @@ protected:
 public:
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void Disable() override;
+	virtual void Disable_Implementation() override;
 
-	virtual void Enable() override;
+	virtual void Enable_Implementation() override;
 
 protected:
-	virtual void FinishAnimation() override;
+	virtual void FinishAnimation_Implementation() override;
 
 	// DoorType
 public:

@@ -29,23 +29,23 @@ void ADoorBase::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-void ADoorBase::Disable()
+void ADoorBase::Disable_Implementation()
 {
-	Super::Disable();
+	Super::Disable_Implementation();
 
 	DoorTrigger->SetIsEnabled(false);
 }
 
-void ADoorBase::Enable()
+void ADoorBase::Enable_Implementation()
 {
-	Super::Enable();
+	Super::Enable_Implementation();
 
 	SwitchDoorType();
 }
 
-void ADoorBase::FinishAnimation()
+void ADoorBase::FinishAnimation_Implementation()
 {
-	Super::FinishAnimation();
+	Super::FinishAnimation_Implementation();
 
 	switch (GetStateCurrent())
 	{

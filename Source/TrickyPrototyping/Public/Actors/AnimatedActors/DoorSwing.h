@@ -17,12 +17,12 @@ class TRICKYPROTOTYPING_API ADoorSwing : public ADoorBase
 public:
 	ADoorSwing();
 
-	virtual void Close() override;
+	virtual void Close_Implementation() override;
 	
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void FinishAnimation() override;
+	virtual void FinishAnimation_Implementation() override;
 	
 	float SwingDirection = 1.f;
 

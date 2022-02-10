@@ -35,24 +35,24 @@ void AButtonBase::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-void AButtonBase::Disable()
+void AButtonBase::Disable_Implementation()
 {
-	Super::Disable();
+	Super::Disable_Implementation();
 
 	ButtonTrigger->SetIsEnabled(false);
 }
 
-void AButtonBase::Enable()
+void AButtonBase::Enable_Implementation()
 {
 	if (bPressOnce) return;
 
-	Super::Enable();
+	Super::Enable_Implementation();
 	ButtonTrigger->SetIsEnabled(true);
 }
 
-void AButtonBase::FinishAnimation()
+void AButtonBase::FinishAnimation_Implementation()
 {
-	Super::FinishAnimation();
+	Super::FinishAnimation_Implementation();
 
 	if (bPressOnce)
 	{

@@ -35,11 +35,12 @@ protected:
 public:
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void Disable() override;
-	virtual void Enable() override;
+	virtual void Disable_Implementation() override;
+
+	virtual void Enable_Implementation() override;
 
 protected:
-	virtual void FinishAnimation() override;
+	virtual void FinishAnimation_Implementation() override;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components")
 	USceneComponent* ButtonRoot = nullptr;
@@ -59,8 +60,11 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Button")
 	bool bRequireInteraction = true;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Button", meta=(AllowPrivateAccess="true", EditCondition="bRequireInteraction"))
+
+	UPROPERTY(EditAnywhere,
+		BlueprintReadOnly,
+		Category="Button",
+		meta=(AllowPrivateAccess="true", EditCondition="bRequireInteraction"))
 	bool bRequireLineOfSight = false;
 
 	UPROPERTY(EditAnywhere,

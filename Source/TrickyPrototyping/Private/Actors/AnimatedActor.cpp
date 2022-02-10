@@ -205,7 +205,7 @@ void AAnimatedActor::StopAnimation()
 	AnimationTimeline->Stop();
 }
 
-void AAnimatedActor::FinishAnimation()
+void AAnimatedActor::FinishAnimation_Implementation()
 {
 	SetState(StateTarget);
 }
@@ -282,7 +282,7 @@ bool AAnimatedActor::CanStartAnimation() const
 	return !IsStateCurrent(EAnimatedActorState::Locked) || !IsStateCurrent(EAnimatedActorState::Disabled);
 }
 
-void AAnimatedActor::Open()
+void AAnimatedActor::Open_Implementation()
 {
 	if (IsStateCurrent(EAnimatedActorState::Opened) || !CanStartAnimation()) return;
 
@@ -305,7 +305,7 @@ void AAnimatedActor::Open()
 	StartAnimation();
 }
 
-void AAnimatedActor::Close()
+void AAnimatedActor::Close_Implementation()
 {
 	if (IsStateCurrent(EAnimatedActorState::Closed) || !CanStartAnimation()) return;
 
@@ -328,7 +328,7 @@ void AAnimatedActor::Close()
 	StartAnimation();
 }
 
-void AAnimatedActor::Lock()
+void AAnimatedActor::Lock_Implementation()
 {
 	if (IsStateCurrent(EAnimatedActorState::Closed) || IsStateCurrent(EAnimatedActorState::Opened))
 	{
@@ -336,21 +336,21 @@ void AAnimatedActor::Lock()
 	}
 }
 
-void AAnimatedActor::Unlock()
+void AAnimatedActor::Unlock_Implementation()
 {
 	if (!IsStateCurrent(EAnimatedActorState::Locked)) return;
 
 	SetState(StatePrevious);
 }
 
-void AAnimatedActor::Enable()
+void AAnimatedActor::Enable_Implementation()
 {
 	if (IsStateCurrent(EAnimatedActorState::Disabled)) return;
 
 	SetState(StatePrevious);
 }
 
-void AAnimatedActor::Disable()
+void AAnimatedActor::Disable_Implementation()
 {
 	if (!IsStateCurrent(EAnimatedActorState::Transition)) return;
 
