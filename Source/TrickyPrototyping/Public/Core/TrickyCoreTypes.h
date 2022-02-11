@@ -21,12 +21,23 @@ struct FSessionGameModeData
 {
 	GENERATED_USTRUCT_BODY()
 
+	/**
+	 * Duration of the start timer.
+	 * Player can't control character while the start timer is active.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Session", meta=(ClampMin="0", ClampMax="60"))
 	float PreparationTimerDuration = 3.f; // In seconds
 
+	/**
+	 * If true, the time in the chosen level will be limited.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Session")
 	bool bIsSessionTimeLimited = false;
 
+	/**
+	 * Duration of the level timer.
+	 * When it finishes, the session state will be changed automatically to GameOver.
+	 */
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintReadWrite,
 		Category="Session",
@@ -34,7 +45,7 @@ struct FSessionGameModeData
 	float SessionDuration = 240.f; // In seconds
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class ETransitionCommand : uint8
 {
 	Start,
