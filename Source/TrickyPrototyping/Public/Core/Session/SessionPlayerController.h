@@ -8,7 +8,8 @@
 #include "SessionPlayerController.generated.h"
 
 /**
- * 
+ * A simple player controller which works with session states.
+ * It already has a pause functionality. Just add the "Pause" input action in the project settings.
  */
 UCLASS()
 class TRICKYPROTOTYPING_API ASessionPlayerController : public APlayerController
@@ -26,7 +27,10 @@ public:
 	
 protected:
 	virtual void SetupInputComponent() override;
-	
+
+	/**
+	 * If true, the mouse cursor will be shown when the session switch to the Progress state.
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controller")
 	bool bShowCursorOnStart = false;
 	

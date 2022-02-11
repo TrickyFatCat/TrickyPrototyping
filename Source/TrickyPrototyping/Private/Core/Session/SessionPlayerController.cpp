@@ -48,31 +48,31 @@ void ASessionPlayerController::SetupInputComponent()
 
 void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewState)
 {
+	auto ToggleInput = [&](const bool bInputEnabled, const bool bShowCursor, const FInputModeDataBase& InputMode)
+	{
+		bInputEnabled ? EnableInput(this) : DisableInput(this);
+		bShowMouseCursor = bShowCursor;
+		SetInputMode(InputMode);
+	};
+	
 	switch (NewState)
 	{
 	case ESessionState::Progress:
-		bShowMouseCursor = bShowCursorOnStart;
-		SetInputMode(FInputModeGameOnly());
-		EnableInput(this);
+		ToggleInput(true, bShowCursorOnStart, FInputModeGameOnly());
 		break;
 
 	case ESessionState::GameOver:
-		bShowMouseCursor = true;
-		SetInputMode(FInputModeUIOnly());
-		DisableInput(this);
+		ToggleInput(false, true, FInputModeUIOnly());
 		StopMovement();
 		GetPawn()->TurnOff();
 		break;
 
 	case ESessionState::Pause:
-		bShowMouseCursor = true;
-		SetInputMode(FInputModeGameAndUI());
+		ToggleInput(false, true, FInputModeGameAndUI());
 		break;
 
 	default:
-		bShowMouseCursor = true;
-		SetInputMode(FInputModeUIOnly());
-		DisableInput(this);
+		ToggleInput(false, true, FInputModeUIOnly());
 		break;
 	}
 }
