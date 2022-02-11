@@ -10,10 +10,15 @@ class UImage;
 class UTransitionScreenWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSplashFinishedSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSplashChangedSignature, const int32, SplashIndex, const UTexture2D*, SplashImage);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSplashChangedSignature,
+                                             const int32,
+                                             SplashIndex,
+                                             const UTexture2D*,
+                                             SplashImage);
 
 /**
- * 
+ * This widget is for showing simple splash screens after starting the game.
  */
 UCLASS()
 class TRICKYPROTOTYPING_API USplashScreenWidget : public UUserWidget
@@ -30,10 +35,10 @@ public:
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UTransitionScreenWidget* TransitionScreen;
-	
+
 	UPROPERTY(meta=(BindWidget))
 	UImage* Image_SplashScreen = nullptr;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category="SplashScreen")
 	TArray<UTexture2D*> SplashImages;
 
@@ -42,9 +47,15 @@ protected:
 	virtual void NativeOnInitialized() override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="SplashScreen",  meta=(AllowPrivateAccess="true"))
+	/**
+	 * How long the current splash screen will be shown.
+	 */
+	UPROPERTY(EditDefaultsOnly,
+		BlueprintReadOnly,
+		Category="SplashScreen",
+		meta=(AllowPrivateAccess="true", ClampMin="0.5"))
 	float SplashDuration = 1.5f;
-	
+
 	FTimerHandle SplashTimerHandle;
 
 	UFUNCTION()
