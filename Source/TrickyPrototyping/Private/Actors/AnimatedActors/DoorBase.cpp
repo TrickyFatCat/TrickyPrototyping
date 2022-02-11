@@ -50,26 +50,26 @@ void ADoorBase::FinishAnimation_Implementation()
 
 	switch (GetStateCurrent())
 	{
-	case EAnimatedActorState::Opened:
-		if (IsClosingAutomatically() && !DoorTrigger->GetIsActorInside())
-		{
-			StartAutoClose();
-			return;
-		}
+		case EAnimatedActorState::Opened:
+			if (IsClosingAutomatically() && !DoorTrigger->GetIsActorInside())
+			{
+				StartAutoClose();
+				return;
+			}
 
-		if (!IsClosingAutomatically() && !DoorTrigger->GetIsActorInside())
-		{
-			Close();
-			return;
-		}
-		break;
+			if (!IsClosingAutomatically() && !DoorTrigger->GetIsActorInside())
+			{
+				Close();
+				return;
+			}
+			break;
 
-	case EAnimatedActorState::Closed:
-		if (DoorTrigger->GetIsActorInside() && DoorType == EDoorType::Auto)
-		{
-			Open();
-		}
-		break;
+		case EAnimatedActorState::Closed:
+			if (DoorTrigger->GetIsActorInside() && DoorType == EDoorType::Auto)
+			{
+				Open();
+			}
+			break;
 	}
 }
 
@@ -85,18 +85,18 @@ void ADoorBase::SwitchDoorType() const
 {
 	switch (DoorType)
 	{
-	case EDoorType::Auto:
-		DoorTrigger->SetIsNormalTrigger(true);
-		break;
+		case EDoorType::Auto:
+			DoorTrigger->SetIsNormalTrigger(true);
+			break;
 
-	case EDoorType::Interactive:
-		DoorTrigger->SetIsNormalTrigger(false);
-		DoorTrigger->bRequireLineOfSight = bRequireLineOfSight;
-		break;
+		case EDoorType::Interactive:
+			DoorTrigger->SetIsNormalTrigger(false);
+			DoorTrigger->bRequireLineOfSight = bRequireLineOfSight;
+			break;
 
-	case EDoorType::Manual:
-		DoorTrigger->SetIsEnabled(false);
-		break;
+		case EDoorType::Manual:
+			DoorTrigger->SetIsEnabled(false);
+			break;
 	}
 }
 
@@ -116,27 +116,33 @@ void ADoorBase::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	switch (DoorType)
 	{
 		case EDoorType::Auto:
-		if (KeyClass && !HasKey(OtherActor)) return;
 
-		if (GetIsReversible())
-		{
-			Open();
-			return;
-		}
+			if (KeyClass)
+			{
+				if (!HasKey(OtherActor)) return;
 
-		if (IsStateCurrent(EAnimatedActorState::Closed))
-		{
-			Open();
-		}
-		else if (IsStateCurrent(EAnimatedActorState::Opened))
-		{
-			Close();
-		}
+				UseKey(OtherActor);				
+			}
 
-		break;
+			if (GetIsReversible())
+			{
+				Open();
+				return;
+			}
 
-	case EDoorType::Interactive:
-		break;
+			if (IsStateCurrent(EAnimatedActorState::Closed))
+			{
+				Open();
+			}
+			else if (IsStateCurrent(EAnimatedActorState::Opened))
+			{
+				Close();
+			}
+
+			break;
+
+		case EDoorType::Interactive:
+			break;
 	}
 }
 
@@ -153,14 +159,14 @@ void ADoorBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	switch (DoorType)
 	{
-	case EDoorType::Auto:
-		if (GetStateCurrent() != EAnimatedActorState::Opened && !GetIsReversible()) return;
+		case EDoorType::Auto:
+			if (GetStateCurrent() != EAnimatedActorState::Opened && !GetIsReversible()) return;
 
-		Close();
-		break;
+			Close();
+			break;
 
-	case EDoorType::Interactive:
-		break;
+		case EDoorType::Interactive:
+			break;
 	}
 }
 
@@ -168,19 +174,24 @@ bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 {
 	if (!TargetActor || DoorType != EDoorType::Interactive) return false;
 
-	if (KeyClass && !HasKey(TargetActor)) return false;
+	if (KeyClass)
+	{
+		if (!HasKey(TargetActor)) return false;
+
+		UseKey(TargetActor);
+	}
 
 	if (GetIsReversible() && IsStateCurrent(EAnimatedActorState::Transition))
 	{
 		switch (GetStateTarget())
 		{
-		case EAnimatedActorState::Opened:
-			Close();
-			break;
+			case EAnimatedActorState::Opened:
+				Close();
+				break;
 
-		case EAnimatedActorState::Closed:
-			Open();
-			break;
+			case EAnimatedActorState::Closed:
+				Open();
+				break;
 		}
 
 		return true;
@@ -190,13 +201,13 @@ bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 
 	switch (GetStateCurrent())
 	{
-	case EAnimatedActorState::Opened:
-		Close();
-		break;
+		case EAnimatedActorState::Opened:
+			Close();
+			break;
 
-	case EAnimatedActorState::Closed:
-		Open();
-		break;
+		case EAnimatedActorState::Closed:
+			Open();
+			break;
 	}
 
 	return true;
@@ -231,4 +242,15 @@ bool ADoorBase::HasKey(const AActor* Actor) const
 	if (!KeyRingComponent) return false;
 
 	return KeyRingComponent->HasKey(KeyClass);
+}
+
+void ADoorBase::UseKey(const AActor* Actor) const
+{
+	if (!IsValid(Actor)) return;
+
+	UKeyRingComponent* KeyRingComponent = Actor->FindComponentByClass<UKeyRingComponent>();
+
+	if (!KeyRingComponent) return;
+
+	KeyRingComponent->RemoveKey(KeyClass);
 }

@@ -128,4 +128,6 @@ private:
 	TSubclassOf<UKeyType> KeyClass = nullptr;
 
 	bool HasKey(const AActor* Actor) const;
+
+	void UseKey(const AActor* Actor) const;
 };
