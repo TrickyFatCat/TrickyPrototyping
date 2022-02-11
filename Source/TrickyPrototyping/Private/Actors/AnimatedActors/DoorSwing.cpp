@@ -47,11 +47,11 @@ void ADoorSwing::CalculateTargetTransform(const AActor* Actor)
 
 	PrevSwingDirection = SwingDirection;
 	const float DotProduct = FVector::DotProduct(GetActorForwardVector(),
-												 Actor->GetActorLocation());
+												 (Actor->GetActorLocation() - GetActorLocation()).GetSafeNormal());
 	SwingDirection = FMath::Sign(DotProduct);
 
-	if (PrevSwingDirection != SwingDirection) return; // TODO Fix a bug with false calculations if bIsReversible == true;
-	
+	if (PrevSwingDirection == SwingDirection) return;
+
 	for (FTransform& Offset : TransformOffsets)
 	{
 		FRotator NewRotator{Offset.GetRotation()};

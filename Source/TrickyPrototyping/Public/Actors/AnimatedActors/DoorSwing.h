@@ -20,9 +20,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	int32 SwingDirection = 1.f;
+	int32 SwingDirection = 0.f;
 
-	int32 PrevSwingDirection = 1.f;
+	int32 PrevSwingDirection = 0.f;
 
 	TArray<FTransform> DefaultOffsets;
 
