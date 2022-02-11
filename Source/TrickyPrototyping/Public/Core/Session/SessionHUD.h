@@ -20,16 +20,16 @@ class TRICKYPROTOTYPING_API ASessionHUD : public AHUD
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UI")
 	TSubclassOf<UBaseUserWidget> PreparationWidgetClass = nullptr;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UI")
 	TSubclassOf<UBaseUserWidget> ProgressWidgetClass = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UI")
 	TSubclassOf<UBaseUserWidget> PauseWidgetClass = nullptr;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UI")
 	TSubclassOf<UBaseUserWidget> GameOverScreenWidgetClass = nullptr;
 
 private:
