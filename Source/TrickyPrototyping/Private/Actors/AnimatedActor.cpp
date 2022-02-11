@@ -222,7 +222,7 @@ void AAnimatedActor::CalculatePlayRate()
 
 void AAnimatedActor::AnimateTransform(const float AnimationProgress)
 {
-	if (InitialTransforms.Num() == 0 || TransformOffsets.Num() == 0) return; // TODO Print error
+	if (InitialTransforms.Num() == 0 || TransformOffsets.Num() == 0 || InitialTransforms.Num() != TransformOffsets.Num()) return; // TODO Print error
 
 	for (int32 i = 0; i < AnimatedComponents.Num(); ++i)
 	{
