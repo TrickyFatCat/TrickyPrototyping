@@ -75,8 +75,10 @@ public:
 	FResourceData GetHealthData() const { return HealthData; }
 
 protected:
+	UFUNCTION()
 	void BroadcastOnHealthChanged(const float NewHealth, const float DeltaHealth);
 
+	UFUNCTION()
 	void BroadcastOnMaxHealthChanged(const float NewMaxHealth, const float DeltaMaxHealth);
 
 	UPROPERTY(EditAnywhere,
