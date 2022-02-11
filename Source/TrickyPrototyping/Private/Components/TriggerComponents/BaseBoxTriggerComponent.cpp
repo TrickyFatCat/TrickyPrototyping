@@ -6,6 +6,10 @@
 UBaseBoxTriggerComponent::UBaseBoxTriggerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SetCollisionObjectType(ECC_WorldStatic);
+	SetCollisionResponseToAllChannels(ECR_Ignore);
+	SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 void UBaseBoxTriggerComponent::BeginPlay()
@@ -43,19 +47,19 @@ void UBaseBoxTriggerComponent::DisableTrigger_Implementation()
 }
 
 void UBaseBoxTriggerComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-	AActor* OtherActor,
-	UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex,
-	bool bFromSweep,
-	const FHitResult& SweepResult)
+                                              AActor* OtherActor,
+                                              UPrimitiveComponent* OtherComp,
+                                              int32 OtherBodyIndex,
+                                              bool bFromSweep,
+                                              const FHitResult& SweepResult)
 {
 	bIsActorInside = true;
 }
 
 void UBaseBoxTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
-	AActor* OtherActor,
-	UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex)
+                                            AActor* OtherActor,
+                                            UPrimitiveComponent* OtherComp,
+                                            int32 OtherBodyIndex)
 {
 	bIsActorInside = false;
 }

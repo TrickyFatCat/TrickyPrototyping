@@ -6,6 +6,10 @@
 UBaseSphereTriggerComponent::UBaseSphereTriggerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SetCollisionObjectType(ECC_WorldStatic);
+	SetCollisionResponseToAllChannels(ECR_Ignore);
+	SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 void UBaseSphereTriggerComponent::BeginPlay()
@@ -43,20 +47,19 @@ void UBaseSphereTriggerComponent::DisableTrigger_Implementation()
 }
 
 void UBaseSphereTriggerComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-	AActor* OtherActor,
-	UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex,
-	bool bFromSweep,
-	const FHitResult& SweepResult)
+                                                 AActor* OtherActor,
+                                                 UPrimitiveComponent* OtherComp,
+                                                 int32 OtherBodyIndex,
+                                                 bool bFromSweep,
+                                                 const FHitResult& SweepResult)
 {
 	bIsActorInside = true;
 }
 
 void UBaseSphereTriggerComponent::OnEndOverlap(UPrimitiveComponent* OverlappedComponent,
-	AActor* OtherActor,
-	UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex)
+                                               AActor* OtherActor,
+                                               UPrimitiveComponent* OtherComp,
+                                               int32 OtherBodyIndex)
 {
 	bIsActorInside = false;
 }
-

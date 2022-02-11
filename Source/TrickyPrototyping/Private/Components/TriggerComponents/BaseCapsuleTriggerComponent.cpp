@@ -5,12 +5,17 @@
 
 UBaseCapsuleTriggerComponent::UBaseCapsuleTriggerComponent()
 {
+	PrimaryComponentTick.bCanEverTick = true;
+	SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SetCollisionObjectType(ECC_WorldStatic);
+	SetCollisionResponseToAllChannels(ECR_Ignore);
+	SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
 void UBaseCapsuleTriggerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	OnComponentBeginOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnEndOverlap);
 	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
