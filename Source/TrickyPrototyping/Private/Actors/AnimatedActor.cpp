@@ -60,7 +60,7 @@ void AAnimatedActor::SetAnimationDuration(const float Value)
 
 void AAnimatedActor::AddAnimatedComponent(USceneComponent* NewComponent)
 {
-	if (AnimatedComponents.Num() > 1)
+	if (AnimatedComponents.Num() > 0)
 	{
 		AnimatedComponents.Empty();
 	}
