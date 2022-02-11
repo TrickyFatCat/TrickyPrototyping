@@ -48,9 +48,9 @@ void ASessionPlayerController::SetupInputComponent()
 
 void ASessionPlayerController::OnSessionStateChanged(const ESessionState NewState)
 {
-	auto ToggleInput = [&](const bool bInputEnabled, const bool bShowCursor, const FInputModeDataBase& InputMode)
+	auto ToggleInput = [&](const bool bEnableInput, const bool bShowCursor, const FInputModeDataBase& InputMode)
 	{
-		bInputEnabled ? EnableInput(this) : DisableInput(this);
+		bEnableInput ? EnableInput(this) : DisableInput(this);
 		bShowMouseCursor = bShowCursor;
 		SetInputMode(InputMode);
 	};
