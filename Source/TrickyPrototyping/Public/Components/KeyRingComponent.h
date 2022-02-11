@@ -8,6 +8,10 @@
 
 class UKeyType;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnKeyAddedSignature, UKeyType*, KeyType);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnKeyRemovedSignature, UKeyType*, KeyType);
+
 UCLASS(ClassGroup=(TrickyPrototyping), meta=(BlueprintSpawnableComponent))
 class TRICKYPROTOTYPING_API UKeyRingComponent : public UActorComponent
 {
@@ -20,6 +24,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UPROPERTY(BlueprintAssignable, Category="KeyRing")
+	FOnKeyAddedSignature OnKeyAdded;
+
+	UPROPERTY(BlueprintAssignable, Category="KeyRing")
+	FOnKeyRemovedSignature OnKeyRemoved;
+	
 	UFUNCTION(BlueprintCallable, Category="KeyRing")
 	bool AddKey(const TSubclassOf<UKeyType> NewKey);
 
@@ -29,7 +39,10 @@ public:
 	UFUNCTION(BlueprintPure, Category="KeyRing")
 	bool HasKey(const TSubclassOf<UKeyType> KeyType) const;
 
+	UFUNCTION(BlueprintCallable, Category="KeyRing")
+	UKeyType* GetKeyByClass(TSubclassOf<UKeyType> KeyClass) const;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="KeyRing", meta=(AllowPrivateAccess="true"))
-	TArray<TSubclassOf<UKeyType>> AcquiredKeys;
+	TArray<UKeyType*> AcquiredKeys;
 };

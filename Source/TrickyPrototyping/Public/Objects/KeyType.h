@@ -14,5 +14,11 @@ UCLASS(Blueprintable, BlueprintType)
 class TRICKYPROTOTYPING_API UKeyType : public UBaseObject
 {
 	GENERATED_BODY()
+
+public:
+	bool GetDestroyOnUse() const { return bDestroyOnUse; }
 	
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Key")
+	bool bDestroyOnUse = false;
 };
