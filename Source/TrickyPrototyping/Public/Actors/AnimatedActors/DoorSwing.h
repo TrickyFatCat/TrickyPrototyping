@@ -16,22 +16,15 @@ class TRICKYPROTOTYPING_API ADoorSwing : public ADoorBase
 
 public:
 	ADoorSwing();
-
-	virtual void Close_Implementation() override;
 	
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void FinishAnimation_Implementation() override;
-	
-	float SwingDirection = 1.f;
+	int32 SwingDirection = 1.f;
 
-	float PrevSwingDirection = 1.f;
+	int32 PrevSwingDirection = 1.f;
 
 	TArray<FTransform> DefaultOffsets;
-
-	UPROPERTY()
-	AActor* Initiator = nullptr;
 
 	virtual bool ProcessInteraction_Implementation(AActor* TargetActor) override;
 
@@ -41,11 +34,6 @@ protected:
 	                                   int32 OtherBodyIndex,
 	                                   bool bFromSweep,
 	                                   const FHitResult& SweepResult) override;
-
-	virtual void OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
-	                                 AActor* OtherActor,
-	                                 UPrimitiveComponent* OtherComp,
-	                                 int32 OtherBodyIndex) override;
 
 	void CalculateTargetTransform(const AActor* Actor);
 };

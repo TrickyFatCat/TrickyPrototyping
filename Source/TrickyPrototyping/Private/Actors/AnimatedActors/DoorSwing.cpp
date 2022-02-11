@@ -8,38 +8,22 @@ ADoorSwing::ADoorSwing()
 {
 }
 
-void ADoorSwing::Close_Implementation()
-{
-	PrevSwingDirection = SwingDirection;
-	Super::Close_Implementation();
-}
-
 void ADoorSwing::BeginPlay()
 {
 	Super::BeginPlay();
 	DefaultOffsets = TransformOffsets;
 }
 
-void ADoorSwing::FinishAnimation_Implementation()
-{
-	Super::FinishAnimation_Implementation();
-
-	if (GetDoorTrigger()->GetIsActorInside())
-	{
-		CalculateTargetTransform(Initiator);
-	}
-}
-
 bool ADoorSwing::ProcessInteraction_Implementation(AActor* TargetActor)
 {
-	Super::ProcessInteraction_Implementation(TargetActor);
-
 	if (!TargetActor) return false;
 
-	Initiator = TargetActor;
-	CalculateTargetTransform(Initiator);
+	if (IsStateCurrent(EAnimatedActorState::Closed))
+	{
+		CalculateTargetTransform(TargetActor);
+	}
 
-	return true;
+	return Super::ProcessInteraction_Implementation(TargetActor);
 }
 
 void ADoorSwing::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -49,56 +33,29 @@ void ADoorSwing::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
                                        bool bFromSweep,
                                        const FHitResult& SweepResult)
 {
-	Initiator = OtherActor;
-	
-	// if (IsStateCurrent(EAnimatedActorState::Transition))
-	// {
-	// 	CalculateTargetTransform(Initiator);
-	// }
-	
+	if (GetDoorType() == EDoorType::Auto && IsStateCurrent(EAnimatedActorState::Closed))
+	{
+		CalculateTargetTransform(OtherActor);
+	}
+
 	Super::OnTriggerBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
-void ADoorSwing::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
-                                     AActor* OtherActor,
-                                     UPrimitiveComponent* OtherComp,
-                                     int32 OtherBodyIndex)
-{
-	// if (IsStateCurrent(EAnimatedActorState::Transition))
-	// {
-	// 	CalculateTargetTransform(Initiator);
-	// }
-
-	Initiator = nullptr;
-	Super::OnTriggerEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
 }
 
 void ADoorSwing::CalculateTargetTransform(const AActor* Actor)
 {
 	if (TransformOffsets.Num() == 0 || !Actor || GetDoorType() == EDoorType::Manual) return;
-	
+
+	PrevSwingDirection = SwingDirection;
 	const float DotProduct = FVector::DotProduct(GetActorForwardVector(),
-	                                             Actor->GetActorLocation());
+												 Actor->GetActorLocation());
 	SwingDirection = FMath::Sign(DotProduct);
+
+	if (PrevSwingDirection != SwingDirection) return; // TODO Fix a bug with false calculations if bIsReversible == true;
 	
-	// if (PrevSwingDirection != SwingDirection)
-	// {
-	// 	PrevSwingDirection = SwingDirection;
-	// 	return;
-	// }
-	//
-	// if (SwingDirection > 0)
-	// {
-	// 	TransformOffsets = DefaultOffsets;
-	// 	return;
-	// }
-	//
-	// for (int32 i = 0; i < TransformOffsets.Num(); ++i)
-	// {
-	// 	const float OffsetYawSign = FMath::Sign(TransformOffsets[i].RotationOffset.Yaw);
-	//
-	// 	if (OffsetYawSign == -FMath::Sign(DefaultOffsets[i].RotationOffset.Yaw)) continue;
-	//
-	// 	TransformOffsets[i].RotationOffset.Yaw *= -1;
-	// }
+	for (FTransform& Offset : TransformOffsets)
+	{
+		FRotator NewRotator{Offset.GetRotation()};
+		NewRotator.Yaw *= -1;
+		Offset.SetRotation(NewRotator.Quaternion());
+	}
 }
