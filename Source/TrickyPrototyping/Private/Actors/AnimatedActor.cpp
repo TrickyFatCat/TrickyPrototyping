@@ -242,7 +242,7 @@ void AAnimatedActor::AnimateTransform(const float AnimationProgress)
 			NewTransform.SetRotation(NewRotation);
 		}
 
-		if (TargetTransform.GetLocation() != FVector::ZeroVector)
+		if (TargetTransform.GetScale3D() != FVector::ZeroVector)
 		{
 			NewTransform.SetScale3D(NewTransform.GetScale3D() + TargetTransform.GetScale3D() * AnimationProgress);
 		}
