@@ -31,5 +31,5 @@ protected:
 	                                   bool bFromSweep,
 	                                   const FHitResult& SweepResult) override;
 
-	void CalculateTargetTransform(const AActor* Actor);
+	void CalculateTransformOffsets(const AActor* Actor);
 };

@@ -14,7 +14,7 @@ bool ADoorSwing::ProcessInteraction_Implementation(AActor* TargetActor)
 
 	if (IsStateCurrent(EAnimatedActorState::Closed))
 	{
-		CalculateTargetTransform(TargetActor);
+		CalculateTransformOffsets(TargetActor);
 	}
 
 	return Super::ProcessInteraction_Implementation(TargetActor);
@@ -29,26 +29,37 @@ void ADoorSwing::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if (GetDoorType() == EDoorType::Auto && IsStateCurrent(EAnimatedActorState::Closed))
 	{
-		CalculateTargetTransform(OtherActor);
+		CalculateTransformOffsets(OtherActor);
 	}
 
 	Super::OnTriggerBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
 
-void ADoorSwing::CalculateTargetTransform(const AActor* Actor)
+void ADoorSwing::CalculateTransformOffsets(const AActor* Actor)
 {
 	if (TransformOffsets.Num() == 0 || !Actor || GetDoorType() == EDoorType::Manual) return;
 
-	PrevSwingDirection = SwingDirection;
 	const float DotProduct = FVector::DotProduct(GetActorForwardVector(),
-												 (Actor->GetActorLocation() - GetActorLocation()).GetSafeNormal());
+	                                             (GetActorLocation() - Actor->GetActorLocation()).GetSafeNormal());
+	PrevSwingDirection = SwingDirection;
 	SwingDirection = FMath::Sign(DotProduct);
 
 	if (PrevSwingDirection == SwingDirection) return;
 
+	const FRotator FirstRotator = TransformOffsets[0].GetRotation().Rotator();
+	auto IsAxisValid = [&](const float Axis) { return (SwingDirection != FMath::Sign(Axis) && Axis != 0); };
+
 	for (FTransform& Offset : TransformOffsets)
 	{
+		if (IsAxisValid(FirstRotator.Roll)) continue;
+		
+		if (IsAxisValid(FirstRotator.Pitch)) continue;
+		
+		if (IsAxisValid(FirstRotator.Yaw)) continue;
+
 		FRotator NewRotator{Offset.GetRotation()};
+		NewRotator.Roll *= -1;
+		NewRotator.Pitch *= -1;
 		NewRotator.Yaw *= -1;
 		Offset.SetRotation(NewRotator.Quaternion());
 	}
