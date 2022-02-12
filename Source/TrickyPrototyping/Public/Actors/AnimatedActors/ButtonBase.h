@@ -82,6 +82,7 @@ private:
 	 * It's useful for floor buttons on which the player has to step.
 	 */
 	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
 		Category="Button",
 		meta=(AllowPrivateAccess="true", EditCondition="!bRequireInteraction", ClampMin="0"))
 	float BeginOverlapDelay = 1.f;
@@ -91,8 +92,9 @@ private:
 	 * It's useful for floor buttons on which the player has to step.
 	 */
 	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
 		Category="Button",
-		meta=(AllowPrivateAccess="true", ClampMin="0"))
+		meta=(AllowPrivateAccess="true", EditCondition="!bRequireInteraction", ClampMin="0"))
 	float EndOverlapDelay = 1.f;
 
 	FTimerHandle BeginOverlapDelayHandle;
