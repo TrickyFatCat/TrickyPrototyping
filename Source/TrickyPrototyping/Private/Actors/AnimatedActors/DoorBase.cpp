@@ -18,16 +18,11 @@ ADoorBase::ADoorBase()
 
 void ADoorBase::BeginPlay()
 {
-	Super::BeginPlay();
 	SwitchDoorType();
-
 	DoorTrigger->OnComponentBeginOverlap.AddDynamic(this, &ADoorBase::OnTriggerBeginOverlap);
 	DoorTrigger->OnComponentEndOverlap.AddDynamic(this, &ADoorBase::OnTriggerEndOverlap);
-}
-
-void ADoorBase::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
+	
+	Super::BeginPlay();
 }
 
 void ADoorBase::Disable_Implementation()

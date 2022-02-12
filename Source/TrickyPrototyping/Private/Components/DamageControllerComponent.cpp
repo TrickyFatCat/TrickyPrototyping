@@ -14,8 +14,6 @@ UDamageControllerComponent::UDamageControllerComponent()
 
 void UDamageControllerComponent::BeginPlay()
 {
-	Super::BeginPlay();
-
 	HealthObject = NewObject<UEntityResource>(this, TEXT("HealthObject"));
 	HealthObject->SetResourceData(HealthData);
 	HealthObject->OnValueChanged.AddDynamic(this, &UDamageControllerComponent::BroadcastOnHealthChanged);
@@ -29,6 +27,8 @@ void UDamageControllerComponent::BeginPlay()
 		ComponentOwner->OnTakePointDamage.AddDynamic(this, &UDamageControllerComponent::OnTakePointDamage);
 		ComponentOwner->OnTakeRadialDamage.AddDynamic(this, &UDamageControllerComponent::OnTakeRadialDamage);
 	}
+	
+	Super::BeginPlay();
 }
 
 void UDamageControllerComponent::DecreaseHealth(const float Amount)

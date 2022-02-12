@@ -21,10 +21,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void TickComponent(float DeltaTime,
-	                           ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
-
 	UFUNCTION(BlueprintSetter, Category="TriggerComponent")
 	void SetIsEnabled(const bool bEnabled);
 

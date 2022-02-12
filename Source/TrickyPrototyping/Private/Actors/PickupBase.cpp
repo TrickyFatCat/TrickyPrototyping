@@ -22,20 +22,20 @@ APickupBase::APickupBase()
 
 void APickupBase::BeginPlay()
 {
-	Super::BeginPlay();
-
 	InitialLocation = MeshScene->GetRelativeLocation();
 	InteractionTrigger->SetIsNormalTrigger(!bRequireInteraction);
 	InteractionTrigger->bRequireLineOfSight = bRequireLineOfSight;
 	InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &APickupBase::OnTriggerBeginOverlap);
+	
+	Super::BeginPlay();
 }
 
 void APickupBase::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
 	AnimatePosition();
 	AnimateRotation();
+	
+	Super::Tick(DeltaTime);
 }
 
 void APickupBase::ActivatePickup_Implementation()

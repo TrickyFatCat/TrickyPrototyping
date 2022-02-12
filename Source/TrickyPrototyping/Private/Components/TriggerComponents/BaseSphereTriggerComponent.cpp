@@ -14,18 +14,11 @@ UBaseSphereTriggerComponent::UBaseSphereTriggerComponent()
 
 void UBaseSphereTriggerComponent::BeginPlay()
 {
-	Super::BeginPlay();
-
 	OnComponentBeginOverlap.AddDynamic(this, &UBaseSphereTriggerComponent::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UBaseSphereTriggerComponent::OnEndOverlap);
 	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
-}
-
-void UBaseSphereTriggerComponent::TickComponent(float DeltaTime,
-                                                ELevelTick Tick,
-                                                FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
+	
+	Super::BeginPlay();
 }
 
 void UBaseSphereTriggerComponent::SetIsEnabled(const bool bEnabled)

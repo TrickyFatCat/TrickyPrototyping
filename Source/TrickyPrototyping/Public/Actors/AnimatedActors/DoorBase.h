@@ -34,8 +34,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void Tick(float DeltaSeconds) override;
-
 	virtual void Disable_Implementation() override;
 
 	virtual void Enable_Implementation() override;

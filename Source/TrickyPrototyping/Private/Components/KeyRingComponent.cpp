@@ -8,11 +8,6 @@ UKeyRingComponent::UKeyRingComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UKeyRingComponent::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 bool UKeyRingComponent::AddKey(const TSubclassOf<UKeyType> NewKey)
 {
 	if (!NewKey) return false;

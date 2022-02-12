@@ -20,9 +20,6 @@ class TRICKYPROTOTYPING_API UKeyRingComponent : public UActorComponent
 public:
 	UKeyRingComponent();
 
-protected:
-	virtual void BeginPlay() override;
-
 public:
 	UPROPERTY(BlueprintAssignable, Category="KeyRing")
 	FOnKeyAddedSignature OnKeyAdded;

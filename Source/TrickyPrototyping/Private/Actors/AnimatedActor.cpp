@@ -14,7 +14,6 @@ AAnimatedActor::AAnimatedActor()
 
 void AAnimatedActor::BeginPlay()
 {
-	Super::BeginPlay();
 	check(AnimationTimeline);
 	CalculatePlayRate();
 
@@ -43,11 +42,8 @@ void AAnimatedActor::BeginPlay()
 		       InitialTransforms.Num());
 		return;
 	}
-}
-
-void AAnimatedActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	
+	Super::BeginPlay();
 }
 
 void AAnimatedActor::SetAnimationDuration(const float Value)

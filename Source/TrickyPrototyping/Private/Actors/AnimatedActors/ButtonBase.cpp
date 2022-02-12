@@ -18,8 +18,6 @@ AButtonBase::AButtonBase()
 
 void AButtonBase::BeginPlay()
 {
-	Super::BeginPlay();
-
 	ButtonTrigger->SetIsNormalTrigger(!bRequireInteraction);
 	ButtonTrigger->bRequireLineOfSight = bRequireLineOfSight;
 
@@ -28,11 +26,8 @@ void AButtonBase::BeginPlay()
 		ButtonTrigger->OnComponentBeginOverlap.AddDynamic(this, &AButtonBase::OnTriggerBeginOverlap);
 		ButtonTrigger->OnComponentEndOverlap.AddDynamic(this, &AButtonBase::OnTriggerEndOverlap);
 	}
-}
-
-void AButtonBase::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
+	
+	Super::BeginPlay();
 }
 
 void AButtonBase::Disable_Implementation()

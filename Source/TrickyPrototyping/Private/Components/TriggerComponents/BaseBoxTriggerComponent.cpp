@@ -21,13 +21,6 @@ void UBaseBoxTriggerComponent::BeginPlay()
 	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
 }
 
-void UBaseBoxTriggerComponent::TickComponent(float DeltaTime,
-                                             ELevelTick Tick,
-                                             FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
-}
-
 void UBaseBoxTriggerComponent::SetIsEnabled(const bool Value)
 {
 	if (bIsEnabled == Value) return;

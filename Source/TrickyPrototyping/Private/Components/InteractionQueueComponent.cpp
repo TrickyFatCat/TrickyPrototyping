@@ -13,18 +13,13 @@ UInteractionQueueComponent::UInteractionQueueComponent()
 	PrimaryComponentTick.TickInterval = 0.1;
 }
 
-void UInteractionQueueComponent::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void UInteractionQueueComponent::TickComponent(float DeltaTime,
                                                ELevelTick Tick,
                                                FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
-
 	CheckLineOfSight();
+	
+	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
 }
 
 void UInteractionQueueComponent::AddToQueue(AActor* Actor,

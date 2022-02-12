@@ -14,18 +14,11 @@ UBaseCapsuleTriggerComponent::UBaseCapsuleTriggerComponent()
 
 void UBaseCapsuleTriggerComponent::BeginPlay()
 {
-	Super::BeginPlay();
-
 	OnComponentBeginOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnEndOverlap);
 	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
-}
-
-void UBaseCapsuleTriggerComponent::TickComponent(float DeltaTime,
-                                                 ELevelTick Tick,
-                                                 FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
+	
+	Super::BeginPlay();
 }
 
 void UBaseCapsuleTriggerComponent::SetIsEnabled(const bool Value)

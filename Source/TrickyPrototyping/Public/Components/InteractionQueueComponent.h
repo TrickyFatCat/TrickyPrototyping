@@ -42,9 +42,6 @@ class TRICKYPROTOTYPING_API UInteractionQueueComponent : public UActorComponent
 public:
 	UInteractionQueueComponent();
 
-protected:
-	virtual void BeginPlay() override;
-
 public:
 	virtual void TickComponent(float DeltaTime,
 	                           ELevelTick TickType,
