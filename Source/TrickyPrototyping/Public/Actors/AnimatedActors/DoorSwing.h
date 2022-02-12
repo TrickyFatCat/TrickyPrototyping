@@ -18,13 +18,9 @@ public:
 	ADoorSwing();
 	
 protected:
-	virtual void BeginPlay() override;
-
 	int32 SwingDirection = 0.f;
 
 	int32 PrevSwingDirection = 0.f;
-
-	TArray<FTransform> DefaultOffsets;
 
 	virtual bool ProcessInteraction_Implementation(AActor* TargetActor) override;
 

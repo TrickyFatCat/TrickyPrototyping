@@ -8,12 +8,6 @@ ADoorSwing::ADoorSwing()
 {
 }
 
-void ADoorSwing::BeginPlay()
-{
-	Super::BeginPlay();
-	DefaultOffsets = TransformOffsets;
-}
-
 bool ADoorSwing::ProcessInteraction_Implementation(AActor* TargetActor)
 {
 	if (!TargetActor) return false;
