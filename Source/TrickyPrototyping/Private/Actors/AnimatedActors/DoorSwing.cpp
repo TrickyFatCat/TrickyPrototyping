@@ -14,7 +14,7 @@ bool ADoorSwing::ProcessInteraction_Implementation(AActor* TargetActor)
 
 	if (IsStateCurrent(EAnimatedActorState::Closed))
 	{
-		CalculateTransformOffsets(TargetActor);
+		CalculateRotationOffsets(TargetActor);
 	}
 
 	return Super::ProcessInteraction_Implementation(TargetActor);
@@ -29,13 +29,13 @@ void ADoorSwing::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if (GetDoorType() == EDoorType::Auto && IsStateCurrent(EAnimatedActorState::Closed))
 	{
-		CalculateTransformOffsets(OtherActor);
+		CalculateRotationOffsets(OtherActor);
 	}
 
 	Super::OnTriggerBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
 
-void ADoorSwing::CalculateTransformOffsets(const AActor* Actor)
+void ADoorSwing::CalculateRotationOffsets(const AActor* Actor)
 {
 	if (TransformOffsets.Num() == 0 || !Actor || GetDoorType() == EDoorType::Manual) return;
 
@@ -51,12 +51,8 @@ void ADoorSwing::CalculateTransformOffsets(const AActor* Actor)
 
 	for (FTransform& Offset : TransformOffsets)
 	{
-		if (IsAxisValid(FirstRotator.Roll)) continue;
+		if (IsAxisValid(FirstRotator.Roll) || IsAxisValid(FirstRotator.Pitch) || IsAxisValid(FirstRotator.Yaw)) continue;
 		
-		if (IsAxisValid(FirstRotator.Pitch)) continue;
-		
-		if (IsAxisValid(FirstRotator.Yaw)) continue;
-
 		FRotator NewRotator{Offset.GetRotation()};
 		NewRotator.Roll *= -1;
 		NewRotator.Pitch *= -1;
