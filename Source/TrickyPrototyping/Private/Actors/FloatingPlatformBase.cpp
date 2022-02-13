@@ -117,7 +117,7 @@ void AFloatingPlatformBase::SetSpeed(const float Value)
 
 bool AFloatingPlatformBase::IndexIsValid(const int32 Index) const
 {
-	return Index > 0 && Index < PointsIndexes.Num();
+	return Index >= 0 && Index < PointsIndexes.Num();
 }
 
 void AFloatingPlatformBase::CalculateTravelTime()
