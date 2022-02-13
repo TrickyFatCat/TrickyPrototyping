@@ -13,7 +13,8 @@ UENUM(BlueprintType)
 enum class EPlatformState : uint8
 {
 	Idle,
-	Moving
+	Moving,
+	Waiting
 };
 
 UENUM(BlueprintType)
@@ -151,12 +152,21 @@ protected:
 	bool bStopAtPoints = true;
 
 	/**
+	 * If true, the platform will wait at the start point before starting movement.
+	 */
+	UPROPERTY(EditAnywhere,
+		BlueprintReadOnly,
+		Category="FloatingPlatform",
+		meta=(AllowPrivateAccess="true", EditCondition="bStopAtPoints"))
+	bool bWaitAtStart = false;
+
+	/**
 	 * Determines how long the platform will stay at the point.
 	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadOnly,
 		Category="FloatingPlatform",
-		meta=(AllowPrivateAccess="true", ClampMin="0"))
+		meta=(AllowPrivateAccess="true", ClampMin="0", EditCondition="bStopAtPoints"))
 	float StopWaitDuration = 3.f;
 
 	UPROPERTY(BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
@@ -199,14 +209,14 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category="FloatingPlatform|Debug")
 	int32 NextPointIndex = 0;
-	
+
 	virtual void CalculateTravelTime();
 
 	virtual void FillPointIndexes();
 
 	UFUNCTION()
 	virtual void MovePlatform(const float Progress);
-	
+
 	UFUNCTION()
 	void ContinueMovement();
 
@@ -214,7 +224,7 @@ protected:
 
 	void StartStopWaitTimer();
 
-	void FinishStopTimer() const;
+	void FinishStopTimer();
 
 	void SetState(const EPlatformState NewState);
 

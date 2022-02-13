@@ -32,6 +32,11 @@ void AFloatingPlatformBase::BeginPlay()
 		CalculateTimelinePlayRate();
 	}
 
+	if (StopWaitDuration <= 0.f)
+	{
+		bStopAtPoints = false;
+	}
+
 	if (bAutoStart)
 	{
 		StartMovement();
@@ -71,13 +76,20 @@ void AFloatingPlatformBase::StartMovement()
 {
 	if (State == EPlatformState::Moving || PointsIndexes.Num() == 0) return; // TODO Print error if Num == 0
 
-	if (CurrentPointIndex == NextPointIndex && bStopAtPoints)
+	if (CurrentPointIndex == NextPointIndex)
 	{
-		ContinueMovement();
+		CalculateNextPointIndex();
 	}
 
 	CalculateTravelTime();
 	CalculateTimelinePlayRate();
+
+	if (bStopAtPoints && bWaitAtStart)
+	{
+		StartStopWaitTimer();
+		return;
+	}
+
 	MovementTimeline->PlayFromStart();
 	SetState(EPlatformState::Moving);
 }
@@ -140,7 +152,15 @@ void AFloatingPlatformBase::ContinueMovement()
 	OnPointReached.Broadcast(CurrentPointIndex);
 	CalculateNextPointIndex();
 	CalculateTravelTime();
-	bStopAtPoints ? StartStopWaitTimer() : StartMovement();
+
+	if (bStopAtPoints)
+	{
+		StartStopWaitTimer();
+	}
+	else
+	{
+		MovementTimeline->PlayFromStart();
+	}
 }
 
 void AFloatingPlatformBase::CalculateNextPointIndex()
@@ -177,10 +197,11 @@ void AFloatingPlatformBase::CalculateNextPointIndex()
 void AFloatingPlatformBase::StartStopWaitTimer()
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-
-	if (StopWaitDuration > 0.f && !TimerManager.IsTimerActive(StopWaitTimerHandle))
+	
+	if (!TimerManager.IsTimerActive(StopWaitTimerHandle))
 	{
 		OnWaitStarted.Broadcast(CurrentPointIndex);
+		SetState(EPlatformState::Waiting);
 		TimerManager.SetTimer(StopWaitTimerHandle,
 		                      this,
 		                      &AFloatingPlatformBase::FinishStopTimer,
@@ -189,9 +210,10 @@ void AFloatingPlatformBase::StartStopWaitTimer()
 	}
 }
 
-void AFloatingPlatformBase::FinishStopTimer() const
+void AFloatingPlatformBase::FinishStopTimer()
 {
 	OnWaitFinished.Broadcast(CurrentPointIndex);
+	SetState(EPlatformState::Moving);
 	MovementTimeline->PlayFromStart();
 }
 
