@@ -1,7 +1,9 @@
-// Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
+// Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
 #include "Actors/FloatingPlatformBase.h"
+
+#include "IDetailPropertyRow.h"
 #include "Components/TimelineComponent.h"
 
 
@@ -13,6 +15,30 @@ AFloatingPlatformBase::AFloatingPlatformBase()
 	SetRootComponent(PlatformRoot);
 
 	MovementTimeline = CreateDefaultSubobject<UTimelineComponent>("MovementTimeline");
+}
+
+void AFloatingPlatformBase::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	FillPointIndexes();
+
+	if (PointsIndexes.Num() > 0)
+	{
+		if (!IndexIsValid(StartPointIndex))
+		{
+			StartPointIndex = 0;
+			// TODO Print error.
+		}
+
+		CurrentPointIndex = StartPointIndex;
+		NextPointIndex = StartPointIndex;
+		MovePlatform(0.0f);
+	}
+	else
+	{
+		// TODO Print error
+	}
 }
 
 void AFloatingPlatformBase::BeginPlay()
@@ -34,7 +60,7 @@ void AFloatingPlatformBase::BeginPlay()
 	{
 		StartMovement();
 	}
-	
+
 	Super::BeginPlay();
 }
 
@@ -45,13 +71,13 @@ void AFloatingPlatformBase::Tick(float DeltaTime)
 
 void AFloatingPlatformBase::StartMovement()
 {
-	if (State == EPlatformState::Moving) return;
+	if (State == EPlatformState::Moving || PointsIndexes.Num() == 0) return; // TODO Print error if Num == 0
 
 	if (CurrentPointIndex == NextPointIndex && bStopAtPoints)
 	{
 		ContinueMovement();
 	}
-	
+
 	CalculateTravelTime();
 	CalculateTimelinePlayRate();
 	MovementTimeline->PlayFromStart();
@@ -88,8 +114,7 @@ void AFloatingPlatformBase::SetSpeed(const float Value)
 	if (Value < 0.f) return;
 
 	Speed = Value;
-
-	// TODO Recalculate movement timers;
+	CalculateTravelTime();
 }
 
 bool AFloatingPlatformBase::IndexIsValid(const int32 Index)
@@ -103,6 +128,7 @@ void AFloatingPlatformBase::CalculateTravelTime()
 
 void AFloatingPlatformBase::FillPointIndexes()
 {
+	PointsIndexes.Empty();
 }
 
 void AFloatingPlatformBase::MovePlatform(const float Progress)
@@ -129,24 +155,24 @@ void AFloatingPlatformBase::CalculateNextPointIndex()
 
 	switch (MovementMode)
 	{
-		case EPlatformMovementMode::Loop:
-			if (!bIndexIsValid)
-			{
-				CurrentPointIndex = bIsReversed ? PointsIndexes.Num() - 1 : 0;
-				CalculateNextIndex();
-			}
-			break;
+	case EPlatformMovementMode::Loop:
+		if (!bIndexIsValid)
+		{
+			CurrentPointIndex = bIsReversed ? PointsIndexes.Num() - 1 : 0;
+			CalculateNextIndex();
+		}
+		break;
 
-		case EPlatformMovementMode::PingPong:
-			if (!bIndexIsValid)
-			{
-				bIsReversed = !bIsReversed;
-				CalculateNextIndex();
-			}
-			break;
+	case EPlatformMovementMode::PingPong:
+		if (!bIndexIsValid)
+		{
+			bIsReversed = !bIsReversed;
+			CalculateNextIndex();
+		}
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 }
 
@@ -157,7 +183,11 @@ void AFloatingPlatformBase::StartStopWaitTimer()
 	if (StopWaitDuration > 0.f && !TimerManager.IsTimerActive(StopWaitTimerHandle))
 	{
 		OnWaitStarted.Broadcast(CurrentPointIndex);
-		TimerManager.SetTimer(StopWaitTimerHandle, this, &AFloatingPlatformBase::FinishStopTimer, StopWaitDuration, false);
+		TimerManager.SetTimer(StopWaitTimerHandle,
+		                      this,
+		                      &AFloatingPlatformBase::FinishStopTimer,
+		                      StopWaitDuration,
+		                      false);
 	}
 }
 
@@ -182,7 +212,6 @@ void AFloatingPlatformBase::CalculateTimelinePlayRate()
 		TravelTime = 1.f;
 		// TODO Print error;
 	}
-	
+
 	MovementTimeline->SetPlayRate(1 / TravelTime);
 }
-

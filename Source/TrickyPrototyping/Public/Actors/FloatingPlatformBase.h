@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
+// Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 #pragma once
 
@@ -40,6 +40,8 @@ public:
 	AFloatingPlatformBase();
 
 protected:
+	virtual void PostInitProperties() override;
+	
 	virtual void BeginPlay() override;
 
 #pragma region Actions
