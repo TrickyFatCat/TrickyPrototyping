@@ -6,13 +6,13 @@
 #include "Components/SplineComponent.h"
 #include "Core/TrickyUtils.h"
 
-void AFloatingPlatformSpline::PostInitProperties()
+void AFloatingPlatformSpline::InitPlatform()
 {
 	if (SplineActor)
 	{
 		SplineComponent = FTrickyUtils::GetComponent<USplineComponent>(SplineActor);
 	}
-	Super::PostInitProperties();
+	Super::InitPlatform();
 }
 
 void AFloatingPlatformSpline::SetSplineActor(AActor* Value)
@@ -68,8 +68,10 @@ void AFloatingPlatformSpline::MovePlatform(const float Progress)
 	const float Start = GetSplineDistance(CurrentPointIndex);
 	const float Finish = GetSplineDistance(NextPointIndex);
 	const float SplinePosition = FMath::Lerp(Start, Finish, Progress);
-	const FVector NewLocation{SplineComponent->GetLocationAtDistanceAlongSpline(SplinePosition,
-																				ESplineCoordinateSpace::World)};
+	const FVector NewLocation{
+		SplineComponent->GetLocationAtDistanceAlongSpline(SplinePosition,
+		                                                  ESplineCoordinateSpace::World)
+	};
 	SetActorLocation(NewLocation);
 }
 

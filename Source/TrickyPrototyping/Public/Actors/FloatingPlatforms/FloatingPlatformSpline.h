@@ -11,13 +11,13 @@ class USplineComponent;
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class TRICKYPROTOTYPING_API AFloatingPlatformSpline : public AFloatingPlatformBase
 {
 	GENERATED_BODY()
-	
+
 protected:
-	virtual void PostInitProperties() override;
+	virtual void InitPlatform() override;
 	
 public:
 	UFUNCTION(BlueprintGetter, Category="FloatingPlatform|Spline")
