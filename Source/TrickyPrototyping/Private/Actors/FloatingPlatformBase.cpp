@@ -17,30 +17,6 @@ AFloatingPlatformBase::AFloatingPlatformBase()
 	MovementTimeline = CreateDefaultSubobject<UTimelineComponent>("MovementTimeline");
 }
 
-void AFloatingPlatformBase::PostInitProperties()
-{
-	Super::PostInitProperties();
-
-	FillPointIndexes();
-
-	if (PointsIndexes.Num() > 0)
-	{
-		if (!IndexIsValid(StartPointIndex))
-		{
-			StartPointIndex = 0;
-			// TODO Print error.
-		}
-
-		CurrentPointIndex = StartPointIndex;
-		NextPointIndex = StartPointIndex;
-		MovePlatform(0.0f);
-	}
-	else
-	{
-		// TODO Print error
-	}
-}
-
 void AFloatingPlatformBase::BeginPlay()
 {
 	if (MovementTimeline && MovementAnimationCurve)
@@ -62,6 +38,28 @@ void AFloatingPlatformBase::BeginPlay()
 	}
 
 	Super::BeginPlay();
+}
+
+void AFloatingPlatformBase::InitPlatform()
+{
+	FillPointIndexes();
+
+	if (PointsIndexes.Num() > 0)
+	{
+		if (!IndexIsValid(StartPointIndex))
+		{
+			StartPointIndex = 0;
+			// TODO Print error.
+		}
+
+		CurrentPointIndex = StartPointIndex;
+		NextPointIndex = StartPointIndex;
+		MovePlatform(0.0f);
+	}
+	else
+	{
+		// TODO Print error
+	}
 }
 
 void AFloatingPlatformBase::Tick(float DeltaTime)
@@ -155,24 +153,24 @@ void AFloatingPlatformBase::CalculateNextPointIndex()
 
 	switch (MovementMode)
 	{
-	case EPlatformMovementMode::Loop:
-		if (!bIndexIsValid)
-		{
-			CurrentPointIndex = bIsReversed ? PointsIndexes.Num() - 1 : 0;
-			CalculateNextIndex();
-		}
-		break;
+		case EPlatformMovementMode::Loop:
+			if (!bIndexIsValid)
+			{
+				CurrentPointIndex = bIsReversed ? PointsIndexes.Num() - 1 : 0;
+				CalculateNextIndex();
+			}
+			break;
 
-	case EPlatformMovementMode::PingPong:
-		if (!bIndexIsValid)
-		{
-			bIsReversed = !bIsReversed;
-			CalculateNextIndex();
-		}
-		break;
+		case EPlatformMovementMode::PingPong:
+			if (!bIndexIsValid)
+			{
+				bIsReversed = !bIsReversed;
+				CalculateNextIndex();
+			}
+			break;
 
-	default:
-		break;
+		default:
+			break;
 	}
 }
 

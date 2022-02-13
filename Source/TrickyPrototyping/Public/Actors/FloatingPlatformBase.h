@@ -40,9 +40,10 @@ public:
 	AFloatingPlatformBase();
 
 protected:
-	virtual void PostInitProperties() override;
-
 	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
+	virtual void InitPlatform();
 
 #pragma region Actions
 public:
@@ -144,7 +145,7 @@ protected:
 	 * If true, the platform will stop at points while moving.
 	 */
 	UPROPERTY(EditAnywhere,
-		BlueprintGetter=GetStopAtCertainPoints,
+		BlueprintReadOnly,
 		Category="FloatingPlatform",
 		meta=(AllowPrivateAccess="true"))
 	bool bStopAtPoints = true;
@@ -176,7 +177,7 @@ protected:
 	UPROPERTY(EditAnywhere,
 		BlueprintReadOnly,
 		Category="FloatingPlatform",
-		meta=(AllowPrivateAccess="true", EditCondition="bUseCustomStops"))
+		meta=(AllowPrivateAccess="true", EditCondition="bStopAtCertainPoints"))
 	TSet<int32> CustomPointsIndexes{};
 #pragma endregion
 
@@ -187,12 +188,16 @@ public:
 	bool IndexIsValid(const int32 Index) const;
 
 protected:
+	UPROPERTY(VisibleAnywhere, Category="FloatingPlatform|Debug")
 	TArray<int32> PointsIndexes;
 
+	UPROPERTY(VisibleAnywhere, Category="FloatingPlatform|Debug")
 	float TravelTime = 1.f;
 
+	UPROPERTY(VisibleAnywhere, Category="FloatingPlatform|Debug")
 	int32 CurrentPointIndex = 0;
 
+	UPROPERTY(VisibleAnywhere, Category="FloatingPlatform|Debug")
 	int32 NextPointIndex = 0;
 	
 	virtual void CalculateTravelTime();
