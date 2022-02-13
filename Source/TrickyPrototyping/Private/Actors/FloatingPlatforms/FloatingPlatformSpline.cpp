@@ -77,7 +77,7 @@ void AFloatingPlatformSpline::MovePlatform(const float Progress)
 
 float AFloatingPlatformSpline::GetSplineDistance(const int32 PointIndex) const
 {
-	if (!SplineComponent || !IndexIsValid(PointIndex)) return -1.f;
+	if (!SplineComponent) return -1.f;
 
 	return SplineComponent->GetDistanceAlongSplineAtSplinePoint(PointsIndexes[PointIndex]);
 }
