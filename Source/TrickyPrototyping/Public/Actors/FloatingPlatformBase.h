@@ -13,8 +13,7 @@ UENUM(BlueprintType)
 enum class EPlatformState : uint8
 {
 	Idle,
-	Moving,
-	Paused
+	Moving
 };
 
 UENUM(BlueprintType)
@@ -49,7 +48,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="FloatingPlatform")
 	FOnChangeStateSignature OnStateChanged;
-	
+
 	UPROPERTY(BlueprintAssignable, Category="FloatingPlatform")
 	FOnPointReachedSignature OnPointReached;
 
@@ -72,12 +71,6 @@ public:
 	void StopMovement();
 
 	/**
-	 * Pauses platform movement.
-	 */
-	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
-	void PauseMovement();
-
-	/**
 	 * Resumes platform movement.
 	 */
 	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
@@ -92,11 +85,12 @@ public:
 
 #pragma region Parameters
 public:
-	UFUNCTION(BlueprintSetter, Category="FloatingPlatform")
+	UFUNCTION(BlueprintGetter, Category="FloatingPlatform")
 	float GetSpeed() const { return Speed; }
 
-	UFUNCTION(BlueprintGetter, Category="FloatingPlatform")
+	UFUNCTION(BlueprintSetter, Category="FloatingPlatform")
 	void SetSpeed(const float Value);
+
 private:
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	USceneComponent* PlatformRoot = nullptr;
@@ -116,7 +110,11 @@ private:
 	/**
 	 * Movement speed of the platform.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true", ClampMin="0"))
+	UPROPERTY(EditAnywhere,
+		BlueprintGetter=GetSpeed,
+		BlueprintSetter=SetSpeed,
+		Category="FloatingPlatform",
+		meta=(AllowPrivateAccess="true", ClampMin="0"))
 	float Speed = 300.f;
 
 	/**
@@ -156,8 +154,11 @@ private:
 		BlueprintReadOnly,
 		Category="FloatingPlatform",
 		meta=(AllowPrivateAccess="true", ClampMin="0"))
-	float StopDuration = 3.f;
+	float StopWaitDuration = 3.f;
 
+	UPROPERTY(BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
+	FTimerHandle StopWaitTimerHandle{};
+	
 	/**
 	 * If true, the platform will automatically stop only in certain points.
 	 */
@@ -179,10 +180,38 @@ private:
 
 #pragma region Movement
 
+public:
+	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
+	bool IndexIsValid(const int32 Index);
+
+protected:
+	virtual void CalculateTravelTime();
+	
+	virtual void FillPointIndexes();
+
+	UFUNCTION()
+	virtual void MovePlatform(const float Progress);
+
 private:
+	float TravelTime = 1.f;
+	
 	TArray<int32> PointsIndexes;
 
 	int32 CurrentPointIndex = 0;
-	int32 NextPointIndex = 1;
+
+	int32 NextPointIndex = 0;
+
+	UFUNCTION()
+	void ContinueMovement();
+
+	void CalculateNextPointIndex();
+
+	void StartStopWaitTimer();
+
+	void FinishStopTimer() const;
+
+	void SetState(const EPlatformState NewState);
+
+	void CalculateTimelinePlayRate();
 #pragma endregion
 };
