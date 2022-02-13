@@ -14,4 +14,10 @@ public:
 			               ? FMath::Min(CurrentValue + DeltaValue, TargetValue)
 			               : FMath::Max(CurrentValue - DeltaValue, TargetValue);
 	}
+
+	template <typename  T>
+	static T* GetComponent(const AActor* Actor)
+	{
+		return Cast<T>(Actor->GetComponentByClass(T::StaticClass()));
+	}
 };
