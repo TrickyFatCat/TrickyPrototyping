@@ -41,7 +41,7 @@ public:
 
 protected:
 	virtual void PostInitProperties() override;
-	
+
 	virtual void BeginPlay() override;
 
 #pragma region Actions
@@ -93,7 +93,7 @@ public:
 	UFUNCTION(BlueprintSetter, Category="FloatingPlatform")
 	void SetSpeed(const float Value);
 
-private:
+protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	USceneComponent* PlatformRoot = nullptr;
 
@@ -144,7 +144,7 @@ private:
 	 * If true, the platform will stop at points while moving.
 	 */
 	UPROPERTY(EditAnywhere,
-		BlueprintReadOnly,
+		BlueprintGetter=GetStopAtCertainPoints,
 		Category="FloatingPlatform",
 		meta=(AllowPrivateAccess="true"))
 	bool bStopAtPoints = true;
@@ -160,7 +160,7 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
 	FTimerHandle StopWaitTimerHandle{};
-	
+
 	/**
 	 * If true, the platform will automatically stop only in certain points.
 	 */
@@ -184,25 +184,24 @@ private:
 
 public:
 	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
-	bool IndexIsValid(const int32 Index);
+	bool IndexIsValid(const int32 Index) const;
 
 protected:
-	virtual void CalculateTravelTime();
-	
-	virtual void FillPointIndexes();
-
-	UFUNCTION()
-	virtual void MovePlatform(const float Progress);
-
-private:
-	float TravelTime = 1.f;
-	
 	TArray<int32> PointsIndexes;
+
+	float TravelTime = 1.f;
 
 	int32 CurrentPointIndex = 0;
 
 	int32 NextPointIndex = 0;
+	
+	virtual void CalculateTravelTime();
 
+	virtual void FillPointIndexes();
+
+	UFUNCTION()
+	virtual void MovePlatform(const float Progress);
+	
 	UFUNCTION()
 	void ContinueMovement();
 
