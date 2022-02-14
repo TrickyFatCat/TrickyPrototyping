@@ -4,6 +4,7 @@
 #include "Actors/FloatingActorBase.h"
 
 #include "Components/TimelineComponent.h"
+#include "Core/TrickyFunctionLibrary.h"
 
 
 AFloatingActorBase::AFloatingActorBase()
@@ -28,7 +29,7 @@ void AFloatingActorBase::BeginPlay()
 		MovementFinished.BindUFunction(this, FName("ContinueMovement"));
 		MovementTimeline->SetTimelineFinishedFunc(MovementFinished);
 
-		CalculateTimelinePlayRate();
+		UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, MovementAnimationCurve, TravelTime);
 	}
 
 	if (WaitDuration <= 0.f)
@@ -94,7 +95,7 @@ void AFloatingActorBase::StartMovement()
 	}
 
 	CalculateTravelTime();
-	CalculateTimelinePlayRate();
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, MovementAnimationCurve, TravelTime);
 
 	if (bStopAtPoints && bWaitAtStart)
 	{
@@ -128,7 +129,7 @@ void AFloatingActorBase::MoveToPoint(const int32 PointIndex)
 
 	NextPointIndex = PointIndex;
 	CalculateTravelTime();
-	CalculateTimelinePlayRate();
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, MovementAnimationCurve, TravelTime);
 	SetState(EFloatingActorState::Moving);
 	MovementTimeline->PlayFromStart();
 }
@@ -253,15 +254,4 @@ void AFloatingActorBase::SetState(const EFloatingActorState NewState)
 
 	State = NewState;
 	OnStateChanged.Broadcast(State);
-}
-
-void AFloatingActorBase::CalculateTimelinePlayRate()
-{
-	if (TravelTime <= 0.f)
-	{
-		TravelTime = 1.f;
-		// TODO Print error;
-	}
-
-	MovementTimeline->SetPlayRate(1 / TravelTime);
 }

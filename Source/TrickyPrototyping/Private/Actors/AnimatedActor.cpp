@@ -2,6 +2,7 @@
 
 #include "Actors/AnimatedActor.h"
 #include "Components/TimelineComponent.h"
+#include "Core/TrickyFunctionLibrary.h"
 
 DECLARE_LOG_CATEGORY_CLASS(LogAnimatedActor, All, All);
 
@@ -15,7 +16,7 @@ AAnimatedActor::AAnimatedActor()
 void AAnimatedActor::BeginPlay()
 {
 	check(AnimationTimeline);
-	CalculatePlayRate();
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(AnimationTimeline, AnimationCurve, AnimationDuration);
 
 	if (AnimationCurve)
 	{
@@ -51,7 +52,7 @@ void AAnimatedActor::SetAnimationDuration(const float Value)
 	if (Value <= 0.f) return;
 
 	AnimationDuration = Value;
-	CalculatePlayRate();
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(AnimationTimeline, AnimationCurve, AnimationDuration);
 }
 
 void AAnimatedActor::AddAnimatedComponent(USceneComponent* NewComponent)
@@ -171,6 +172,9 @@ void AAnimatedActor::StartAnimation()
 				FinishAnimation();
 			}
 			break;
+
+		default:
+			break;
 	}
 }
 
@@ -190,6 +194,8 @@ void AAnimatedActor::ReverseAnimation()
 		case EAnimatedActorState::Closed:
 			AnimationTimeline->Reverse();
 			break;
+		default:
+			break;
 	}
 
 	OnActorTransitionReversed.Broadcast(StateTarget);
@@ -204,16 +210,6 @@ void AAnimatedActor::StopAnimation()
 void AAnimatedActor::FinishAnimation_Implementation()
 {
 	SetState(StateTarget);
-}
-
-void AAnimatedActor::CalculatePlayRate()
-{
-	if (!AnimationTimeline || !AnimationCurve) return;
-
-	float MinTime, MaxTime;
-	AnimationCurve->GetTimeRange(MinTime, MaxTime);
-
-	AnimationTimeline->SetPlayRate(MaxTime / AnimationDuration);
 }
 
 void AAnimatedActor::AnimateTransform(const float AnimationProgress)

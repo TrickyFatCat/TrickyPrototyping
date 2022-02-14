@@ -240,7 +240,5 @@ protected:
 	void FinishStopTimer();
 
 	void SetState(const EFloatingActorState NewState);
-
-	void CalculateTimelinePlayRate();
 #pragma endregion
 };

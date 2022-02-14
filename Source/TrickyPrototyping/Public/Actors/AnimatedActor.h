@@ -118,9 +118,6 @@ protected:
 		meta=(AllowPrivateAccess="true"))
 	bool bIsReversible = false;
 
-	UFUNCTION(BlueprintCallable, Category="Animation")
-	void CalculatePlayRate();
-
 	UFUNCTION()
 	void AnimateTransform(const float AnimationProgress);
 
