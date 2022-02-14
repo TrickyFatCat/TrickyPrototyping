@@ -32,7 +32,7 @@ void AFloatingPlatformBase::BeginPlay()
 		CalculateTimelinePlayRate();
 	}
 
-	if (StopWaitDuration <= 0.f)
+	if (WaitDuration <= 0.f)
 	{
 		bStopAtPoints = false;
 	}
@@ -60,6 +60,13 @@ void AFloatingPlatformBase::InitPlatform()
 		CurrentPointIndex = StartPointIndex;
 		NextPointIndex = StartPointIndex;
 		MovePlatform(0.0f);
+
+		if (bStopAtPoints && bStopAtCertainPoints && CustomStopsIndexes.Num() > 0)
+		{
+			RemoveInvalidCustomIndexes();
+			auto Iterator = [](const int32& LHS, const int32& RHS) { return LHS < RHS; };
+			CustomStopsIndexes.Sort(Iterator);
+		}
 	}
 	else
 	{
@@ -141,6 +148,10 @@ void AFloatingPlatformBase::FillPointIndexes()
 	PointsIndexes.Empty();
 }
 
+void AFloatingPlatformBase::RemoveInvalidCustomIndexes()
+{
+}
+
 void AFloatingPlatformBase::MovePlatform(const float Progress)
 {
 }
@@ -155,7 +166,18 @@ void AFloatingPlatformBase::ContinueMovement()
 
 	if (bStopAtPoints)
 	{
-		StartStopWaitTimer();
+		if (bStopAtPoints && CustomStopsIndexes.Contains(CurrentPointIndex))
+		{
+			StartStopWaitTimer();
+		}
+		else if (!bStopAtCertainPoints)
+		{
+			StartStopWaitTimer();
+		}
+		else
+		{
+			MovementTimeline->PlayFromStart();
+		}
 	}
 	else
 	{
@@ -197,15 +219,15 @@ void AFloatingPlatformBase::CalculateNextPointIndex()
 void AFloatingPlatformBase::StartStopWaitTimer()
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-	
-	if (!TimerManager.IsTimerActive(StopWaitTimerHandle))
+
+	if (!TimerManager.IsTimerActive(WaitTimerHandle))
 	{
 		OnWaitStarted.Broadcast(CurrentPointIndex);
 		SetState(EPlatformState::Waiting);
-		TimerManager.SetTimer(StopWaitTimerHandle,
+		TimerManager.SetTimer(WaitTimerHandle,
 		                      this,
 		                      &AFloatingPlatformBase::FinishStopTimer,
-		                      StopWaitDuration,
+		                      WaitDuration,
 		                      false);
 	}
 }

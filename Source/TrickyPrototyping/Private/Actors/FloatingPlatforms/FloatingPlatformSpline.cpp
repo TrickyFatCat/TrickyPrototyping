@@ -41,21 +41,38 @@ void AFloatingPlatformSpline::FillPointIndexes()
 
 	Super::FillPointIndexes();
 
-	if (bStopAtCertainPoints)
+	for (int32 i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
 	{
-		PointsIndexes = CustomPointsIndexes.Array();
-	}
-	else
-	{
-		for (int32 i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
-		{
-			PointsIndexes.Add(i);
-		}
+		PointsIndexes.Add(i);
 	}
 
 	if (SplineComponent->IsClosedLoop())
 	{
 		PointsIndexes.Add(SplineComponent->GetNumberOfSplinePoints());
+	}
+}
+
+void AFloatingPlatformSpline::RemoveInvalidCustomIndexes()
+{
+	Super::RemoveInvalidCustomIndexes();
+
+	for (const int32& Index : CustomStopsIndexes)
+	{
+		if (Index < 0)
+		{
+			CustomStopsIndexes.Remove(Index);
+			continue;
+		}
+
+		if (!SplineComponent) continue; // TODO Print error;
+
+		const int32 NumberOfPoints = SplineComponent->GetNumberOfSplinePoints();
+		const bool bIsValid = SplineComponent->IsClosedLoop() ? Index <= NumberOfPoints : Index < NumberOfPoints;
+
+		if (!bIsValid)
+		{
+			CustomStopsIndexes.Remove(Index);
+		}
 	}
 }
 

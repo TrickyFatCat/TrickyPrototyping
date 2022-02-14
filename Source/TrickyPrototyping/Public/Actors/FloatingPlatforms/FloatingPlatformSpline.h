@@ -31,10 +31,12 @@ protected:
 
 	virtual void FillPointIndexes() override;
 
+	virtual void RemoveInvalidCustomIndexes() override;
+
 	virtual void MovePlatform(const float Progress) override;
 	
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingPlatform|Spline", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
 	AActor* SplineActor = nullptr;
 
 	UPROPERTY()

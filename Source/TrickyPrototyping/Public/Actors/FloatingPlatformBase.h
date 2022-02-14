@@ -167,10 +167,10 @@ protected:
 		BlueprintReadOnly,
 		Category="FloatingPlatform",
 		meta=(AllowPrivateAccess="true", ClampMin="0", EditCondition="bStopAtPoints"))
-	float StopWaitDuration = 3.f;
+	float WaitDuration = 3.f;
 
 	UPROPERTY(BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
-	FTimerHandle StopWaitTimerHandle{};
+	FTimerHandle WaitTimerHandle{};
 
 	/**
 	 * If true, the platform will automatically stop only in certain points.
@@ -188,7 +188,7 @@ protected:
 		BlueprintReadOnly,
 		Category="FloatingPlatform",
 		meta=(AllowPrivateAccess="true", EditCondition="bStopAtCertainPoints"))
-	TSet<int32> CustomPointsIndexes{};
+	TSet<int32> CustomStopsIndexes{};
 #pragma endregion
 
 #pragma region Movement
@@ -213,6 +213,8 @@ protected:
 	virtual void CalculateTravelTime();
 
 	virtual void FillPointIndexes();
+
+	virtual void RemoveInvalidCustomIndexes();
 
 	UFUNCTION()
 	virtual void MovePlatform(const float Progress);
