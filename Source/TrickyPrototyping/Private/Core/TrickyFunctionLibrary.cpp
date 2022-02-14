@@ -66,3 +66,20 @@ void UTrickyFunctionLibrary::ApproachFloat(float& CurrentValue, const float Targ
 {
 	FTrickyUtils::Approach<float>(CurrentValue, TargetValue, DeltaValue);
 }
+
+void UTrickyFunctionLibrary::CalculateTimelinePlayRate(UTimelineComponent* TimelineComponent,
+                                                       const UCurveBase* AnimationCurve,
+                                                       const float TargetTime)
+{
+	if (!TimelineComponent || TargetTime <= 0.f) return;
+
+	float MaxTime = 1.f;
+
+	if (AnimationCurve)
+	{
+		float MinTime = 0.f;
+		AnimationCurve->GetTimeRange(MinTime, MaxTime);
+	}
+
+	TimelineComponent->SetPlayRate(MaxTime / TargetTime);
+}

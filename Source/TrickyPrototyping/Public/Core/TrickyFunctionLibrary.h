@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TimelineComponent.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "TrickyFunctionLibrary.generated.h"
 
@@ -19,6 +20,7 @@ enum class ETimeFormat : uint8
 	SS_Ms UMETA(DisplayName="SS.Ms"),
 	SS UMETA(DisplayName="SS")
 };
+
 UCLASS()
 class TRICKYPROTOTYPING_API UTrickyFunctionLibrary : public UBlueprintFunctionLibrary
 {
@@ -44,4 +46,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="TrickyFunctionLibrary")
 	static void ApproachFloat(UPARAM(ref) float& CurrentValue, const float TargetValue, const float DeltaValue);
+
+	UFUNCTION(BlueprintCallable, Category="TrickyFunctionLibrary")
+	static void CalculateTimelinePlayRate(UTimelineComponent* TimelineComponent,
+	                                      const UCurveBase* AnimationCurve,
+	                                      const float TargetTime = 1.f);
 };
