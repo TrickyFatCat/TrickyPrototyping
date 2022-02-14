@@ -1,13 +1,12 @@
 // Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Actors/FloatingPlatformBase.h"
+#include "Actors/FloatingActorBase.h"
 
-#include "IDetailPropertyRow.h"
 #include "Components/TimelineComponent.h"
 
 
-AFloatingPlatformBase::AFloatingPlatformBase()
+AFloatingActorBase::AFloatingActorBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -17,7 +16,7 @@ AFloatingPlatformBase::AFloatingPlatformBase()
 	MovementTimeline = CreateDefaultSubobject<UTimelineComponent>("MovementTimeline");
 }
 
-void AFloatingPlatformBase::BeginPlay()
+void AFloatingActorBase::BeginPlay()
 {
 	if (MovementTimeline && MovementAnimationCurve)
 	{
@@ -45,7 +44,7 @@ void AFloatingPlatformBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AFloatingPlatformBase::InitPlatform()
+void AFloatingActorBase::InitPlatform()
 {
 	FillPointIndexes();
 
@@ -74,12 +73,12 @@ void AFloatingPlatformBase::InitPlatform()
 	}
 }
 
-void AFloatingPlatformBase::Tick(float DeltaTime)
+void AFloatingActorBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AFloatingPlatformBase::StartMovement()
+void AFloatingActorBase::StartMovement()
 {
 	if (State == EPlatformState::Moving || PointsIndexes.Num() == 0) return; // TODO Print error if Num == 0
 
@@ -101,7 +100,7 @@ void AFloatingPlatformBase::StartMovement()
 	SetState(EPlatformState::Moving);
 }
 
-void AFloatingPlatformBase::StopMovement()
+void AFloatingActorBase::StopMovement()
 {
 	if (State == EPlatformState::Idle) return;
 
@@ -109,7 +108,7 @@ void AFloatingPlatformBase::StopMovement()
 	SetState(EPlatformState::Idle);
 }
 
-void AFloatingPlatformBase::ResumeMovement()
+void AFloatingActorBase::ResumeMovement()
 {
 	if (State != EPlatformState::Idle) return;
 
@@ -117,7 +116,7 @@ void AFloatingPlatformBase::ResumeMovement()
 	SetState(EPlatformState::Moving);
 }
 
-void AFloatingPlatformBase::MoveToPoint(const int32 PointIndex)
+void AFloatingActorBase::MoveToPoint(const int32 PointIndex)
 {
 	if (!IndexIsValid(PointIndex)) return;
 
@@ -126,7 +125,7 @@ void AFloatingPlatformBase::MoveToPoint(const int32 PointIndex)
 	StartMovement();
 }
 
-void AFloatingPlatformBase::SetSpeed(const float Value)
+void AFloatingActorBase::SetSpeed(const float Value)
 {
 	if (Value < 0.f) return;
 
@@ -134,29 +133,29 @@ void AFloatingPlatformBase::SetSpeed(const float Value)
 	CalculateTravelTime();
 }
 
-bool AFloatingPlatformBase::IndexIsValid(const int32 Index) const
+bool AFloatingActorBase::IndexIsValid(const int32 Index) const
 {
 	return Index >= 0 && Index < PointsIndexes.Num();
 }
 
-void AFloatingPlatformBase::CalculateTravelTime()
+void AFloatingActorBase::CalculateTravelTime()
 {
 }
 
-void AFloatingPlatformBase::FillPointIndexes()
+void AFloatingActorBase::FillPointIndexes()
 {
 	PointsIndexes.Empty();
 }
 
-void AFloatingPlatformBase::RemoveInvalidCustomIndexes()
+void AFloatingActorBase::RemoveInvalidCustomIndexes()
 {
 }
 
-void AFloatingPlatformBase::MovePlatform(const float Progress)
+void AFloatingActorBase::MovePlatform(const float Progress)
 {
 }
 
-void AFloatingPlatformBase::ContinueMovement()
+void AFloatingActorBase::ContinueMovement()
 {
 	if (State == EPlatformState::Idle) return;
 
@@ -185,7 +184,7 @@ void AFloatingPlatformBase::ContinueMovement()
 	}
 }
 
-void AFloatingPlatformBase::CalculateNextPointIndex()
+void AFloatingActorBase::CalculateNextPointIndex()
 {
 	auto CalculateNextIndex = [&]() { NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1; };
 
@@ -216,7 +215,7 @@ void AFloatingPlatformBase::CalculateNextPointIndex()
 	}
 }
 
-void AFloatingPlatformBase::StartStopWaitTimer()
+void AFloatingActorBase::StartStopWaitTimer()
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 
@@ -226,20 +225,20 @@ void AFloatingPlatformBase::StartStopWaitTimer()
 		SetState(EPlatformState::Waiting);
 		TimerManager.SetTimer(WaitTimerHandle,
 		                      this,
-		                      &AFloatingPlatformBase::FinishStopTimer,
+		                      &AFloatingActorBase::FinishStopTimer,
 		                      WaitDuration,
 		                      false);
 	}
 }
 
-void AFloatingPlatformBase::FinishStopTimer()
+void AFloatingActorBase::FinishStopTimer()
 {
 	OnWaitFinished.Broadcast(CurrentPointIndex);
 	SetState(EPlatformState::Moving);
 	MovementTimeline->PlayFromStart();
 }
 
-void AFloatingPlatformBase::SetState(const EPlatformState NewState)
+void AFloatingActorBase::SetState(const EPlatformState NewState)
 {
 	if (State == NewState) return;
 
@@ -247,7 +246,7 @@ void AFloatingPlatformBase::SetState(const EPlatformState NewState)
 	OnStateChanged.Broadcast(State);
 }
 
-void AFloatingPlatformBase::CalculateTimelinePlayRate()
+void AFloatingActorBase::CalculateTimelinePlayRate()
 {
 	if (TravelTime <= 0.f)
 	{

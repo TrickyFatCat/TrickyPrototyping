@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "FloatingPlatformBase.generated.h"
+#include "FloatingActorBase.generated.h"
 
 class UTimelineComponent;
 class UCurveFloat;
@@ -33,12 +33,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaitStartedSingnature, int32, Poi
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaitFinishedSingnature, int32, PointIndex);
 
 UCLASS(NotBlueprintable, NotBlueprintType)
-class TRICKYPROTOTYPING_API AFloatingPlatformBase : public AActor
+class TRICKYPROTOTYPING_API AFloatingActorBase : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	AFloatingPlatformBase();
+	AFloatingActorBase();
 
 protected:
 	virtual void BeginPlay() override;

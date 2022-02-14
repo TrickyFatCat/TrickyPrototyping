@@ -1,12 +1,12 @@
 // Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Actors/FloatingPlatforms/FloatingPlatformSpline.h"
+#include "Actors/FloatingPlatforms/FloatingActorSpline.h"
 
 #include "Components/SplineComponent.h"
 #include "Core/TrickyUtils.h"
 
-void AFloatingPlatformSpline::InitPlatform()
+void AFloatingActorSpline::InitPlatform()
 {
 	if (SplineActor)
 	{
@@ -15,7 +15,7 @@ void AFloatingPlatformSpline::InitPlatform()
 	Super::InitPlatform();
 }
 
-void AFloatingPlatformSpline::SetSplineActor(AActor* Value)
+void AFloatingActorSpline::SetSplineActor(AActor* Value)
 {
 	if (!Value) return;
 
@@ -23,7 +23,7 @@ void AFloatingPlatformSpline::SetSplineActor(AActor* Value)
 	SplineComponent = FTrickyUtils::GetComponent<USplineComponent>(Value);
 }
 
-void AFloatingPlatformSpline::CalculateTravelTime()
+void AFloatingActorSpline::CalculateTravelTime()
 {
 	Super::CalculateTravelTime();
 
@@ -35,7 +35,7 @@ void AFloatingPlatformSpline::CalculateTravelTime()
 	TravelTime = DistanceBetweenPoints / Speed;
 }
 
-void AFloatingPlatformSpline::FillPointIndexes()
+void AFloatingActorSpline::FillPointIndexes()
 {
 	if (!SplineComponent) return; // TODO Print error.
 
@@ -52,7 +52,7 @@ void AFloatingPlatformSpline::FillPointIndexes()
 	}
 }
 
-void AFloatingPlatformSpline::RemoveInvalidCustomIndexes()
+void AFloatingActorSpline::RemoveInvalidCustomIndexes()
 {
 	Super::RemoveInvalidCustomIndexes();
 
@@ -76,7 +76,7 @@ void AFloatingPlatformSpline::RemoveInvalidCustomIndexes()
 	}
 }
 
-void AFloatingPlatformSpline::MovePlatform(const float Progress)
+void AFloatingActorSpline::MovePlatform(const float Progress)
 {
 	Super::MovePlatform(Progress);
 
@@ -92,7 +92,7 @@ void AFloatingPlatformSpline::MovePlatform(const float Progress)
 	SetActorLocation(NewLocation);
 }
 
-float AFloatingPlatformSpline::GetSplineDistance(const int32 PointIndex) const
+float AFloatingActorSpline::GetSplineDistance(const int32 PointIndex) const
 {
 	if (!SplineComponent) return -1.f;
 

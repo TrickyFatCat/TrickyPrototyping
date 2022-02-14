@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/FloatingPlatformBase.h"
-#include "FloatingPlatformSpline.generated.h"
+#include "Actors/FloatingActorBase.h"
+#include "FloatingActorSpline.generated.h"
 
 class USplineComponent;
 
@@ -12,7 +12,7 @@ class USplineComponent;
  * 
  */
 UCLASS(Blueprintable, BlueprintType)
-class TRICKYPROTOTYPING_API AFloatingPlatformSpline : public AFloatingPlatformBase
+class TRICKYPROTOTYPING_API AFloatingActorSpline : public AFloatingActorBase
 {
 	GENERATED_BODY()
 
