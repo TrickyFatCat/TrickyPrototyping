@@ -43,8 +43,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
-	virtual void InitPlatform();
+	virtual void ConstructActor();
 
 #pragma region Actions
 public:

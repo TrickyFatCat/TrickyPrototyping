@@ -17,7 +17,7 @@ class TRICKYPROTOTYPING_API AFloatingActorSpline : public AFloatingActorBase
 	GENERATED_BODY()
 
 protected:
-	virtual void InitPlatform() override;
+	virtual void ConstructActor() override;
 	
 public:
 	UFUNCTION(BlueprintGetter, Category="FloatingPlatform|Spline")

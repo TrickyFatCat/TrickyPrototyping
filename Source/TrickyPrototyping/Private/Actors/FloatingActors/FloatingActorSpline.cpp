@@ -6,13 +6,13 @@
 #include "Components/SplineComponent.h"
 #include "Core/TrickyUtils.h"
 
-void AFloatingActorSpline::InitPlatform()
+void AFloatingActorSpline::ConstructActor()
 {
 	if (SplineActor)
 	{
 		SplineComponent = FTrickyUtils::GetComponent<USplineComponent>(SplineActor);
 	}
-	Super::InitPlatform();
+	Super::ConstructActor();
 }
 
 void AFloatingActorSpline::SetSplineActor(AActor* Value)

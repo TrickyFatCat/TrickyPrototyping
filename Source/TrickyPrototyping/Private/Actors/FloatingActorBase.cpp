@@ -44,7 +44,13 @@ void AFloatingActorBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AFloatingActorBase::InitPlatform()
+void AFloatingActorBase::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	ConstructActor();
+}
+
+void AFloatingActorBase::ConstructActor()
 {
 	FillPointIndexes();
 
