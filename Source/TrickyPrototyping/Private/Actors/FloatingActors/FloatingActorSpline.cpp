@@ -41,14 +41,26 @@ void AFloatingActorSpline::FillPointIndexes()
 
 	Super::FillPointIndexes();
 
-	for (int32 i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
+	if (bStopAtCertainPoints && CustomStopsIndexes.Num() == 0)
 	{
-		PointsIndexes.Add(i);
+		return; // TODO Print error;
 	}
 
-	if (SplineComponent->IsClosedLoop())
+	if (bStopAtCertainPoints && CustomStopsIndexes.Num() > 1)
 	{
-		PointsIndexes.Add(SplineComponent->GetNumberOfSplinePoints());
+		PointsIndexes = CustomStopsIndexes.Array();
+	}
+	else
+	{
+		for (int32 i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
+		{
+			PointsIndexes.Add(i);
+		}
+
+		if (SplineComponent->IsClosedLoop())
+		{
+			PointsIndexes.Add(SplineComponent->GetNumberOfSplinePoints());
+		}
 	}
 }
 

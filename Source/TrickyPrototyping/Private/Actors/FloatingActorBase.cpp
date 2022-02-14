@@ -124,7 +124,7 @@ void AFloatingActorBase::ResumeMovement()
 
 void AFloatingActorBase::MoveToPoint(const int32 PointIndex)
 {
-	if (!IndexIsValid(PointIndex)) return;
+	if (!IndexIsValid(PointIndex) || MovementMode != EFloatingActorMovementMode::Manual) return;
 
 	NextPointIndex = PointIndex;
 	CalculateTravelTime();
@@ -185,18 +185,7 @@ void AFloatingActorBase::ContinueMovement()
 
 	if (bStopAtPoints)
 	{
-		if (bStopAtPoints && CustomStopsIndexes.Contains(CurrentPointIndex))
-		{
-			StartStopWaitTimer();
-		}
-		else if (!bStopAtCertainPoints)
-		{
-			StartStopWaitTimer();
-		}
-		else
-		{
-			MovementTimeline->PlayFromStart();
-		}
+		StartStopWaitTimer();
 	}
 	else
 	{
