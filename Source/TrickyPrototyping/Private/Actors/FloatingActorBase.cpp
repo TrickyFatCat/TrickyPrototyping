@@ -37,7 +37,7 @@ void AFloatingActorBase::BeginPlay()
 		bStopAtPoints = false;
 	}
 
-	if (bAutoStart)
+	if (bAutoStart && MovementMode != EFloatingActorMovementMode::Manual)
 	{
 		StartMovement();
 	}
@@ -179,7 +179,12 @@ void AFloatingActorBase::ContinueMovement()
 
 	OnPointReached.Broadcast(CurrentPointIndex);
 
-	if (MovementMode == EFloatingActorMovementMode::Manual) return;
+	if (MovementMode == EFloatingActorMovementMode::Manual)
+	{
+		CurrentPointIndex = NextPointIndex;
+		SetState(EFloatingActorState::Idle);
+		return;
+	}
 
 	CalculateNextPointIndex();
 	CalculateTravelTime();
