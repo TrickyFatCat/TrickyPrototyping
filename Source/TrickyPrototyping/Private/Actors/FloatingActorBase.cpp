@@ -86,7 +86,7 @@ void AFloatingActorBase::Tick(float DeltaTime)
 
 void AFloatingActorBase::StartMovement()
 {
-	if (State == EPlatformState::Moving || PointsIndexes.Num() == 0) return; // TODO Print error if Num == 0
+	if (State == EFloatingActorState::Moving || PointsIndexes.Num() == 0) return; // TODO Print error if Num == 0
 
 	if (CurrentPointIndex == NextPointIndex)
 	{
@@ -103,23 +103,23 @@ void AFloatingActorBase::StartMovement()
 	}
 
 	MovementTimeline->PlayFromStart();
-	SetState(EPlatformState::Moving);
+	SetState(EFloatingActorState::Moving);
 }
 
 void AFloatingActorBase::StopMovement()
 {
-	if (State == EPlatformState::Idle) return;
+	if (State == EFloatingActorState::Idle) return;
 
 	MovementTimeline->Stop();
-	SetState(EPlatformState::Idle);
+	SetState(EFloatingActorState::Idle);
 }
 
 void AFloatingActorBase::ResumeMovement()
 {
-	if (State != EPlatformState::Idle) return;
+	if (State != EFloatingActorState::Idle) return;
 
 	MovementTimeline->Play();
-	SetState(EPlatformState::Moving);
+	SetState(EFloatingActorState::Moving);
 }
 
 void AFloatingActorBase::MoveToPoint(const int32 PointIndex)
@@ -128,7 +128,9 @@ void AFloatingActorBase::MoveToPoint(const int32 PointIndex)
 
 	NextPointIndex = PointIndex;
 	CalculateTravelTime();
-	StartMovement();
+	CalculateTimelinePlayRate();
+	SetState(EFloatingActorState::Moving);
+	MovementTimeline->PlayFromStart();
 }
 
 void AFloatingActorBase::SetSpeed(const float Value)
@@ -137,6 +139,15 @@ void AFloatingActorBase::SetSpeed(const float Value)
 
 	Speed = Value;
 	CalculateTravelTime();
+}
+
+void AFloatingActorBase::SetWaitDuration(const float Value)
+{
+	if (Value < 0.f) return;
+
+	WaitDuration = Value;
+
+	if (WaitDuration == 0.f) bStopAtPoints = false;
 }
 
 bool AFloatingActorBase::IndexIsValid(const int32 Index) const
@@ -163,9 +174,12 @@ void AFloatingActorBase::MovePlatform(const float Progress)
 
 void AFloatingActorBase::ContinueMovement()
 {
-	if (State == EPlatformState::Idle) return;
+	if (State == EFloatingActorState::Idle) return;
 
 	OnPointReached.Broadcast(CurrentPointIndex);
+
+	if (MovementMode == EFloatingActorMovementMode::Manual) return;
+
 	CalculateNextPointIndex();
 	CalculateTravelTime();
 
@@ -200,7 +214,7 @@ void AFloatingActorBase::CalculateNextPointIndex()
 
 	switch (MovementMode)
 	{
-		case EPlatformMovementMode::Loop:
+		case EFloatingActorMovementMode::Loop:
 			if (!bIndexIsValid)
 			{
 				CurrentPointIndex = bIsReversed ? PointsIndexes.Num() - 1 : 0;
@@ -208,7 +222,7 @@ void AFloatingActorBase::CalculateNextPointIndex()
 			}
 			break;
 
-		case EPlatformMovementMode::PingPong:
+		case EFloatingActorMovementMode::PingPong:
 			if (!bIndexIsValid)
 			{
 				bIsReversed = !bIsReversed;
@@ -228,7 +242,7 @@ void AFloatingActorBase::StartStopWaitTimer()
 	if (!TimerManager.IsTimerActive(WaitTimerHandle))
 	{
 		OnWaitStarted.Broadcast(CurrentPointIndex);
-		SetState(EPlatformState::Waiting);
+		SetState(EFloatingActorState::Waiting);
 		TimerManager.SetTimer(WaitTimerHandle,
 		                      this,
 		                      &AFloatingActorBase::FinishStopTimer,
@@ -240,11 +254,11 @@ void AFloatingActorBase::StartStopWaitTimer()
 void AFloatingActorBase::FinishStopTimer()
 {
 	OnWaitFinished.Broadcast(CurrentPointIndex);
-	SetState(EPlatformState::Moving);
+	SetState(EFloatingActorState::Moving);
 	MovementTimeline->PlayFromStart();
 }
 
-void AFloatingActorBase::SetState(const EPlatformState NewState)
+void AFloatingActorBase::SetState(const EFloatingActorState NewState)
 {
 	if (State == NewState) return;
 

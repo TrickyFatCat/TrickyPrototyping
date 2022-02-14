@@ -10,7 +10,7 @@ class UTimelineComponent;
 class UCurveFloat;
 
 UENUM(BlueprintType)
-enum class EPlatformState : uint8
+enum class EFloatingActorState : uint8
 {
 	Idle,
 	Moving,
@@ -18,13 +18,14 @@ enum class EPlatformState : uint8
 };
 
 UENUM(BlueprintType)
-enum class EPlatformMovementMode : uint8
+enum class EFloatingActorMovementMode : uint8
 {
+	Manual,
 	Loop,
 	PingPong
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeStateSignature, EPlatformState, NewState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeStateSignature, EFloatingActorState, NewState);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPointReachedSignature, int32, PointIndex);
 
@@ -84,6 +85,7 @@ public:
 
 	/**
 	 * Moves platform to a certain point.
+	 * Works only in Manual mode.
 	 */
 	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
 	void MoveToPoint(const int32 PointIndex);
@@ -97,6 +99,12 @@ public:
 	UFUNCTION(BlueprintSetter, Category="FloatingPlatform")
 	void SetSpeed(const float Value);
 
+	UFUNCTION(BlueprintGetter, Category="FloatingPlatform")
+	float GetWaitDuration() const { return WaitDuration; }
+
+	UFUNCTION(BlueprintSetter, Category="FloatingPlatform")
+	void SetWaitDuration(const float Value);	
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	USceneComponent* PlatformRoot = nullptr;
@@ -105,10 +113,10 @@ protected:
 	UTimelineComponent* MovementTimeline = nullptr;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
-	EPlatformState State = EPlatformState::Idle;
+	EFloatingActorState State = EFloatingActorState::Idle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
-	EPlatformMovementMode MovementMode = EPlatformMovementMode::Loop;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
+	EFloatingActorMovementMode MovementMode = EFloatingActorMovementMode::Loop;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
 	UCurveFloat* MovementAnimationCurve = nullptr;
@@ -132,7 +140,7 @@ protected:
 	/**
 	 * If true, the platform will move from the last point to the first.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
 	bool bIsReversed = false;
 
 	/**
@@ -148,7 +156,7 @@ protected:
 	 * If true, the platform will stop at points while moving.
 	 */
 	UPROPERTY(EditAnywhere,
-		BlueprintReadOnly,
+		BlueprintReadWrite,
 		Category="FloatingPlatform",
 		meta=(AllowPrivateAccess="true"))
 	bool bStopAtPoints = true;
@@ -157,7 +165,7 @@ protected:
 	 * If true, the platform will wait at the start point before starting movement.
 	 */
 	UPROPERTY(EditAnywhere,
-		BlueprintReadOnly,
+		BlueprintReadWrite,
 		Category="FloatingPlatform",
 		meta=(AllowPrivateAccess="true", EditCondition="bStopAtPoints"))
 	bool bWaitAtStart = false;
@@ -166,7 +174,8 @@ protected:
 	 * Determines how long the platform will stay at the point.
 	 */
 	UPROPERTY(EditAnywhere,
-		BlueprintReadOnly,
+		BlueprintGetter=GetWaitDuration,
+		BlueprintSetter=SetWaitDuration,
 		Category="FloatingPlatform",
 		meta=(AllowPrivateAccess="true", ClampMin="0", EditCondition="bStopAtPoints"))
 	float WaitDuration = 3.f;
@@ -230,7 +239,7 @@ protected:
 
 	void FinishStopTimer();
 
-	void SetState(const EPlatformState NewState);
+	void SetState(const EFloatingActorState NewState);
 
 	void CalculateTimelinePlayRate();
 #pragma endregion
