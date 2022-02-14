@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Artyom "Tricky Fat Cat" Volkov (tricky.fat.cat@gmail.com)
 
 
-#include "Actors/FloatingPlatforms/FloatingActorSpline.h"
+#include "Actors/FloatingActors/FloatingActorSpline.h"
 
 #include "Components/SplineComponent.h"
 #include "Core/TrickyUtils.h"
