@@ -46,64 +46,64 @@ protected:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
+	UFUNCTION(BlueprintCallable, Category="FloatingActor")
 	virtual void ConstructActor();
 
 #pragma region Actions
 public:
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(BlueprintAssignable, Category="FloatingPlatform")
+	UPROPERTY(BlueprintAssignable, Category="FloatingActor")
 	FOnChangeStateSignature OnStateChanged;
 
-	UPROPERTY(BlueprintAssignable, Category="FloatingPlatform")
+	UPROPERTY(BlueprintAssignable, Category="FloatingActor")
 	FOnPointReachedSignature OnPointReached;
 
-	UPROPERTY(BlueprintAssignable, Category="FloatingPlatform")
+	UPROPERTY(BlueprintAssignable, Category="FloatingActor")
 	FOnWaitStartedSingnature OnWaitStarted;
 
-	UPROPERTY(BlueprintAssignable, Category="FloatingPlatform")
+	UPROPERTY(BlueprintAssignable, Category="FloatingActor")
 	FOnWaitFinishedSingnature OnWaitFinished;
 
 	/**
 	 * Starts platform movement.
 	 */
-	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
+	UFUNCTION(BlueprintCallable, Category="FloatingActor")
 	void StartMovement();
 
 	/**
 	 * Stops platform movement.
 	 */
-	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
+	UFUNCTION(BlueprintCallable, Category="FloatingActor")
 	void StopMovement();
 
 	/**
 	 * Resumes platform movement.
 	 */
-	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
+	UFUNCTION(BlueprintCallable, Category="FloatingActor")
 	void ResumeMovement();
 
 	/**
 	 * Moves platform to a certain point.
 	 * Works only in Manual mode.
 	 */
-	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
+	UFUNCTION(BlueprintCallable, Category="FloatingActor")
 	void MoveToPoint(const int32 PointIndex);
 #pragma endregion
 
 #pragma region Parameters
 public:
-	UFUNCTION(BlueprintGetter, Category="FloatingPlatform")
+	UFUNCTION(BlueprintGetter, Category="FloatingActor")
 	float GetSpeed() const { return Speed; }
 
-	UFUNCTION(BlueprintSetter, Category="FloatingPlatform")
+	UFUNCTION(BlueprintSetter, Category="FloatingActor")
 	void SetSpeed(const float Value);
 
-	UFUNCTION(BlueprintGetter, Category="FloatingPlatform")
+	UFUNCTION(BlueprintGetter, Category="FloatingActor")
 	float GetWaitDuration() const { return WaitDuration; }
 
-	UFUNCTION(BlueprintSetter, Category="FloatingPlatform")
-	void SetWaitDuration(const float Value);	
+	UFUNCTION(BlueprintSetter, Category="FloatingActor")
+	void SetWaitDuration(const float Value);
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
@@ -112,13 +112,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	UTimelineComponent* MovementTimeline = nullptr;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="FloatingActor", meta=(AllowPrivateAccess="true"))
 	EFloatingActorState State = EFloatingActorState::Idle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingActor", meta=(AllowPrivateAccess="true"))
 	EFloatingActorMovementMode MovementMode = EFloatingActorMovementMode::Loop;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="FloatingActor", meta=(AllowPrivateAccess="true"))
 	UCurveFloat* MovementAnimationCurve = nullptr;
 
 	/**
@@ -127,38 +127,44 @@ protected:
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetSpeed,
 		BlueprintSetter=SetSpeed,
-		Category="FloatingPlatform",
+		Category="FloatingActor",
 		meta=(AllowPrivateAccess="true", ClampMin="0"))
 	float Speed = 300.f;
-
-	/**
-	 * If true, the platform will start moving automatically on BeginPlay.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
-	bool bAutoStart = false;
-
-	/**
-	 * If true, the platform will move from the last point to the first.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
-	bool bIsReversed = false;
 
 	/**
 	 * Index of the point from which the platform will start moving.
 	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadOnly,
-		Category="FloatingPlatform",
+		Category="FloatingActor",
 		meta=(AllowPrivateAccess="true", ClampMin="0"))
 	int32 StartPointIndex = 0;
+
+	/**
+	 * If true, the platform will start moving automatically on BeginPlay.
+	 */
+	UPROPERTY(EditAnywhere,
+		BlueprintReadOnly,
+		Category="FloatingActor",
+		meta=(AllowPrivateAccess="true", EditCondition="MovementMode!=EFloatingActorMovementMode::Manual"))
+	bool bAutoStart = false;
+
+	/**
+	 * If true, the platform will move from the last point to the first.
+	 */
+	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
+		Category="FloatingActor",
+		meta=(AllowPrivateAccess="true", EditCondition="MovementMode!=EFloatingActorMovementMode::Manual"))
+	bool bIsReversed = false;
 
 	/**
 	 * If true, the platform will stop at points while moving.
 	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
-		Category="FloatingPlatform",
-		meta=(AllowPrivateAccess="true"))
+		Category="FloatingActor",
+		meta=(AllowPrivateAccess="true", EditCondition="MovementMode!=EFloatingActorMovementMode::Manual"))
 	bool bStopAtPoints = true;
 
 	/**
@@ -166,8 +172,9 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadWrite,
-		Category="FloatingPlatform",
-		meta=(AllowPrivateAccess="true", EditCondition="bStopAtPoints"))
+		Category="FloatingActor",
+		meta=(AllowPrivateAccess="true", EditCondition=
+			"bStopAtPoints && MovementMode!=EFloatingActorMovementMode::Manual"))
 	bool bWaitAtStart = false;
 
 	/**
@@ -176,11 +183,12 @@ protected:
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetWaitDuration,
 		BlueprintSetter=SetWaitDuration,
-		Category="FloatingPlatform",
-		meta=(AllowPrivateAccess="true", ClampMin="0", EditCondition="bStopAtPoints"))
+		Category="FloatingActor",
+		meta=(AllowPrivateAccess="true", ClampMin="0", EditCondition=
+			"bStopAtPoints && MovementMode!=EFloatingActorMovementMode::Manual"))
 	float WaitDuration = 3.f;
 
-	UPROPERTY(BlueprintReadOnly, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(BlueprintReadOnly, Category="FloatingActor", meta=(AllowPrivateAccess="true"))
 	FTimerHandle WaitTimerHandle{};
 
 	/**
@@ -188,8 +196,9 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadOnly,
-		Category="FloatingPlatform",
-		meta=(AllowPrivateAccess="true", EditCondition="bStopAtPoints"))
+		Category="FloatingActor",
+		meta=(AllowPrivateAccess="true", EditCondition=
+			"bStopAtPoints && MovementMode!=EFloatingActorMovementMode::Manual"))
 	bool bStopAtCertainPoints = false;
 
 	/**
@@ -197,28 +206,29 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintReadOnly,
-		Category="FloatingPlatform",
-		meta=(AllowPrivateAccess="true", EditCondition="bStopAtCertainPoints"))
+		Category="FloatingActor",
+		meta=(AllowPrivateAccess="true", EditCondition=
+			"bStopAtPoints && bStopAtCertainPoints && MovementMode!=EFloatingActorMovementMode::Manual"))
 	TSet<int32> CustomStopsIndexes{};
 #pragma endregion
 
 #pragma region Movement
 
 public:
-	UFUNCTION(BlueprintCallable, Category="FloatingPlatform")
+	UFUNCTION(BlueprintCallable, Category="FloatingActor")
 	bool IndexIsValid(const int32 Index) const;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category="FloatingPlatform|Debug")
+	UPROPERTY(VisibleAnywhere, Category="FloatingActor|Debug")
 	TArray<int32> PointsIndexes;
 
-	UPROPERTY(VisibleAnywhere, Category="FloatingPlatform|Debug")
+	UPROPERTY(VisibleAnywhere, Category="FloatingActor|Debug")
 	float TravelTime = 1.f;
 
-	UPROPERTY(VisibleAnywhere, Category="FloatingPlatform|Debug")
+	UPROPERTY(VisibleAnywhere, Category="FloatingActor|Debug")
 	int32 CurrentPointIndex = 0;
 
-	UPROPERTY(VisibleAnywhere, Category="FloatingPlatform|Debug")
+	UPROPERTY(VisibleAnywhere, Category="FloatingActor|Debug")
 	int32 NextPointIndex = 0;
 
 	virtual void CalculateTravelTime();

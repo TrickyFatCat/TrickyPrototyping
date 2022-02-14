@@ -70,8 +70,10 @@ void AFloatingActorSpline::RemoveInvalidCustomIndexes()
 {
 	Super::RemoveInvalidCustomIndexes();
 
-	for (const int32& Index : CustomStopsIndexes)
+	for (int32 i = 0; i < CustomStopsIndexes.Num(); i++)
 	{
+		const int Index = CustomStopsIndexes.Array()[i];
+		
 		if (Index < 0)
 		{
 			CustomStopsIndexes.Remove(Index);

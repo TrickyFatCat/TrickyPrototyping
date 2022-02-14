@@ -20,10 +20,10 @@ protected:
 	virtual void ConstructActor() override;
 	
 public:
-	UFUNCTION(BlueprintGetter, Category="FloatingPlatform|Spline")
+	UFUNCTION(BlueprintGetter, Category="FloatingActor|Spline")
 	AActor* GetSplineActor() const { return SplineActor; }
 
-	UFUNCTION(BlueprintSetter, Category="FloatingPlatform|Spline")
+	UFUNCTION(BlueprintSetter, Category="FloatingActor|Spline")
 	void SetSplineActor(AActor* Value);
 
 protected:
@@ -36,7 +36,7 @@ protected:
 	virtual void MovePlatform(const float Progress) override;
 	
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingPlatform", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingActor|Spline", meta=(AllowPrivateAccess="true"))
 	AActor* SplineActor = nullptr;
 
 	UPROPERTY()
