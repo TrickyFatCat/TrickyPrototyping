@@ -162,4 +162,15 @@ void AFloatingActorSpline::RotateAlongSpline(const float Progress)
 
 void AFloatingActorSpline::ScaleAlongSpline(const float Progress)
 {
+	if (!SplineComponent) return;
+
+	if (InheritSplineScale.bInheritX || InheritSplineScale.bInheritY || InheritSplineScale.bInheritZ)
+	{
+		const FVector CurrentScale{GetActorScale3D()};
+		const FVector ScaleAlongSpline{SplineComponent->GetScaleAtDistanceAlongSpline(GetPositionAtSpline(Progress))};
+		const float NewScaleX = InheritSplineScale.bInheritX ? ScaleAlongSpline.X : CurrentScale.X;
+		const float NewScaleY = InheritSplineScale.bInheritY ? ScaleAlongSpline.Y : CurrentScale.Y;
+		const float NewScaleZ = InheritSplineScale.bInheritZ ? ScaleAlongSpline.Z : CurrentScale.Z;
+		SetActorScale3D(FVector{NewScaleX, NewScaleY, NewScaleZ});
+	}
 }
