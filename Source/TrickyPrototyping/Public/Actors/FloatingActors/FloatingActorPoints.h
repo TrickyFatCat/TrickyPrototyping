@@ -28,4 +28,6 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingActor|Points", meta=(AllowPrivateAccess="true"))
 	TArray<AActor*> TargetActors;
+
+	AActor* GetTargetActor(const int32 PointIndex) const;
 };

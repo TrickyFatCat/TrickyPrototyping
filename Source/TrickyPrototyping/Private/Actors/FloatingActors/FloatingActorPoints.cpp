@@ -19,13 +19,21 @@ void AFloatingActorPoints::ConstructActor()
 void AFloatingActorPoints::CalculateTravelTime()
 {
 	Super::CalculateTravelTime();
+
+	const AActor* StartActor = GetTargetActor(CurrentPointIndex);
+	const AActor* FinishActor = GetTargetActor(NextPointIndex);
+
+	if (bUseTravelTime || !StartActor || !FinishActor) return;
+
+	const float Distance = StartActor->GetDistanceTo(FinishActor);
+	TravelTime = Distance / Speed;
 }
 
 void AFloatingActorPoints::FillPointIndexes()
 {
 	Super::FillPointIndexes();
 
-	if (TargetActors.Num() == 0 || TargetActors.Num() == 1)
+	if (TargetActors.Num() < 2)
 	{
 		// TODO Print error
 		return;
@@ -95,10 +103,19 @@ void AFloatingActorPoints::MoveActor(const float Progress)
 {
 	Super::MoveActor(Progress);
 
-	if (TargetActors.Num() < 2 || !TargetActors[CurrentPointIndex] || !TargetActors[NextPointIndex]) return;
+	const AActor* StartActor = GetTargetActor(CurrentPointIndex);
+	const AActor* FinishActor = GetTargetActor(NextPointIndex);
 
-	const FVector StartPosition{TargetActors[CurrentPointIndex]->GetActorLocation()};
-	const FVector FinishPosition{TargetActors[NextPointIndex]->GetActorLocation()};
+	if (TargetActors.Num() < 2 || !StartActor || !FinishActor) return;
+
+	const FVector StartPosition = StartActor->GetActorLocation();
+	const FVector FinishPosition = FinishActor->GetActorLocation();
 	SetActorLocation(FMath::Lerp(StartPosition, FinishPosition, Progress));
-	
+}
+
+AActor* AFloatingActorPoints::GetTargetActor(const int32 PointIndex) const
+{
+	if (PointIndex < 0 || PointIndex >= TargetActors.Num() || TargetActors.Num() == 0) return nullptr;
+
+	return TargetActors[PointsIndexes[PointIndex]];
 }
