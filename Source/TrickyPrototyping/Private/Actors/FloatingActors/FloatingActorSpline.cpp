@@ -54,33 +54,41 @@ void AFloatingActorSpline::FillPointIndexes()
 		}
 	};
 
-	if (MovementMode == EFloatingActorMovementMode::Manual)
+	switch (MovementMode)
 	{
-		GetPointsFromSpline();
-	}
-	else
-	{
-		if (bStopAtPoints)
-		{
-			if (bStopAtCertainPoints && CustomStopsIndexes.Num() == 0)
-			{
-				return; // TODO Print error;
-			}
-
-			if (bStopAtCertainPoints && CustomStopsIndexes.Num() > 1)
-			{
-				PointsIndexes = CustomStopsIndexes;
-				return;
-			}
-
+		case EFloatingActorMovementMode::Manual:
 			GetPointsFromSpline();
-		}
-		else
-		{
-			PointsIndexes.Add(0);
-			const int PointsNumber = TargetSplineComponent->GetNumberOfSplinePoints();
-			PointsIndexes.Add(TargetSplineComponent->IsClosedLoop() ? PointsNumber : PointsNumber - 1);
-		}
+			break;
+
+		default:
+			if (bStopAtPoints)
+			{
+				if (bStopAtCertainPoints)
+				{
+					if (CustomStopsIndexes.Num() < 2)
+					{
+						return; // TODO Print error;
+					}
+
+					PointsIndexes = CustomStopsIndexes;
+
+					if (bSortCustomStops)
+					{
+						auto Iterator = [](const int32& Lhs, const int32& Rhs) { return Lhs <= Rhs; };
+						PointsIndexes.Sort(Iterator);
+					}
+					return;
+				}
+
+				GetPointsFromSpline();
+			}
+			else
+			{
+				PointsIndexes.Add(0);
+				const int PointsNumber = TargetSplineComponent->GetNumberOfSplinePoints();
+				PointsIndexes.Add(TargetSplineComponent->IsClosedLoop() ? PointsNumber : PointsNumber - 1);
+			}
+			break;
 	}
 }
 
@@ -118,7 +126,7 @@ void AFloatingActorSpline::MovePlatform(const float Progress)
 
 	const FVector NewLocation{
 		TargetSplineComponent->GetLocationAtDistanceAlongSpline(GetPositionAtSpline(Progress),
-		                                                  ESplineCoordinateSpace::World)
+		                                                        ESplineCoordinateSpace::World)
 	};
 	SetActorLocation(NewLocation);
 	RotateAlongSpline(Progress);
@@ -151,11 +159,11 @@ void AFloatingActorSpline::RotateAlongSpline(const float Progress)
 		const FRotator CurrentRotation{GetActorRotation()};
 		const FRotator RotationAlongSpline{
 			TargetSplineComponent->GetRotationAtDistanceAlongSpline(GetPositionAtSpline(Progress),
-			                                                  ESplineCoordinateSpace::World)
+			                                                        ESplineCoordinateSpace::World)
 		};
 		const float NewRoll = InheritSplineRotation.bInheritX ? RotationAlongSpline.Roll : CurrentRotation.Roll;
 		const float NewPitch = InheritSplineRotation.bInheritY ? RotationAlongSpline.Pitch : CurrentRotation.Pitch;
-		const float NewYaw= InheritSplineRotation.bInheritZ ? RotationAlongSpline.Yaw : CurrentRotation.Yaw;
+		const float NewYaw = InheritSplineRotation.bInheritZ ? RotationAlongSpline.Yaw : CurrentRotation.Yaw;
 		SetActorRotation(FRotator{NewPitch, NewYaw, NewRoll});
 	}
 }
@@ -167,7 +175,9 @@ void AFloatingActorSpline::ScaleAlongSpline(const float Progress)
 	if (InheritSplineScale.bInheritX || InheritSplineScale.bInheritY || InheritSplineScale.bInheritZ)
 	{
 		const FVector CurrentScale{GetActorScale3D()};
-		const FVector ScaleAlongSpline{TargetSplineComponent->GetScaleAtDistanceAlongSpline(GetPositionAtSpline(Progress))};
+		const FVector ScaleAlongSpline{
+			TargetSplineComponent->GetScaleAtDistanceAlongSpline(GetPositionAtSpline(Progress))
+		};
 		const float NewScaleX = InheritSplineScale.bInheritX ? ScaleAlongSpline.X : CurrentScale.X;
 		const float NewScaleY = InheritSplineScale.bInheritY ? ScaleAlongSpline.Y : CurrentScale.Y;
 		const float NewScaleZ = InheritSplineScale.bInheritZ ? ScaleAlongSpline.Z : CurrentScale.Z;

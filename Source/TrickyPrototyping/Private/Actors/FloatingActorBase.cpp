@@ -74,7 +74,7 @@ void AFloatingActorBase::ConstructActor()
 			// Sort custom indexes
 			if (bSortCustomStops)
 			{
-				auto Iterator = [](const int32& LHS, const int32& RHS) { return LHS < RHS; };
+				auto Iterator = [](const int32& Lhs, const int32& Rhs) { return Lhs <= Rhs; };
 				CustomStopsIndexes.Sort(Iterator);
 			}
 		}
