@@ -173,6 +173,14 @@ void AFloatingActorBase::FillPointIndexes()
 	PointsIndexes.Empty();
 }
 
+void AFloatingActorBase::SortPointsIndexes()
+{
+	if (!bSortCustomStops) return;
+
+	auto Iterator = [](const int32& Lhs, const int32& Rhs) { return Lhs <= Rhs; };
+	PointsIndexes.Sort(Iterator);
+}
+
 void AFloatingActorBase::RemoveInvalidCustomIndexes()
 {
 }

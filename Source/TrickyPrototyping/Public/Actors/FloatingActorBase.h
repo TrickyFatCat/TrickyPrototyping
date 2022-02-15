@@ -265,6 +265,8 @@ protected:
 
 	virtual void FillPointIndexes();
 
+	virtual void SortPointsIndexes();
+
 	virtual void RemoveInvalidCustomIndexes();
 
 	UFUNCTION()

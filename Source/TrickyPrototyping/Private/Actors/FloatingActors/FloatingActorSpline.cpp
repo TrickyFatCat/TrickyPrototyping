@@ -71,12 +71,8 @@ void AFloatingActorSpline::FillPointIndexes()
 					}
 
 					PointsIndexes = CustomStopsIndexes;
-
-					if (bSortCustomStops)
-					{
-						auto Iterator = [](const int32& Lhs, const int32& Rhs) { return Lhs <= Rhs; };
-						PointsIndexes.Sort(Iterator);
-					}
+					SortPointsIndexes();
+					
 					return;
 				}
 
