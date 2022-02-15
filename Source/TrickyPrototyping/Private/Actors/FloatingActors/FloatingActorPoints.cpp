@@ -81,4 +81,11 @@ void AFloatingActorPoints::RemoveInvalidCustomIndexes()
 void AFloatingActorPoints::MovePlatform(const float Progress)
 {
 	Super::MovePlatform(Progress);
+
+	if (TargetActors.Num() < 2) return;
+
+	const FVector StartPosition{TargetActors[CurrentPointIndex]->GetActorLocation()};
+	const FVector FinishPosition{TargetActors[NextPointIndex]->GetActorLocation()};
+	SetActorLocation(FMath::Lerp(StartPosition, FinishPosition, Progress));
+	
 }
