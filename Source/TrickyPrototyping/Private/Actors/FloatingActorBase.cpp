@@ -22,7 +22,7 @@ void AFloatingActorBase::BeginPlay()
 	if (MovementTimeline && MovementAnimationCurve)
 	{
 		FOnTimelineFloat MovementProgress{};
-		MovementProgress.BindUFunction(this, FName("MovePlatform"));
+		MovementProgress.BindUFunction(this, FName("MoveActor"));
 		MovementTimeline->AddInterpFloat(MovementAnimationCurve, MovementProgress);
 
 		FOnTimelineEvent MovementFinished{};
