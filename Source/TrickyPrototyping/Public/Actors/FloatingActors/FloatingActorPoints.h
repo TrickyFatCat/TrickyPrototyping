@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class TRICKYPROTOTYPING_API AFloatingActorPoints : public AFloatingActorBase
 {
 	GENERATED_BODY()
