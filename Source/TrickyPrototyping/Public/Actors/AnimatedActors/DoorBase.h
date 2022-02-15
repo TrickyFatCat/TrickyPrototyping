@@ -122,7 +122,7 @@ private:
 	 * The key class which is required to interact with the door.
 	 * If none, the door does not require the key.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Door", meta=(AllowPrivateAccess="true", EditCondition="bRequireKey"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Door", meta=(AllowPrivateAccess="true"))
 	TSubclassOf<UKeyType> KeyClass = nullptr;
 
 	bool HasKey(const AActor* Actor) const;
