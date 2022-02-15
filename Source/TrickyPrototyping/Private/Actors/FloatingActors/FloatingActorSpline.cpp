@@ -72,7 +72,7 @@ void AFloatingActorSpline::FillPointIndexes()
 				PointsIndexes = CustomStopsIndexes;
 				return;
 			}
-			
+
 			GetPointsFromSpline();
 		}
 		else
@@ -116,14 +116,13 @@ void AFloatingActorSpline::MovePlatform(const float Progress)
 
 	if (!SplineComponent) return; // TODO Print error.
 
-	const float Start = GetSplineDistance(CurrentPointIndex);
-	const float Finish = GetSplineDistance(NextPointIndex);
-	const float SplinePosition = FMath::Lerp(Start, Finish, Progress);
 	const FVector NewLocation{
-		SplineComponent->GetLocationAtDistanceAlongSpline(SplinePosition,
+		SplineComponent->GetLocationAtDistanceAlongSpline(GetPositionAtSpline(Progress),
 		                                                  ESplineCoordinateSpace::World)
 	};
 	SetActorLocation(NewLocation);
+	RotateAlongSpline(Progress);
+	ScaleAlongSpline(Progress);
 }
 
 float AFloatingActorSpline::GetSplineDistance(const int32 PointIndex) const
@@ -131,4 +130,36 @@ float AFloatingActorSpline::GetSplineDistance(const int32 PointIndex) const
 	if (!SplineComponent) return -1.f;
 
 	return SplineComponent->GetDistanceAlongSplineAtSplinePoint(PointsIndexes[PointIndex]);
+}
+
+float AFloatingActorSpline::GetPositionAtSpline(const float Progress) const
+{
+	if (!SplineComponent) return -1;
+
+	const float Start = GetSplineDistance(CurrentPointIndex);
+	const float Finish = GetSplineDistance(NextPointIndex);
+
+	return FMath::Lerp(Start, Finish, Progress);
+}
+
+void AFloatingActorSpline::RotateAlongSpline(const float Progress)
+{
+	if (!SplineComponent) return;
+
+	if (InheritSplineRotation.bInheritX || InheritSplineRotation.bInheritY || InheritSplineRotation.bInheritZ)
+	{
+		const FRotator CurrentRotation{GetActorRotation()};
+		const FRotator RotationAlongSpline{
+			SplineComponent->GetRotationAtDistanceAlongSpline(GetPositionAtSpline(Progress),
+			                                                  ESplineCoordinateSpace::World)
+		};
+		const float NewRoll = InheritSplineRotation.bInheritX ? RotationAlongSpline.Roll : CurrentRotation.Roll;
+		const float NewPitch = InheritSplineRotation.bInheritY ? RotationAlongSpline.Pitch : CurrentRotation.Pitch;
+		const float NewYaw= InheritSplineRotation.bInheritZ ? RotationAlongSpline.Yaw : CurrentRotation.Yaw;
+		SetActorRotation(FRotator{NewPitch, NewYaw, NewRoll});
+	}
+}
+
+void AFloatingActorSpline::ScaleAlongSpline(const float Progress)
+{
 }

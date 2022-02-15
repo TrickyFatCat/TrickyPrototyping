@@ -8,6 +8,21 @@
 
 class USplineComponent;
 
+USTRUCT(BlueprintType)
+struct FAxisInheritance
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Category="Inheritance")
+	bool bInheritX = false;
+	
+	UPROPERTY(EditAnywhere, Category="Inheritance")
+	bool bInheritY = false;
+	
+	UPROPERTY(EditAnywhere, Category="Inheritance")
+	bool bInheritZ = false;
+};
+
 /**
  * 
  */
@@ -42,7 +57,19 @@ private:
 	UPROPERTY()
 	USplineComponent* SplineComponent = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingActor|Spline", meta=(AllowPrivateAccess="true"))
+	FAxisInheritance InheritSplineRotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingActor|Spline", meta=(AllowPrivateAccess="true"))
+	FAxisInheritance InheritSplineScale;	
+
 	float GetSplineDistance(const int32 PointIndex) const;
+
+	float GetPositionAtSpline(const float Progress) const;
+
+	void RotateAlongSpline(const float Progress);
+
+	void ScaleAlongSpline(const float Progress);
 
 protected:
 };
