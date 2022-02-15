@@ -10,9 +10,13 @@ ASplineActor::ASplineActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	auto SetDefaultMobility = [](USceneComponent* Component) { Component->SetMobility(EComponentMobility::Static); };
+
 	ActorRoot = CreateDefaultSubobject<USceneComponent>("RootComponent");
 	SetRootComponent(ActorRoot);
+	SetDefaultMobility(ActorRoot);
 
 	SplineComponent = CreateDefaultSubobject<USplineComponent>("SplineComponent");
+	SetDefaultMobility(SplineComponent);
 	SplineComponent->SetupAttachment(GetRootComponent());
 }
