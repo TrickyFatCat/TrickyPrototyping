@@ -3,6 +3,19 @@
 
 #include "Actors/FloatingActors/FloatingActorPoints.h"
 
+void AFloatingActorPoints::ConstructActor()
+{
+	Super::ConstructActor();
+
+	if (TargetActors.Num() > 0)
+	{
+		if (!TargetActors[StartPointIndex])
+		{
+			// TODO Print error
+		}
+	}
+}
+
 void AFloatingActorPoints::CalculateTravelTime()
 {
 	Super::CalculateTravelTime();
@@ -82,7 +95,7 @@ void AFloatingActorPoints::MoveActor(const float Progress)
 {
 	Super::MoveActor(Progress);
 
-	if (TargetActors.Num() < 2) return;
+	if (TargetActors.Num() < 2 || !TargetActors[CurrentPointIndex] || !TargetActors[NextPointIndex]) return;
 
 	const FVector StartPosition{TargetActors[CurrentPointIndex]->GetActorLocation()};
 	const FVector FinishPosition{TargetActors[NextPointIndex]->GetActorLocation()};

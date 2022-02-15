@@ -15,6 +15,8 @@ class TRICKYPROTOTYPING_API AFloatingActorPoints : public AFloatingActorBase
 	GENERATED_BODY()
 
 protected:
+	virtual void ConstructActor() override;
+	
 	virtual void CalculateTravelTime() override;
 
 	virtual void FillPointIndexes() override;
