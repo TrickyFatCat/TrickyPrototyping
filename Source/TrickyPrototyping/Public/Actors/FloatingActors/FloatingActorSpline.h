@@ -55,7 +55,7 @@ private:
 	AActor* SplineActor = nullptr;
 
 	UPROPERTY()
-	USplineComponent* SplineComponent = nullptr;
+	USplineComponent* TargetSplineComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingActor|Spline", meta=(AllowPrivateAccess="true"))
 	FAxisInheritance InheritSplineRotation;
