@@ -22,7 +22,11 @@ void AFloatingActorPoints::FillPointIndexes()
 	{
 		for (int32 i = 0; i < TargetActors.Num(); i++)
 		{
-			if (!TargetActors[i]) continue;
+			if (!TargetActors[i])
+			{
+				// TODO Print error
+				continue;
+			}
 			PointsIndexes.Add(i);
 		}
 	};
@@ -43,7 +47,7 @@ void AFloatingActorPoints::FillPointIndexes()
 
 				PointsIndexes = CustomStopsIndexes;
 				SortPointsIndexes();
-				
+
 				return;
 			}
 
@@ -55,6 +59,23 @@ void AFloatingActorPoints::FillPointIndexes()
 void AFloatingActorPoints::RemoveInvalidCustomIndexes()
 {
 	Super::RemoveInvalidCustomIndexes();
+
+	for (int32 i = 0; i < CustomStopsIndexes.Num(); i++)
+	{
+		const int32 Index = CustomStopsIndexes[i];
+
+		if (Index < 0 || Index >= TargetActors.Num())
+		{
+			CustomStopsIndexes.Remove(Index);
+			continue;
+		}
+
+		if (!TargetActors[Index])
+		{
+			// TODO Print error
+			CustomStopsIndexes.Remove(Index);
+		}
+	}
 }
 
 void AFloatingActorPoints::MovePlatform(const float Progress)
