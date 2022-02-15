@@ -39,7 +39,7 @@ void AFloatingActorSpline::FillPointIndexes()
 {
 	if (!TargetSplineComponent) return; // TODO Print error.
 
-	Super::FillPointIndexes();
+	PointsIndexes.Empty();
 
 	auto GetPointsFromSpline = [&]()
 	{
