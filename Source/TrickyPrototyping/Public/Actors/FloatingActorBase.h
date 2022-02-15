@@ -51,8 +51,6 @@ protected:
 
 #pragma region Actions
 public:
-	virtual void Tick(float DeltaTime) override;
-
 	UPROPERTY(BlueprintAssignable, Category="FloatingActor")
 	FOnChangeStateSignature OnStateChanged;
 
@@ -100,6 +98,12 @@ public:
 	void SetSpeed(const float Value);
 
 	UFUNCTION(BlueprintGetter, Category="FloatingActor")
+	float GetTravelTime() const { return TravelTime; }
+
+	UFUNCTION(BlueprintSetter, Category="FloatingActor")
+	void SetTravelTime(const float Value);
+
+	UFUNCTION(BlueprintGetter, Category="FloatingActor")
 	float GetWaitDuration() const { return WaitDuration; }
 
 	UFUNCTION(BlueprintSetter, Category="FloatingActor")
@@ -112,24 +116,36 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	UTimelineComponent* MovementTimeline = nullptr;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="FloatingActor", meta=(AllowPrivateAccess="true"))
-	EFloatingActorState State = EFloatingActorState::Idle;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingActor", meta=(AllowPrivateAccess="true"))
 	EFloatingActorMovementMode MovementMode = EFloatingActorMovementMode::Loop;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="FloatingActor", meta=(AllowPrivateAccess="true"))
 	UCurveFloat* MovementAnimationCurve = nullptr;
-
+	
+	UPROPERTY(EditAnywhere, Category="FloatingActor", meta=(AllowPrivateAccess="true"))
+	bool bUseTravelTime = false;
+	
 	/**
 	 * Movement speed of the platform.
+	 * Use this parameter if you want to make platform move between points with constant speed.
 	 */
 	UPROPERTY(EditAnywhere,
 		BlueprintGetter=GetSpeed,
 		BlueprintSetter=SetSpeed,
 		Category="FloatingActor",
-		meta=(AllowPrivateAccess="true", ClampMin="0"))
+		meta=(AllowPrivateAccess="true", ClampMin="0", EditCondition="!bUseTravelTime"))
 	float Speed = 300.f;
+
+	/**
+	 * The travel duration between points.
+	 * Better to use when the platform moves between 2 points.
+	 * Also good when distance between points is uniform.
+	 */
+	UPROPERTY(EditAnywhere,
+		BlueprintReadOnly,
+		Category="FloatingActor",
+		meta=(AllowPrivateAccess="true", ClampMin="0", EditCondition="bUseTravelTime"))
+	float TravelTime = 1.f;
 
 	/**
 	 * Index of the point from which the platform will start moving.
@@ -202,6 +218,16 @@ protected:
 	bool bStopAtCertainPoints = false;
 
 	/**
+	 * If true, custom stops array will be sorted automatically.
+	 */
+	UPROPERTY(EditAnywhere,
+		BlueprintReadWrite,
+		Category="FloatingActor",
+		meta=(AllowPrivateAccess="true", EditCondition=
+			"bStopAtPoints && bStopAtCertainPoints && MovementMode!=EFloatingActorMovementMode::Manual"))
+	bool bSortCustomStops = true;
+
+	/**
 	 * A set of indexes of points where platform will stop while moving.
 	 */
 	UPROPERTY(EditAnywhere,
@@ -209,7 +235,7 @@ protected:
 		Category="FloatingActor",
 		meta=(AllowPrivateAccess="true", EditCondition=
 			"bStopAtPoints && bStopAtCertainPoints && MovementMode!=EFloatingActorMovementMode::Manual"))
-	TSet<int32> CustomStopsIndexes{};
+	TArray<int32> CustomStopsIndexes{};
 #pragma endregion
 
 #pragma region Movement
@@ -219,16 +245,20 @@ public:
 	bool IndexIsValid(const int32 Index) const;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category="FloatingActor|Debug")
+	UPROPERTY(VisibleInstanceOnly,
+		BlueprintReadOnly,
+		AdvancedDisplay,
+		Category="FloatingActor",
+		meta=(AllowPrivateAccess="true"))
+	EFloatingActorState State = EFloatingActorState::Idle;
+
+	UPROPERTY(VisibleInstanceOnly, AdvancedDisplay, Category="FloatingActor")
 	TArray<int32> PointsIndexes;
 
-	UPROPERTY(VisibleAnywhere, Category="FloatingActor|Debug")
-	float TravelTime = 1.f;
-
-	UPROPERTY(VisibleAnywhere, Category="FloatingActor|Debug")
+	UPROPERTY(VisibleInstanceOnly, AdvancedDisplay, Category="FloatingActor")
 	int32 CurrentPointIndex = 0;
 
-	UPROPERTY(VisibleAnywhere, Category="FloatingActor|Debug")
+	UPROPERTY(VisibleInstanceOnly, AdvancedDisplay, Category="FloatingActor")
 	int32 NextPointIndex = 0;
 
 	virtual void CalculateTravelTime();

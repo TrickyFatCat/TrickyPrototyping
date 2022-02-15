@@ -70,19 +70,19 @@ void AFloatingActorBase::ConstructActor()
 		if (bStopAtPoints && bStopAtCertainPoints && CustomStopsIndexes.Num() > 0)
 		{
 			RemoveInvalidCustomIndexes();
-			auto Iterator = [](const int32& LHS, const int32& RHS) { return LHS < RHS; };
-			CustomStopsIndexes.Sort(Iterator);
+
+			// Sort custom indexes
+			if (bSortCustomStops)
+			{
+				auto Iterator = [](const int32& LHS, const int32& RHS) { return LHS < RHS; };
+				CustomStopsIndexes.Sort(Iterator);
+			}
 		}
 	}
 	else
 	{
 		// TODO Print error
 	}
-}
-
-void AFloatingActorBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void AFloatingActorBase::StartMovement()
@@ -140,6 +140,14 @@ void AFloatingActorBase::SetSpeed(const float Value)
 
 	Speed = Value;
 	CalculateTravelTime();
+}
+
+void AFloatingActorBase::SetTravelTime(const float Value)
+{
+	if (bUseTravelTime || Value <= 0.f) return;
+
+	TravelTime = Value;
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, MovementAnimationCurve, TravelTime);
 }
 
 void AFloatingActorBase::SetWaitDuration(const float Value)

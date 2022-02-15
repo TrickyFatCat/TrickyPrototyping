@@ -27,7 +27,7 @@ void AFloatingActorSpline::CalculateTravelTime()
 {
 	Super::CalculateTravelTime();
 
-	if (!SplineComponent) return;
+	if (!SplineComponent || bUseTravelTime) return;
 
 	const float StartDistance = GetSplineDistance(CurrentPointIndex);
 	const float FinishDistance = GetSplineDistance(NextPointIndex);
@@ -41,28 +41,46 @@ void AFloatingActorSpline::FillPointIndexes()
 
 	Super::FillPointIndexes();
 
-	if (bStopAtPoints && MovementMode != EFloatingActorMovementMode::Manual)
+	auto GetPointsFromSpline = [&]()
 	{
-		if (bStopAtCertainPoints && CustomStopsIndexes.Num() == 0)
+		for (int32 i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
 		{
-			return; // TODO Print error;
+			PointsIndexes.Add(i);
 		}
 
-		if (bStopAtCertainPoints && CustomStopsIndexes.Num() > 1)
+		if (SplineComponent->IsClosedLoop())
 		{
-			PointsIndexes = CustomStopsIndexes.Array();
-			return;
+			PointsIndexes.Add(SplineComponent->GetNumberOfSplinePoints());
 		}
-	}
-	
-	for (int32 i = 0; i < SplineComponent->GetNumberOfSplinePoints(); i++)
-	{
-		PointsIndexes.Add(i);
-	}
+	};
 
-	if (SplineComponent->IsClosedLoop())
+	if (MovementMode == EFloatingActorMovementMode::Manual)
 	{
-		PointsIndexes.Add(SplineComponent->GetNumberOfSplinePoints());
+		GetPointsFromSpline();
+	}
+	else
+	{
+		if (bStopAtPoints)
+		{
+			if (bStopAtCertainPoints && CustomStopsIndexes.Num() == 0)
+			{
+				return; // TODO Print error;
+			}
+
+			if (bStopAtCertainPoints && CustomStopsIndexes.Num() > 1)
+			{
+				PointsIndexes = CustomStopsIndexes;
+				return;
+			}
+			
+			GetPointsFromSpline();
+		}
+		else
+		{
+			PointsIndexes.Add(0);
+			const int PointsNumber = SplineComponent->GetNumberOfSplinePoints();
+			PointsIndexes.Add(SplineComponent->IsClosedLoop() ? PointsNumber : PointsNumber - 1);
+		}
 	}
 }
 
@@ -72,8 +90,8 @@ void AFloatingActorSpline::RemoveInvalidCustomIndexes()
 
 	for (int32 i = 0; i < CustomStopsIndexes.Num(); i++)
 	{
-		const int Index = CustomStopsIndexes.Array()[i];
-		
+		const int Index = CustomStopsIndexes[i];
+
 		if (Index < 0)
 		{
 			CustomStopsIndexes.Remove(Index);
