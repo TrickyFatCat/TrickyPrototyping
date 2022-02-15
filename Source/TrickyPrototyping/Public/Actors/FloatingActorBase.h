@@ -111,7 +111,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
-	USceneComponent* PlatformRoot = nullptr;
+	USceneComponent* ActorRoot = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	UTimelineComponent* MovementTimeline = nullptr;

@@ -11,8 +11,8 @@ AFloatingActorBase::AFloatingActorBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	PlatformRoot = CreateDefaultSubobject<USceneComponent>("PlatformRoot");
-	SetRootComponent(PlatformRoot);
+	ActorRoot = CreateDefaultSubobject<USceneComponent>("ActorRoot");
+	SetRootComponent(ActorRoot);
 
 	MovementTimeline = CreateDefaultSubobject<UTimelineComponent>("MovementTimeline");
 }
