@@ -11,6 +11,45 @@ void AFloatingActorPoints::CalculateTravelTime()
 void AFloatingActorPoints::FillPointIndexes()
 {
 	Super::FillPointIndexes();
+
+	if (TargetActors.Num() == 0 || TargetActors.Num() == 1)
+	{
+		// TODO Print error
+		return;
+	}
+
+	auto FillIndexes = [&]()
+	{
+		for (int32 i = 0; i < TargetActors.Num(); i++)
+		{
+			if (!TargetActors[i]) continue;
+			PointsIndexes.Add(i);
+		}
+	};
+
+	switch (MovementMode)
+	{
+		case EFloatingActorMovementMode::Manual:
+			FillIndexes();
+			break;
+
+		default:
+			if (bStopAtPoints && bStopAtCertainPoints)
+			{
+				if (CustomStopsIndexes.Num() < 2)
+				{
+					return; // TODO Print error;
+				}
+
+				PointsIndexes = CustomStopsIndexes;
+				SortPointsIndexes();
+				
+				return;
+			}
+
+			FillIndexes();
+			break;
+	}
 }
 
 void AFloatingActorPoints::RemoveInvalidCustomIndexes()
