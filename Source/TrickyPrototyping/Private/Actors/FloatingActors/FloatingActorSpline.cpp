@@ -114,9 +114,9 @@ void AFloatingActorSpline::RemoveInvalidCustomIndexes()
 	}
 }
 
-void AFloatingActorSpline::MovePlatform(const float Progress)
+void AFloatingActorSpline::MoveActor(const float Progress)
 {
-	Super::MovePlatform(Progress);
+	Super::MoveActor(Progress);
 
 	if (!TargetSplineComponent) return; // TODO Print error.
 

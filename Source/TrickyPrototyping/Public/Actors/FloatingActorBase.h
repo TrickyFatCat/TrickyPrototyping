@@ -270,7 +270,7 @@ protected:
 	virtual void RemoveInvalidCustomIndexes();
 
 	UFUNCTION()
-	virtual void MovePlatform(const float Progress);
+	virtual void MoveActor(const float Progress);
 
 	UFUNCTION()
 	void ContinueMovement();

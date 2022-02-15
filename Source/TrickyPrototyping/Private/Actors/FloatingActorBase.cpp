@@ -65,7 +65,7 @@ void AFloatingActorBase::ConstructActor()
 
 		CurrentPointIndex = StartPointIndex;
 		NextPointIndex = StartPointIndex;
-		MovePlatform(0.0f);
+		MoveActor(0.0f);
 
 		if (bStopAtPoints && bStopAtCertainPoints && CustomStopsIndexes.Num() > 0)
 		{
@@ -185,7 +185,7 @@ void AFloatingActorBase::RemoveInvalidCustomIndexes()
 {
 }
 
-void AFloatingActorBase::MovePlatform(const float Progress)
+void AFloatingActorBase::MoveActor(const float Progress)
 {
 }
 

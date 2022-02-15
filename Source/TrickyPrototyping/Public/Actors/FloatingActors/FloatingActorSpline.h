@@ -48,7 +48,7 @@ protected:
 
 	virtual void RemoveInvalidCustomIndexes() override;
 
-	virtual void MovePlatform(const float Progress) override;
+	virtual void MoveActor(const float Progress) override;
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingActor|Spline", meta=(AllowPrivateAccess="true"))

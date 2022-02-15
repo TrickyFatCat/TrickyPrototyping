@@ -78,9 +78,9 @@ void AFloatingActorPoints::RemoveInvalidCustomIndexes()
 	}
 }
 
-void AFloatingActorPoints::MovePlatform(const float Progress)
+void AFloatingActorPoints::MoveActor(const float Progress)
 {
-	Super::MovePlatform(Progress);
+	Super::MoveActor(Progress);
 
 	if (TargetActors.Num() < 2) return;
 
