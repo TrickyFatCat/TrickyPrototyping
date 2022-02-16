@@ -8,3 +8,27 @@ UE4 plugin for rapid prototyping. It contains the most basic systems and mechani
 2. Download and unzip archive in this folder. You should get such a path to a plugin `Plugins/TrickyPrototyping`;
 
 3. Alternatively you can clone this repository into the `Plugins` directory;
+
+## What does it contain?
+
+The plugin contains the most frequently used things while prototyping various games.
+
+## AnimatedActor
+
+This actor can animate its scene components using a timeline component. It was used to create doors and buttons for the plugin.
+
+However, it is possible to make your custom actor using blueprints.
+
+### Doors
+
+There are two classes of doors:
+
+1. `DoorBase`. Great to make simple sliding doors;
+
+2. `DoorSwing`. Specifically made for sliding doors. It calculates door leaves rotation relative to the player position;
+
+Doors can be controlled manually. However, it’s easy to make them open automatically through interaction.
+
+### Buttons
+
+There is only one button class `ButtonBase`. However, it is possible to make a pressure plate, a simple button, and a switch out of this class.
