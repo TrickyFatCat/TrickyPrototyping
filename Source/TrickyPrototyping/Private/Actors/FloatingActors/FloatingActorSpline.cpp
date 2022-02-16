@@ -8,10 +8,13 @@
 
 void AFloatingActorSpline::ConstructActor()
 {
-	if (SplineActor)
+	if (!SplineActor)
 	{
-		TargetSplineComponent = FTrickyUtils::GetComponent<USplineComponent>(SplineActor);
+		LogError("SplineActor is nullptr. Please choose an actor with spline to use this floating actor.");
+		return;
 	}
+	
+	TargetSplineComponent = FTrickyUtils::GetComponent<USplineComponent>(SplineActor);
 	Super::ConstructActor();
 }
 
@@ -37,7 +40,11 @@ void AFloatingActorSpline::CalculateTravelTime()
 
 void AFloatingActorSpline::FillPointIndexes()
 {
-	if (!TargetSplineComponent) return; // TODO Print error.
+	if (!TargetSplineComponent)
+	{
+		LogError("The target actor doesn't have a spline component.");
+		return;
+	}
 
 	PointsIndexes.Empty();
 
@@ -67,7 +74,8 @@ void AFloatingActorSpline::FillPointIndexes()
 				{
 					if (CustomStopsIndexes.Num() < 2)
 					{
-						return; // TODO Print error;
+						LogError("Not enough custom indexes. There must be at least 2.");
+						return;
 					}
 
 					PointsIndexes = CustomStopsIndexes;
@@ -102,7 +110,7 @@ void AFloatingActorSpline::RemoveInvalidCustomIndexes()
 			continue;
 		}
 
-		if (!TargetSplineComponent) continue; // TODO Print error;
+		if (!TargetSplineComponent) continue;
 
 		const int32 NumberOfPoints = TargetSplineComponent->GetNumberOfSplinePoints();
 		const bool bIsValid = TargetSplineComponent->IsClosedLoop() ? Index <= NumberOfPoints : Index < NumberOfPoints;
@@ -118,7 +126,7 @@ void AFloatingActorSpline::MoveActor(const float Progress)
 {
 	Super::MoveActor(Progress);
 
-	if (!TargetSplineComponent) return; // TODO Print error.
+	if (!TargetSplineComponent) return;
 
 	const FVector NewLocation{
 		TargetSplineComponent->GetLocationAtDistanceAlongSpline(GetPositionAtSpline(Progress),

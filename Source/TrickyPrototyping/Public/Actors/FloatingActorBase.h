@@ -25,6 +25,8 @@ enum class EFloatingActorMovementMode : uint8
 	PingPong
 };
 
+DECLARE_LOG_CATEGORY_CLASS(LogFloatingActor, Display, Display);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeStateSignature, EFloatingActorState, NewState);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPointReachedSignature, int32, PointIndex);
@@ -282,5 +284,7 @@ protected:
 	void FinishStopTimer();
 
 	void SetState(const EFloatingActorState NewState);
+
+	void LogError(const FString& Message) const;
 #pragma endregion
 };

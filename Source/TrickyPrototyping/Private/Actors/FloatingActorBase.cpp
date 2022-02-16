@@ -6,7 +6,6 @@
 #include "Components/TimelineComponent.h"
 #include "Core/TrickyFunctionLibrary.h"
 
-
 AFloatingActorBase::AFloatingActorBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -60,7 +59,7 @@ void AFloatingActorBase::ConstructActor()
 		if (!IndexIsValid(StartPointIndex))
 		{
 			StartPointIndex = 0;
-			// TODO Print error.
+			LogError("Invalid start point index, it can't be < 0 or > the max index in the array.");
 		}
 
 		CurrentPointIndex = StartPointIndex;
@@ -81,13 +80,13 @@ void AFloatingActorBase::ConstructActor()
 	}
 	else
 	{
-		// TODO Print error
+		LogError("Couldn't construct the actor. There are no points to move between.");
 	}
 }
 
 void AFloatingActorBase::StartMovement()
 {
-	if (State == EFloatingActorState::Moving || PointsIndexes.Num() == 0) return; // TODO Print error if Num == 0
+	if (State == EFloatingActorState::Moving || PointsIndexes.Num() == 0) return;
 
 	if (CurrentPointIndex == NextPointIndex)
 	{
@@ -249,4 +248,12 @@ void AFloatingActorBase::SetState(const EFloatingActorState NewState)
 
 	State = NewState;
 	OnStateChanged.Broadcast(State);
+}
+
+void AFloatingActorBase::LogError(const FString& Message) const
+{
+	if (!GetWorld()) return;
+	
+	const FString ErrorMessage{FString::Printf(TEXT("%s | Actor: %s"), *Message, *GetName())};
+	UE_LOG(LogFloatingActor, Error, TEXT("%s"), *ErrorMessage);
 }

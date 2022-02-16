@@ -11,7 +11,7 @@ void AFloatingActorPoints::ConstructActor()
 	{
 		if (!TargetActors[StartPointIndex])
 		{
-			// TODO Print error
+			LogError(FString::Printf(TEXT("The start index %d contains a nullptr actor"), StartPointIndex));
 		}
 	}
 }
@@ -35,7 +35,7 @@ void AFloatingActorPoints::FillPointIndexes()
 
 	if (TargetActors.Num() < 2)
 	{
-		// TODO Print error
+		LogError("Not enough target points. There must be at least 2 to move between.");
 		return;
 	}
 
@@ -45,7 +45,7 @@ void AFloatingActorPoints::FillPointIndexes()
 		{
 			if (!TargetActors[i])
 			{
-				// TODO Print error
+				LogError(FString::Printf(TEXT("Actor with index %d is nullptr. It was skipped."), i));
 				continue;
 			}
 			PointsIndexes.Add(i);
@@ -61,10 +61,7 @@ void AFloatingActorPoints::FillPointIndexes()
 		default:
 			if (bStopAtPoints && bStopAtCertainPoints)
 			{
-				if (CustomStopsIndexes.Num() < 2)
-				{
-					return; // TODO Print error;
-				}
+				if (CustomStopsIndexes.Num() < 2) return;
 
 				PointsIndexes = CustomStopsIndexes;
 				SortPointsIndexes();
@@ -93,7 +90,7 @@ void AFloatingActorPoints::RemoveInvalidCustomIndexes()
 
 		if (!TargetActors[Index])
 		{
-			// TODO Print error
+			LogError(FString::Printf(TEXT("The cosen index %d contains nullptr actor."), Index));
 			CustomStopsIndexes.Remove(Index);
 		}
 	}
