@@ -113,6 +113,42 @@ void AFloatingActorPoints::MoveActor(const float Progress)
 	SetActorLocation(FMath::Lerp(StartPosition, FinishPosition, Progress));
 }
 
+void AFloatingActorPoints::CalculateNextPointIndex()
+{
+	auto CalculateNextIndex = [&]() { NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1; };
+
+	CurrentPointIndex = NextPointIndex;
+
+	switch (MovementMode)
+	{
+		case EFloatingActorMovementMode::Loop:
+			CalculateNextIndex();
+
+			if (NextPointIndex >= PointsIndexes.Num())
+			{
+				NextPointIndex = 0;
+			}
+			else if (NextPointIndex < 0)
+			{
+				NextPointIndex = PointsIndexes.Num() - 1;
+			}
+			break;
+
+		case EFloatingActorMovementMode::PingPong:
+			CalculateNextIndex();
+			
+			if (!IndexIsValid(NextPointIndex))
+			{
+				bIsReversed = !bIsReversed;
+				CalculateNextIndex();
+			}
+			break;
+
+		default:
+			break;
+	}
+}
+
 AActor* AFloatingActorPoints::GetTargetActor(const int32 PointIndex) const
 {
 	if (PointIndex < 0 || PointIndex >= TargetActors.Num() || TargetActors.Num() == 0) return nullptr;

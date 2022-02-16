@@ -113,7 +113,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	USceneComponent* ActorRoot = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category="Components")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Components")
 	UTimelineComponent* MovementTimeline = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingActor", meta=(AllowPrivateAccess="true"))
@@ -275,7 +275,7 @@ protected:
 	UFUNCTION()
 	void ContinueMovement();
 
-	void CalculateNextPointIndex();
+	virtual void CalculateNextPointIndex();
 
 	void StartStopWaitTimer();
 

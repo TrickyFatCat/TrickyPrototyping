@@ -204,6 +204,7 @@ void AFloatingActorBase::ContinueMovement()
 
 	CalculateNextPointIndex();
 	CalculateTravelTime();
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, MovementAnimationCurve, TravelTime);
 
 	if (bStopAtPoints)
 	{
@@ -217,33 +218,6 @@ void AFloatingActorBase::ContinueMovement()
 
 void AFloatingActorBase::CalculateNextPointIndex()
 {
-	auto CalculateNextIndex = [&]() { NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1; };
-
-	CurrentPointIndex = NextPointIndex;
-	CalculateNextIndex();
-	const bool bIndexIsValid = IndexIsValid(NextPointIndex);
-
-	switch (MovementMode)
-	{
-		case EFloatingActorMovementMode::Loop:
-			if (!bIndexIsValid)
-			{
-				CurrentPointIndex = bIsReversed ? PointsIndexes.Num() - 1 : 0;
-				CalculateNextIndex();
-			}
-			break;
-
-		case EFloatingActorMovementMode::PingPong:
-			if (!bIndexIsValid)
-			{
-				bIsReversed = !bIsReversed;
-				CalculateNextIndex();
-			}
-			break;
-
-		default:
-			break;
-	}
 }
 
 void AFloatingActorBase::StartStopWaitTimer()

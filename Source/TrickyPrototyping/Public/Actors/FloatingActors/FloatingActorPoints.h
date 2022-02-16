@@ -24,6 +24,8 @@ protected:
 	virtual void RemoveInvalidCustomIndexes() override;
 
 	virtual void MoveActor(const float Progress) override;
+
+	virtual void CalculateNextPointIndex() override;
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="FloatingActor|Points", meta=(AllowPrivateAccess="true"))
