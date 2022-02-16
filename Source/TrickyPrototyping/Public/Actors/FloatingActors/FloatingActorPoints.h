@@ -7,7 +7,8 @@
 #include "FloatingActorPoints.generated.h"
 
 /**
- * 
+ * An actor which moves between given actors.
+ * It's good for simple things like elevators and simple floating platforms.
  */
 UCLASS(BlueprintType, Blueprintable)
 class TRICKYPROTOTYPING_API AFloatingActorPoints : public AFloatingActorBase

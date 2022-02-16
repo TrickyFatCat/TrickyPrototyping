@@ -24,7 +24,8 @@ struct FAxisInheritance
 };
 
 /**
- * 
+ * The actor which moves along spline.
+ * It's good for things which requires a complicated movement path.
  */
 UCLASS(Blueprintable, BlueprintType)
 class TRICKYPROTOTYPING_API AFloatingActorSpline : public AFloatingActorBase
