@@ -2,6 +2,11 @@
 
 UE4 plugin for rapid prototyping. It contains the most basic systems and mechanics which can be found in the majority of games.
 
+I used this plugin in my personal projects:
+
+1. [**HONK III**](https://tricky-fat-cat.itch.io/honk-iii);
+2. [**Game designer test**](https://github.com/TrickyFatCat/AssignmentVNG);
+
 ## Installation
 
 1. Create Plugins folder in your project directory;
