@@ -7,7 +7,7 @@
 
 bool FTrickyUtils::GetPlayerViewPoint(AActor* CharacterActor, FVector& ViewLocation, FRotator& ViewRotation)
 {
-	ACharacter* Character = Cast<ACharacter>(CharacterActor);
+	const ACharacter* Character = Cast<ACharacter>(CharacterActor);
 
 	if (!Character) return false;
 

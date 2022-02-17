@@ -18,7 +18,7 @@ void UInteractionQueueComponent::TickComponent(float DeltaTime,
                                                FActorComponentTickFunction* ThisTickFunction)
 {
 	CheckLineOfSight();
-	
+
 	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
 }
 
@@ -115,7 +115,7 @@ void UInteractionQueueComponent::CheckLineOfSight()
 
 void UInteractionQueueComponent::SortQueueByLineOfSight(FHitResult& HitResult)
 {
-	auto ReplaceFirstElement = [&](const int32 Index)
+	auto ReplaceFirstElement = [&](const int32 Index)-> void
 	{
 		const FInteractionData Data{InteractionQueue[Index]};
 		InteractionQueue.RemoveAt(Index);
@@ -144,25 +144,20 @@ void UInteractionQueueComponent::SortQueueByLineOfSight(FHitResult& HitResult)
 
 bool UInteractionQueueComponent::QueueContainsActor(const AActor* Actor) const
 {
-	const auto bContains = InteractionQueue.FindByPredicate([&](const FInteractionData& Data)
-	{
-		return Data.Actor == Actor;
-	});
-	return bContains != nullptr;
+	auto Predicate = [&](const FInteractionData& Data)-> bool { return Data.Actor == Actor; };
+	const auto TargetActor = InteractionQueue.FindByPredicate(Predicate);
+	return TargetActor != nullptr;
 }
 
 AActor* UInteractionQueueComponent::GetQueuedActor(const AActor* Actor) const
 {
-	const FInteractionData FinalData = *InteractionQueue.FindByPredicate(
-	                                                                     [&](const FInteractionData& Data)
-	                                                                     {
-		                                                                     return Data.Actor == Actor;
-	                                                                     });
+	auto Predicate = [&](const FInteractionData& Data)-> bool { return Data.Actor == Actor; };
+	const FInteractionData FinalData = *InteractionQueue.FindByPredicate(Predicate);
 	return FinalData.Actor;
 }
 
 int32 UInteractionQueueComponent::GetInteractionDataIndex(const AActor* Actor) const
 {
-	return InteractionQueue.IndexOfByPredicate(
-	                                           [&](const FInteractionData& Data) { return Data.Actor == Actor; });
+	auto Predicate = [&](const FInteractionData& Data)-> bool { return Data.Actor == Actor; };
+	return InteractionQueue.IndexOfByPredicate(Predicate);
 }

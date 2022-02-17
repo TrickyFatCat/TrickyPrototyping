@@ -23,14 +23,14 @@ void UEntityResource::SetResourceData(const FResourceData& NewResourceData)
 			ResourceData.AutoDecreaseData.bIsEnabled = false;
 		}
 	}
-	
+
 	StartAutoIncrease();
 	StartAutoDecrease();
 }
 
 void UEntityResource::GetResourceDataByRef(FResourceData& Data)
 {
-	Data = ResourceData;	
+	Data = ResourceData;
 }
 
 void UEntityResource::SetValue(const float NewValue)

@@ -73,7 +73,7 @@ void AFloatingActorBase::ConstructActor()
 			// Sort custom indexes
 			if (bSortCustomStops)
 			{
-				auto Iterator = [](const int32& Lhs, const int32& Rhs) { return Lhs <= Rhs; };
+				auto Iterator = [](const int32& Lhs, const int32& Rhs)-> bool { return Lhs <= Rhs; };
 				CustomStopsIndexes.Sort(Iterator);
 			}
 		}
@@ -155,7 +155,10 @@ void AFloatingActorBase::SetWaitDuration(const float Value)
 
 	WaitDuration = Value;
 
-	if (WaitDuration == 0.f) bStopAtPoints = false;
+	if (WaitDuration == 0.f)
+	{
+		bStopAtPoints = false;
+	}
 }
 
 bool AFloatingActorBase::IndexIsValid(const int32 Index) const
@@ -176,7 +179,7 @@ void AFloatingActorBase::SortPointsIndexes()
 {
 	if (!bSortCustomStops) return;
 
-	auto Iterator = [](const int32& Lhs, const int32& Rhs) { return Lhs <= Rhs; };
+	auto Iterator = [](const int32& Lhs, const int32& Rhs)-> bool { return Lhs <= Rhs; };
 	PointsIndexes.Sort(Iterator);
 }
 
@@ -253,7 +256,7 @@ void AFloatingActorBase::SetState(const EFloatingActorState NewState)
 void AFloatingActorBase::LogError(const FString& Message) const
 {
 	if (!GetWorld()) return;
-	
+
 	const FString ErrorMessage{FString::Printf(TEXT("%s | Actor: %s"), *Message, *GetName())};
 	UE_LOG(LogFloatingActor, Error, TEXT("%s"), *ErrorMessage);
 }

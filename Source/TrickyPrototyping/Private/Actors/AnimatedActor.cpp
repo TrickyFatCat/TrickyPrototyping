@@ -62,7 +62,10 @@ void AAnimatedActor::AddAnimatedComponent(USceneComponent* NewComponent)
 		AnimatedComponents.Empty();
 	}
 
-	if (AnimatedComponents.Contains(NewComponent) || !NewComponent) return;
+	if (AnimatedComponents.Contains(NewComponent) || !NewComponent)
+	{
+		return;
+	}
 
 	AnimatedComponents.AddUnique(NewComponent);
 	FillInitialTransforms();

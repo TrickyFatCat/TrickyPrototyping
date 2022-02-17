@@ -93,7 +93,10 @@ float UDamageControllerComponent::GetPointDamageModifier(AActor* Actor, const FN
 {
 	const ACharacter* Character = Cast<ACharacter>(Actor);
 
-	if (!Character || !Character->GetMesh() || !Character->GetMesh()->GetBodyInstance(BoneName)) return 1.f;
+	if (!Character || !Character->GetMesh() || !Character->GetMesh()->GetBodyInstance(BoneName))
+	{
+		return 1.f;
+	}
 
 	const UPhysicalMaterial* PhysMat = Character->GetMesh()->GetBodyInstance(BoneName)->GetSimplePhysicalMaterial();
 

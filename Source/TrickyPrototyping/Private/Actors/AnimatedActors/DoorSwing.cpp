@@ -39,6 +39,7 @@ void ADoorSwing::CalculateRotationOffsets(const AActor* Actor)
 {
 	if (TransformOffsets.Num() == 0 || !Actor || GetDoorType() == EDoorType::Manual) return;
 
+	// Check if the rotation should be inverted
 	const float DotProduct = FVector::DotProduct(GetActorForwardVector(),
 	                                             (GetActorLocation() - Actor->GetActorLocation()).GetSafeNormal());
 	PrevSwingDirection = SwingDirection;
@@ -47,16 +48,19 @@ void ADoorSwing::CalculateRotationOffsets(const AActor* Actor)
 	if (PrevSwingDirection == SwingDirection) return;
 
 	const FRotator FirstRotator = TransformOffsets[0].GetRotation().Rotator();
-	auto IsAxisValid = [&](const float Axis) { return (SwingDirection != FMath::Sign(Axis) && Axis != 0); };
+	auto IsAxisValid = [&](const float Axis)-> bool { return (SwingDirection != FMath::Sign(Axis) && Axis != 0); };
 
+	// Invert rotation
 	for (FTransform& Offset : TransformOffsets)
 	{
 		if (IsAxisValid(FirstRotator.Roll) || IsAxisValid(FirstRotator.Pitch) || IsAxisValid(FirstRotator.Yaw)) continue;
-		
+
 		FRotator NewRotator{Offset.GetRotation()};
+		
 		NewRotator.Roll *= -1;
 		NewRotator.Pitch *= -1;
 		NewRotator.Yaw *= -1;
+
 		Offset.SetRotation(NewRotator.Quaternion());
 	}
 }

@@ -23,7 +23,10 @@ void AFloatingActorPoints::CalculateTravelTime()
 	const AActor* StartActor = GetTargetActor(CurrentPointIndex);
 	const AActor* FinishActor = GetTargetActor(NextPointIndex);
 
-	if (bUseTravelTime || !StartActor || !FinishActor) return;
+	if (bUseTravelTime || !StartActor || !FinishActor)
+	{
+		return;
+	}
 
 	const float Distance = StartActor->GetDistanceTo(FinishActor);
 	TravelTime = Distance / Speed;
@@ -61,7 +64,10 @@ void AFloatingActorPoints::FillPointIndexes()
 		default:
 			if (bStopAtPoints && bStopAtCertainPoints)
 			{
-				if (CustomStopsIndexes.Num() < 2) return;
+				if (CustomStopsIndexes.Num() < 2)
+				{
+					return;
+				}
 
 				PointsIndexes = CustomStopsIndexes;
 				SortPointsIndexes();
@@ -103,7 +109,10 @@ void AFloatingActorPoints::MoveActor(const float Progress)
 	const AActor* StartActor = GetTargetActor(CurrentPointIndex);
 	const AActor* FinishActor = GetTargetActor(NextPointIndex);
 
-	if (TargetActors.Num() < 2 || !StartActor || !FinishActor) return;
+	if (TargetActors.Num() < 2 || !StartActor || !FinishActor)
+	{
+		return;
+	}
 
 	const FVector StartPosition = StartActor->GetActorLocation();
 	const FVector FinishPosition = FinishActor->GetActorLocation();
@@ -112,7 +121,10 @@ void AFloatingActorPoints::MoveActor(const float Progress)
 
 void AFloatingActorPoints::CalculateNextPointIndex()
 {
-	auto CalculateNextIndex = [&]() { NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1; };
+	auto CalculateNextIndex = [&]()-> void
+	{
+		NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1;
+	};
 
 	CurrentPointIndex = NextPointIndex;
 
@@ -133,7 +145,7 @@ void AFloatingActorPoints::CalculateNextPointIndex()
 
 		case EFloatingActorMovementMode::PingPong:
 			CalculateNextIndex();
-			
+
 			if (!IndexIsValid(NextPointIndex))
 			{
 				bIsReversed = !bIsReversed;

@@ -10,7 +10,10 @@ ASplineActor::ASplineActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	auto SetDefaultMobility = [](USceneComponent* Component) { Component->SetMobility(EComponentMobility::Static); };
+	auto SetDefaultMobility = [](USceneComponent* Component) -> void
+	{
+		Component->SetMobility(EComponentMobility::Static);
+	};
 
 	ActorRoot = CreateDefaultSubobject<USceneComponent>("RootComponent");
 	SetRootComponent(ActorRoot);

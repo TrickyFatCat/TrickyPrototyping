@@ -26,7 +26,7 @@ void AButtonBase::BeginPlay()
 		ButtonTrigger->OnComponentBeginOverlap.AddDynamic(this, &AButtonBase::OnTriggerBeginOverlap);
 		ButtonTrigger->OnComponentEndOverlap.AddDynamic(this, &AButtonBase::OnTriggerEndOverlap);
 	}
-	
+
 	Super::BeginPlay();
 }
 
@@ -160,7 +160,10 @@ void AButtonBase::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponent,
 			TimerManager.ClearTimer(BeginOverlapDelayHandle);
 		}
 
-		if (!GetIsReversible()) return;
+		if (!GetIsReversible())
+		{
+			return;
+		}
 
 		TimerManager.SetTimer(EndOverlapDelayHandle, this, &AButtonBase::ProcessTriggerOverlap, EndOverlapDelay, false);
 

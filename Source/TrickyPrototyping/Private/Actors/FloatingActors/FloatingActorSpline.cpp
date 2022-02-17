@@ -13,8 +13,9 @@ void AFloatingActorSpline::ConstructActor()
 		LogError("SplineActor is nullptr. Please choose an actor with spline to use this floating actor.");
 		return;
 	}
-	
+
 	TargetSplineComponent = FTrickyUtils::GetComponent<USplineComponent>(SplineActor);
+
 	Super::ConstructActor();
 }
 
@@ -48,7 +49,7 @@ void AFloatingActorSpline::FillPointIndexes()
 
 	PointsIndexes.Empty();
 
-	auto GetPointsFromSpline = [&]()
+	auto GetPointsFromSpline = [&]()-> void
 	{
 		for (int32 i = 0; i < TargetSplineComponent->GetNumberOfSplinePoints(); i++)
 		{
@@ -110,7 +111,10 @@ void AFloatingActorSpline::RemoveInvalidCustomIndexes()
 			continue;
 		}
 
-		if (!TargetSplineComponent) continue;
+		if (!TargetSplineComponent)
+		{
+			continue;
+		}
 
 		const int32 NumberOfPoints = TargetSplineComponent->GetNumberOfSplinePoints();
 		const bool bIsValid = TargetSplineComponent->IsClosedLoop() ? Index <= NumberOfPoints : Index < NumberOfPoints;
@@ -139,7 +143,10 @@ void AFloatingActorSpline::MoveActor(const float Progress)
 
 void AFloatingActorSpline::CalculateNextPointIndex()
 {
-	auto CalculateNextIndex = [&]() { NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1; };
+	auto CalculateNextIndex = [&]()-> void
+	{
+		NextPointIndex = bIsReversed ? CurrentPointIndex - 1 : CurrentPointIndex + 1;
+	};
 
 	CurrentPointIndex = NextPointIndex;
 	CalculateNextIndex();
@@ -196,9 +203,11 @@ void AFloatingActorSpline::RotateAlongSpline(const float Progress)
 			TargetSplineComponent->GetRotationAtDistanceAlongSpline(GetPositionAtSpline(Progress),
 			                                                        ESplineCoordinateSpace::World)
 		};
+		
 		const float NewRoll = InheritSplineRotation.bInheritX ? RotationAlongSpline.Roll : CurrentRotation.Roll;
 		const float NewPitch = InheritSplineRotation.bInheritY ? RotationAlongSpline.Pitch : CurrentRotation.Pitch;
 		const float NewYaw = InheritSplineRotation.bInheritZ ? RotationAlongSpline.Yaw : CurrentRotation.Yaw;
+		
 		SetActorRotation(FRotator{NewPitch, NewYaw, NewRoll});
 	}
 }
@@ -213,9 +222,11 @@ void AFloatingActorSpline::ScaleAlongSpline(const float Progress)
 		const FVector ScaleAlongSpline{
 			TargetSplineComponent->GetScaleAtDistanceAlongSpline(GetPositionAtSpline(Progress))
 		};
+		
 		const float NewScaleX = InheritSplineScale.bInheritX ? ScaleAlongSpline.X : CurrentScale.X;
 		const float NewScaleY = InheritSplineScale.bInheritY ? ScaleAlongSpline.Y : CurrentScale.Y;
 		const float NewScaleZ = InheritSplineScale.bInheritZ ? ScaleAlongSpline.Z : CurrentScale.Z;
+		
 		SetActorScale3D(FVector{NewScaleX, NewScaleY, NewScaleZ});
 	}
 }

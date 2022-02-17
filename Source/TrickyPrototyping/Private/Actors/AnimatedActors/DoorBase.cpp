@@ -55,7 +55,6 @@ void ADoorBase::FinishAnimation_Implementation()
 			if (!IsClosingAutomatically() && !DoorTrigger->GetIsActorInside())
 			{
 				Close();
-				return;
 			}
 			break;
 
@@ -171,7 +170,10 @@ bool ADoorBase::ProcessInteraction_Implementation(AActor* TargetActor)
 
 	if (KeyClass)
 	{
-		if (!HasKey(TargetActor)) return false;
+		if (!HasKey(TargetActor))
+		{
+			return false;
+		}
 
 		UseKey(TargetActor);
 	}
