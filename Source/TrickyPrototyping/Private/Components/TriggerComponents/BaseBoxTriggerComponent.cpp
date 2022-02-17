@@ -18,7 +18,7 @@ void UBaseBoxTriggerComponent::BeginPlay()
 
 	OnComponentBeginOverlap.AddDynamic(this, &UBaseBoxTriggerComponent::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UBaseBoxTriggerComponent::OnEndOverlap);
-	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
+	bIsEnabled ? EnableTrigger() : DisableTrigger();
 }
 
 void UBaseBoxTriggerComponent::SetIsEnabled(const bool Value)
@@ -26,7 +26,7 @@ void UBaseBoxTriggerComponent::SetIsEnabled(const bool Value)
 	if (bIsEnabled == Value) return;
 
 	bIsEnabled = Value;
-	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
+	bIsEnabled ? EnableTrigger() : DisableTrigger();
 }
 
 void UBaseBoxTriggerComponent::EnableTrigger_Implementation()

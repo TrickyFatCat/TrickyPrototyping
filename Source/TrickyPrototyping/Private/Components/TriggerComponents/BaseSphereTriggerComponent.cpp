@@ -16,7 +16,7 @@ void UBaseSphereTriggerComponent::BeginPlay()
 {
 	OnComponentBeginOverlap.AddDynamic(this, &UBaseSphereTriggerComponent::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UBaseSphereTriggerComponent::OnEndOverlap);
-	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
+	bIsEnabled ? EnableTrigger() : DisableTrigger();
 	
 	Super::BeginPlay();
 }
@@ -26,7 +26,7 @@ void UBaseSphereTriggerComponent::SetIsEnabled(const bool bEnabled)
 	if (bIsEnabled == bEnabled) return;
 
 	bIsEnabled = bEnabled;
-	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
+	bIsEnabled ? EnableTrigger() : DisableTrigger();
 }
 
 void UBaseSphereTriggerComponent::EnableTrigger_Implementation()

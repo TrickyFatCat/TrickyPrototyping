@@ -16,7 +16,7 @@ void UBaseCapsuleTriggerComponent::BeginPlay()
 {
 	OnComponentBeginOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnBeginOverlap);
 	OnComponentEndOverlap.AddDynamic(this, &UBaseCapsuleTriggerComponent::OnEndOverlap);
-	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
+	bIsEnabled ? EnableTrigger() : DisableTrigger();
 	
 	Super::BeginPlay();
 }
@@ -26,7 +26,7 @@ void UBaseCapsuleTriggerComponent::SetIsEnabled(const bool Value)
 	if (bIsEnabled == Value) return;
 
 	bIsEnabled = Value;
-	bIsEnabled ? EnableTrigger_Implementation() : DisableTrigger_Implementation();
+	bIsEnabled ? EnableTrigger() : DisableTrigger();
 }
 
 void UBaseCapsuleTriggerComponent::EnableTrigger_Implementation()
