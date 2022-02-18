@@ -16,7 +16,7 @@ AAnimatedActor::AAnimatedActor()
 void AAnimatedActor::BeginPlay()
 {
 	check(AnimationTimeline);
-	UTrickyFunctionLibrary::CalculateTimelinePlayRate(AnimationTimeline, AnimationCurve, AnimationDuration);
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(AnimationTimeline, Cast<UCurveBase>(AnimationCurve), AnimationDuration);
 
 	if (AnimationCurve)
 	{
@@ -52,7 +52,7 @@ void AAnimatedActor::SetAnimationDuration(const float Value)
 	if (Value <= 0.f) return;
 
 	AnimationDuration = Value;
-	UTrickyFunctionLibrary::CalculateTimelinePlayRate(AnimationTimeline, AnimationCurve, AnimationDuration);
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(AnimationTimeline, Cast<UCurveBase>(AnimationCurve), AnimationDuration);
 }
 
 void AAnimatedActor::AddAnimatedComponent(USceneComponent* NewComponent)

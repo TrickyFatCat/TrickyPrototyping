@@ -47,6 +47,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="TrickyFunctionLibrary")
 	static void ApproachFloat(UPARAM(ref) float& CurrentValue, const float TargetValue, const float DeltaValue);
 
+	// Now it's obligatory to use Cast<UCurveBase>() when calling this function.
+	// TODO Reconsider this function. Maybe it must be in TrickyUtils as a template function.
 	UFUNCTION(BlueprintCallable, Category="TrickyFunctionLibrary")
 	static void CalculateTimelinePlayRate(UTimelineComponent* TimelineComponent,
 	                                      const UCurveBase* AnimationCurve,

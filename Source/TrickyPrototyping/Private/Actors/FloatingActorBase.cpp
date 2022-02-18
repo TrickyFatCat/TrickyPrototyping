@@ -28,7 +28,7 @@ void AFloatingActorBase::BeginPlay()
 		MovementFinished.BindUFunction(this, FName("ContinueMovement"));
 		MovementTimeline->SetTimelineFinishedFunc(MovementFinished);
 
-		UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, MovementAnimationCurve, TravelTime);
+		UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, Cast<UCurveBase>(MovementAnimationCurve), TravelTime);
 	}
 
 	if (WaitDuration <= 0.f)
@@ -94,7 +94,7 @@ void AFloatingActorBase::StartMovement()
 	}
 
 	CalculateTravelTime();
-	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, MovementAnimationCurve, TravelTime);
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, Cast<UCurveBase>(MovementAnimationCurve), TravelTime);
 
 	if (bStopAtPoints && bWaitAtStart)
 	{
@@ -128,7 +128,7 @@ void AFloatingActorBase::MoveToPoint(const int32 PointIndex)
 
 	NextPointIndex = PointIndex;
 	CalculateTravelTime();
-	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, MovementAnimationCurve, TravelTime);
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, Cast<UCurveBase>(MovementAnimationCurve), TravelTime);
 	SetState(EFloatingActorState::Moving);
 	MovementTimeline->PlayFromStart();
 }
@@ -146,7 +146,7 @@ void AFloatingActorBase::SetTravelTime(const float Value)
 	if (bUseTravelTime || Value <= 0.f) return;
 
 	TravelTime = Value;
-	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, MovementAnimationCurve, TravelTime);
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, Cast<UCurveBase>(MovementAnimationCurve), TravelTime);
 }
 
 void AFloatingActorBase::SetWaitDuration(const float Value)
@@ -206,7 +206,7 @@ void AFloatingActorBase::ContinueMovement()
 
 	CalculateNextPointIndex();
 	CalculateTravelTime();
-	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, MovementAnimationCurve, TravelTime);
+	UTrickyFunctionLibrary::CalculateTimelinePlayRate(MovementTimeline, Cast<UCurveBase>(MovementAnimationCurve), TravelTime);
 
 	if (bStopAtPoints)
 	{

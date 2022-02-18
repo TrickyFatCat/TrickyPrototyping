@@ -4,6 +4,10 @@
 #include "Core/TrickyFunctionLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Core/TrickyUtils.h"
+#include "Curves/CurveBase.h"
+#include "Curves/CurveFloat.h"
+#include "Curves/CurveVector.h"
+#include "Curves/CurveLinearColor.h"
 
 FString UTrickyFunctionLibrary::ConvertTimeSeconds(const float TimeSeconds, const ETimeFormat TimeFormat)
 {
