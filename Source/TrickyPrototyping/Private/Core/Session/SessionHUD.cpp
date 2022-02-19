@@ -31,7 +31,7 @@ void ASessionHUD::BeginPlay()
 
 		if (GameMode)
 		{
-			GameMode->OnSessionStateChanged.AddUObject(this, &ASessionHUD::OnSessionStateChanged);
+			GameMode->OnSessionStateChanged.AddDynamic(this, &ASessionHUD::OnSessionStateChanged);
 		}
 	}
 }

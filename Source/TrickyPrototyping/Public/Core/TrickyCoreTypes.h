@@ -14,7 +14,7 @@ enum class ESessionState : uint8
 	GameOver
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnSessionStateChangedSignature, ESessionState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSessionStateChangedSignature, ESessionState, NewState);
 
 USTRUCT(BlueprintType)
 struct FSessionGameModeData

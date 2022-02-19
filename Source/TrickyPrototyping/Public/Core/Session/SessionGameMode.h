@@ -40,6 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Session")
 	float GetSessionElapsedTime() const;
 
+	UPROPERTY(BlueprintAssignable)
 	FOnSessionStateChangedSignature OnSessionStateChanged;
 
 protected:
