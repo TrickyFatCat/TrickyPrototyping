@@ -70,6 +70,6 @@ private:
 	void StartSession();
 
 public:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category="Session")
 	void FinishSession();
 };
