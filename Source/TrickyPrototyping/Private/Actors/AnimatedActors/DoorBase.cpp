@@ -43,6 +43,8 @@ void ADoorBase::FinishAnimation_Implementation()
 {
 	Super::FinishAnimation_Implementation();
 
+	if (DoorType == EDoorType::Manual) return;
+
 	switch (GetStateCurrent())
 	{
 		case EAnimatedActorState::Opened:
@@ -217,7 +219,7 @@ bool ADoorBase::IsClosingAutomatically() const
 
 void ADoorBase::StartAutoClose()
 {
-	if (!IsStateCurrent(EAnimatedActorState::Opened)) return;
+	if (!IsStateCurrent(EAnimatedActorState::Opened) || !IsClosingAutomatically()) return;
 
 	GetWorldTimerManager().SetTimer(AutoCloseDelayHandle, this, &ADoorBase::Close, AutoCloseDelay, false);
 }
