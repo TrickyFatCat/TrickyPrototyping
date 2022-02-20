@@ -106,7 +106,7 @@ public:
 	bool GetIsInvulnerable() const { return GeneralDamageModifier == 0.f; }
 
 	UFUNCTION(BlueprintCallable, Category="DamageController|Damage")
-	void SetIsInvulnerable(const bool bIsInvulnerable) { GeneralDamageModifier = bIsInvulnerable; }
+	void SetIsInvulnerable(const bool bIsInvulnerable) { GeneralDamageModifier = !bIsInvulnerable; }
 
 	UFUNCTION(BlueprintGetter, Category="DamageController|Damage")
 	float GetRadialDamageModifier() const { return RadialDamageModifier; }
