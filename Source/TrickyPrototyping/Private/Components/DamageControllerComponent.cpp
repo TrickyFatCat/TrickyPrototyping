@@ -109,7 +109,7 @@ void UDamageControllerComponent::CalculateDamage_Implementation(const float Dama
                                                                 AActor* Causer,
                                                                 const UDamageType* DamageType)
 {
-	if (Damage <= 0.f) return;
+	if (Damage <= 0.f || GetIsDead()) return;
 
 	DecreaseHealth(Damage);
 
