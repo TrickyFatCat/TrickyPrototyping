@@ -22,7 +22,7 @@ void ASessionPlayerController::BeginPlay()
 
 		if (GameMode)
 		{
-			GameMode->OnSessionStateChanged.AddUObject(this, &ASessionPlayerController::OnSessionStateChanged);
+			GameMode->OnSessionStateChanged.AddDynamic(this, &ASessionPlayerController::OnSessionStateChanged);
 		}
 	}
 

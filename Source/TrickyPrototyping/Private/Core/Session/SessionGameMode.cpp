@@ -114,7 +114,7 @@ void ASessionGameMode::StartSession()
 	{
 		GetWorld()->GetTimerManager().SetTimer(SessionTimerHandle,
 		                                       this,
-		                                       &ASessionGameMode::FinishSession,
+		                                       &ASessionGameMode::LoseGame,
 		                                       SessionData.SessionDuration,
 		                                       false);
 	}
@@ -124,7 +124,8 @@ void ASessionGameMode::StartSession()
 	}
 }
 
-void ASessionGameMode::FinishSession()
+void ASessionGameMode::FinishSession(const bool bResult)
 {
+	bIsWinning = bResult;
 	SetSessionState(ESessionState::GameOver);
 }

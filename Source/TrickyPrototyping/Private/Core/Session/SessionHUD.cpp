@@ -6,6 +6,22 @@
 #include "Core/Session/SessionGameMode.h"
 #include "UserInterface/BaseUserWidget.h"
 
+void ASessionHUD::EnableHUD()
+{
+	Super::ShowHUD();
+
+	if (CurrentWidget != SessionWidgets[ESessionState::Progress]) return;
+
+	CurrentWidget->Show();
+}
+
+void ASessionHUD::DisableHUD()
+{
+	if (CurrentWidget != SessionWidgets[ESessionState::Progress]) return;
+	
+	CurrentWidget->Hide();
+}
+
 void ASessionHUD::BeginPlay()
 {
 	Super::BeginPlay();
