@@ -1,4 +1,6 @@
-# TrickyPrototyping
+# TrickyPrototyping (DEPRECATED)
+
+**THIS PLUGIN IS DEPRECATED, PLEASE USE [THIS COLLECTION OF PLUGINS](https://tricky-fat-cat.itch.io/tricky-prototyping-collection)**
 
 UE4 plugin for rapid prototyping. It contains the most basic systems and mechanics which can be found in the majority of games.
 
